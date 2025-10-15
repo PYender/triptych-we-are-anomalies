@@ -6,3 +6,10 @@ TRIPTYCH: Translating philosophy into engineering. 140+ pages with models, code 
 ## Documents
 - Addendum II — definition of consciousness (v0.1):
   [docs/addendum-ii/addendum-ii_definition-of-consciousness_v0.1.pdf](docs/addendum-ii/addendum-ii_definition-of-consciousness_v0.1.pdf)
+### DOI & Related Identifiers
+- **This version (v0.1):** https://doi.org/10.5281/zenodo.17219502  
+- **Concept DOI (all versions):** https://doi.org/10.5281/zenodo.17219501  
+- **Addendum II (report):** https://doi.org/10.5281/zenodo.17359080  
+- **GitHub:** https://github.com/PYender/triptych-we-are-anomalies.git
+#### How to cite
+Wlodarczyk, M. (2025). *TRIPTICH. WE ARE ANOMAL(I)ES. Addendum II: definition of consciousness (v0.1).* Zenodo. https://doi.org/10.5281/zenodo.17359080
