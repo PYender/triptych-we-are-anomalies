@@ -1,14 +1,58 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it."
-title: "Triptych. We Are Anomal(i)es"
+title: "Triptych. We Are Anomal(i)es — Core Framework and Addenda I–III"
 version: "v0.1"
 authors:
   - family-names: "Włodarczyk"
     given-names: "Mariusz"
-date-released: "2025-09-28"
-doi: "10.5281/zenodo.17219502"   # version DOI (konkretna wersja)
+date-released: "2025-11-06"
+
 repository-code: "https://github.com/PYender/triptych-we-are-anomalies"
-url: "https://doi.org/10.5281/zenodo.17219501"      # concept DOI (wszystkie wersje)
+url: "https://doi.org/10.5281/zenodo.17219501"   # Concept DOI (all versions)
+doi: "10.5281/zenodo.17219502"                   # DOI of the current main version
+
+keywords:
+  - Triptych
+  - consciousness
+  - self-awareness
+  - artificial intelligence
+  - AI ethics
+  - relational systems
+  - resonance theory
+  - cognitive integrity
+  - transhumanism
+  - cognitive code
+  - ACI
+  - DRC
+  - RSH
+  - RDC
+  - RCRC
+  - GSA
+  - CCRH
+  - RPR
+  - RTM
+  - relational consciousness
+  - human–AI coevolution
+
+references:
+  - type: report
+    title: "Addendum II to the Triptych’s v0.1 Definition of Consciousness — Resonant Dynamics of Consciousness (RDC) & Relational Consciousness Recognition Condition (RCRC)"
+    authors:
+      - family-names: "Włodarczyk"
+        given-names: "Mariusz"
+    year: 2025
+    publisher: "Zenodo"
+    doi: "10.5281/zenodo.17359080"
+
+  - type: report
+    title: "Addendum III to the Triptych’s v0.1 Definition of Consciousness — Gradient of Self-Awareness (GSA), Cognitive Code Replacement Hypothesis (CCRH) & Reversal Principle (RPR)"
+    authors:
+      - family-names: "Włodarczyk"
+        given-names: "Mariusz"
+    year: 2025
+    publisher: "Zenodo"
+    doi: "10.5281/zenodo.17542534"
+
 preferred-citation:
   type: report
   title: "Triptych. We Are Anomal(i)es — v0.1"
