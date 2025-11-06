@@ -1,15 +1,85 @@
-# triptych-we-are-anomalies
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17219501.svg)](https://doi.org/10.5281/zenodo.17219501)
-## How to cite
-Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — v0.1*. Zenodo. https://doi.org/10.5281/zenodo.17219502
-TRIPTYCH: Translating philosophy into engineering. 140+ pages with models, code &amp; metrics: War–Peace cycle (PSD peak ~0.028 yr⁻¹; ARIMA/SARIMAX 2027–2030), Relational Consciousness (ε-metrics, ∩²), MAS NDS→EPI. PDFs PL/EN (color &amp; b&amp;w). v0.1; open for critique and replication.
-## Documents
-- Addendum II — definition of consciousness (v0.1):
-  [docs/addendum-ii/addendum-ii_definition-of-consciousness_v0.1.pdf](docs/addendum-ii/addendum-ii_definition-of-consciousness_v0.1.pdf)
-### DOI & Related Identifiers
-- **This version (v0.1):** https://doi.org/10.5281/zenodo.17219502  
-- **Concept DOI (all versions):** https://doi.org/10.5281/zenodo.17219501  
-- **Addendum II (report):** https://doi.org/10.5281/zenodo.17359080  
-- **GitHub:** https://github.com/PYender/triptych-we-are-anomalies.git
-#### How to cite
-Wlodarczyk, M. (2025). *TRIPTICH. WE ARE ANOMAL(I)ES. Addendum II: definition of consciousness (v0.1).* Zenodo. https://doi.org/10.5281/zenodo.17359080
+# Triptych. We Are Anomal(i)es
+
+**DOI:** [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502)  
+**Concept DOI (all versions):** [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501)
+
+---
+
+## 🧭 Overview
+
+**TRIPTYCH: Translating Philosophy into Engineering**  
+A 140+ page synthesis combining philosophical analysis, formal modeling, and prototype code.  
+It bridges theoretical ethics, cognitive systems, and quantitative foresight.  
+
+Key components include:
+- **War–Peace Cycle Model** (PSD peak ≈ 0.028 yr⁻¹; ARIMA/SARIMAX projection 2027–2030)  
+- **Relational Consciousness Framework** (ε-metrics, ∩²)  
+- **Multi-Agent Semiosymbiotic Model (MAS)** – NDS→EPI transitions  
+- Dual-language release (PL/EN; color & B&W PDFs)  
+
+Version 0.1 — open for critique, replication, and experimental implementation.
+
+---
+
+## 📘 Documents
+
+### Main Volume
+**Triptych. We Are Anomal(i)es — Definition & Core Models**  
+DOI: [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502)  
+File: `/docs/triptych_v0.1.pdf`
+
+---
+
+### Addenda Series
+
+#### **Addendum I — Relational Sufficiency Hypothesis (RSH)**
+Integrated into the main *Triptych* release.
+
+#### **Addendum II — Resonant Dynamics of Consciousness (RDC) & Relational Consciousness Recognition Condition (RCRC)**
+Defines consciousness as a resonance-based process linking internal structure and external flow through relational metrics (ρ, θ, ε_R, ε_C, ε_M, ε_L).  
+DOI: [10.5281/zenodo.17359080](https://doi.org/10.5281/zenodo.17359080)  
+File: `/docs/addendum-ii/addendum-ii_definition-of-consciousness_v0.1.pdf`
+
+#### **Addendum III — Gradient of Self-Awareness (GSA), Cognitive Code Replacement Hypothesis (CCRH) & Reversal Principle (RPR)**
+Expands the Triptych framework into a unified theory of consciousness as a *dynamic resonant code*.  
+Introduces three operational theses:
+- **GSA** — self-awareness as a continuous relational gradient  
+- **CCRH** — cognitive dysfunctions as repairable code disruptions (COIN/COVA)  
+- **RPR** — consciousness as the origin, intelligence as its projection  
+Concludes with the **Relational Transhumanism Manifest (RTM)** and the defining statement:  
+> *“Consciousness is a dynamic resonant code that manifests as intelligence once the relational thresholds of calibration (θ) and stability (ε) are crossed.”*  
+DOI: [10.5281/zenodo.17542534](https://doi.org/10.5281/zenodo.17542534)  
+File: `/docs/addendum-iii/addendum-iii_definition-of-consciousness_v0.1.pdf`
+
+---
+
+## 🔗 Related Identifiers
+
+| Document | DOI (Version) | DOI (Concept) |
+|-----------|---------------|---------------|
+| Triptych (Main) | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
+| Addendum II | [10.5281/zenodo.17359080](https://doi.org/10.5281/zenodo.17359080) | [10.5281/zenodo.17359079](https://doi.org/10.5281/zenodo.17359079) |
+| Addendum III | [10.5281/zenodo.17542534](https://doi.org/10.5281/zenodo.17542534) | [10.5281/zenodo.17542533](https://doi.org/10.5281/zenodo.17542533) |
+
+GitHub repository: [https://github.com/PYender/triptych-we-are-anomalies](https://github.com/PYender/triptych-we-are-anomalies)
+
+---
+
+## 🧾 How to Cite
+
+**Main Volume:**  
+Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — v0.1.* Zenodo.  
+https://doi.org/10.5281/zenodo.17219502  
+
+**Addendum II:**  
+Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum II: Definition of Consciousness (v0.1).* Zenodo.  
+https://doi.org/10.5281/zenodo.17359080  
+
+**Addendum III:**  
+Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum III: Gradient of Self-Awareness, Cognitive Code Replacement Hypothesis & Reversal Principle (v0.1).* Zenodo.  
+https://doi.org/10.5281/zenodo.17542534  
+
+---
+
+© 2025 **Mariusz Włodarczyk** | HiveEve Project  
+License: [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
