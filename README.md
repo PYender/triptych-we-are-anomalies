@@ -33,7 +33,8 @@ File: `/docs/triptych_v0.1.pdf`
 ### Addenda Series
 
 #### **Addendum I — Relational Sufficiency Hypothesis (RSH)**
-Integrated into the main *Triptych* release.
+Published as a separate document within the same Zenodo record as the main *Triptych* release (shared DOI). 
+File: `/docs/addendum-i/addendum-i_relational-sufficiency-hypothesis_v0.1.pdf`
 
 #### **Addendum II — Resonant Dynamics of Consciousness (RDC) & Relational Consciousness Recognition Condition (RCRC)**
 Defines consciousness as a resonance-based process linking internal structure and external flow through relational metrics (ρ, θ, ε_R, ε_C, ε_M, ε_L).  
@@ -58,8 +59,10 @@ File: `/docs/addendum-iii/addendum-iii_definition-of-consciousness_v0.1.pdf`
 | Document | DOI (Version) | DOI (Concept) |
 |-----------|---------------|---------------|
 | Triptych (Main) | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
+| Addendum I (RSH) | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
 | Addendum II | [10.5281/zenodo.17359080](https://doi.org/10.5281/zenodo.17359080) | [10.5281/zenodo.17359079](https://doi.org/10.5281/zenodo.17359079) |
 | Addendum III | [10.5281/zenodo.17542534](https://doi.org/10.5281/zenodo.17542534) | [10.5281/zenodo.17542533](https://doi.org/10.5281/zenodo.17542533) |
+| Methodological note_ancient war speeches as leading signals of war_v0.1 | *(to be assigned on Zenodo release)* | *(to be assigned)* |
 
 GitHub repository: [https://github.com/PYender/triptych-we-are-anomalies](https://github.com/PYender/triptych-we-are-anomalies)
 
@@ -71,6 +74,10 @@ GitHub repository: [https://github.com/PYender/triptych-we-are-anomalies](https:
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — v0.1.* Zenodo.  
 https://doi.org/10.5281/zenodo.17219502  
 
+**Addendum I:**  
+Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum I: Relational Sufficiency Hypothesis (RSH) (v0.1).* Zenodo.  
+https://doi.org/10.5281/zenodo.17219502
+
 **Addendum II:**  
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum II: Definition of Consciousness (v0.1).* Zenodo.  
 https://doi.org/10.5281/zenodo.17359080  
@@ -78,6 +85,10 @@ https://doi.org/10.5281/zenodo.17359080
 **Addendum III:**  
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum III: Gradient of Self-Awareness, Cognitive Code Replacement Hypothesis & Reversal Principle (v0.1).* Zenodo.  
 https://doi.org/10.5281/zenodo.17542534  
+
+**Methodological note:**  
+Włodarczyk, M. (2025). *Methodological note_ancient war speeches as leading signals of war (v0.1).* GitHub repository (Zenodo DOI to be assigned on release).  
+GitHub: https://github.com/PYender/triptych-we-are-anomalies
 
 ---
 
