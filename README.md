@@ -59,7 +59,7 @@ File: `/docs/addendum-iii/addendum-iii_definition-of-consciousness_v0.1.pdf`
 | Document | DOI (Version) | DOI (Concept) |
 |-----------|---------------|---------------|
 | Triptych (Main) | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
-| Addendum I (RSH) | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
+| Addendum I | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
 | Addendum II | [10.5281/zenodo.17359080](https://doi.org/10.5281/zenodo.17359080) | [10.5281/zenodo.17359079](https://doi.org/10.5281/zenodo.17359079) |
 | Addendum III | [10.5281/zenodo.17542534](https://doi.org/10.5281/zenodo.17542534) | [10.5281/zenodo.17542533](https://doi.org/10.5281/zenodo.17542533) |
 | Methodological note_ancient war speeches as leading signals of war_v0.1 | *(to be assigned on Zenodo release)* | *(to be assigned)* |
