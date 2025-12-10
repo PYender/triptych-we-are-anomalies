@@ -57,14 +57,13 @@ File: `/docs/addendum-iii/addendum-iii_definition-of-consciousness_v0.1.pdf`
 ## 🔗 Related Identifiers
 
 | Document | DOI (Version) | DOI (Concept) |
-|-----------|---------------|---------------|
-| Triptych (Main) | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
-| Addendum I | [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502) | [10.5281/zenodo.17219501](https://doi.org/10.5281/zenodo.17219501) |
-| Addendum II | [10.5281/zenodo.17359080](https://doi.org/10.5281/zenodo.17359080) | [10.5281/zenodo.17359079](https://doi.org/10.5281/zenodo.17359079) |
-| Addendum III | [10.5281/zenodo.17542534](https://doi.org/10.5281/zenodo.17542534) | [10.5281/zenodo.17542533](https://doi.org/10.5281/zenodo.17542533) |
-| Methodological note_ancient war speeches as leading signals of war_v0.1 | *(to be assigned on Zenodo release)* | *(to be assigned)* |
-
-GitHub repository: [https://github.com/PYender/triptych-we-are-anomalies](https://github.com/PYender/triptych-we-are-anomalies)
+|----------|----------------|---------------|
+| Triptych (Main) | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
+| Addendum I | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
+| Addendum II | https://doi.org/10.5281/zenodo.17359080 | https://doi.org/10.5281/zenodo.17359079 |
+| Addendum III | https://doi.org/10.5281/zenodo.17542534 | https://doi.org/10.5281/zenodo.17542533 |
+|  Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1) | https://doi.org/10.5281/zenodo.17877280 | https://doi.org/10.5281/zenodo.17877280 |
+GitHub repository: https://github.com/PYender/triptych-we-are-anomalies
 
 ---
 
@@ -86,9 +85,8 @@ https://doi.org/10.5281/zenodo.17359080
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum III: Gradient of Self-Awareness, Cognitive Code Replacement Hypothesis & Reversal Principle (v0.1).* Zenodo.  
 https://doi.org/10.5281/zenodo.17542534  
 
-**Methodological note:**  
-Włodarczyk, M. (2025). *Methodological note_ancient war speeches as leading signals of war (v0.1).* GitHub repository (Zenodo DOI to be assigned on release).  
-GitHub: https://github.com/PYender/triptych-we-are-anomalies
+**GitHub release (mn-ancient-war-v0.1):**  
+Włodarczyk, M. (2025). Triptych. We Are Anomal(i)es — Core Framework and Addenda I–III (mn-ancient-war-v0.1). Zenodo. https://doi.org/10.5281/zenodo.17877280
 
 ---
 
