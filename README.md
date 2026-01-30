@@ -38,7 +38,7 @@ File: `/docs/addendum-i/addendum-i_relational-sufficiency-hypothesis_v0.1.pdf`
 
 #### **Addendum II — Resonant Dynamics of Consciousness (RDC) & Relational Consciousness Recognition Condition (RCRC)**
 Defines consciousness as a resonance-based process linking internal structure and external flow through relational metrics (ρ, θ, ε_R, ε_C, ε_M, ε_L).  
-DOI: [10.5281/zenodo.17359080](https://doi.org/10.5281/zenodo.17359080)  
+DOI: [10.5281/zenodo.17359080](https://zenodo.org/records/17359080)  
 File: `/docs/addendum-ii/addendum-ii_definition-of-consciousness_v0.1.pdf`
 
 #### **Addendum III — Gradient of Self-Awareness (GSA), Cognitive Code Replacement Hypothesis (CCRH) & Reversal Principle (RPR)**
@@ -60,7 +60,7 @@ File: `/docs/addendum-iii/addendum-iii_definition-of-consciousness_v0.1.pdf`
 |----------|----------------|---------------|
 | Triptych (Main) | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
 | Addendum I | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
-| Addendum II | https://doi.org/10.5281/zenodo.17359080 | https://doi.org/10.5281/zenodo.17359079 |
+| Addendum II | https://zenodo.org/records/17359080 | https://doi.org/10.5281/zenodo.17359079 |  
 | Addendum III | https://doi.org/10.5281/zenodo.17542534 | https://doi.org/10.5281/zenodo.17542533 |
 |  Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1) | https://doi.org/10.5281/zenodo.17877280 | https://doi.org/10.5281/zenodo.17877280 |
 GitHub repository: https://github.com/PYender/triptych-we-are-anomalies
@@ -79,7 +79,7 @@ https://doi.org/10.5281/zenodo.17219502
 
 **Addendum II:**  
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum II: Definition of Consciousness (v0.1).* Zenodo.  
-https://doi.org/10.5281/zenodo.17359080  
+https://zenodo.org/records/17359080    
 
 **Addendum III:**  
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum III: Gradient of Self-Awareness, Cognitive Code Replacement Hypothesis & Reversal Principle (v0.1).* Zenodo.  
