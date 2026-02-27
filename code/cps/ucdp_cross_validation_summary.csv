@@ -1,0 +1,5 @@
+seria,zakres,T_dom_lat,phi_deg,sine_r2,corr_z_COW_1946_2007,p_corr,kryterium_r_ge_070,kryterium_T_le_8lat
+COW,1816–2007,32.0,347.09,0.2091,1.0,0.0,True,True
+UCDP-A,1946–2024,39.0,339.65,0.8691,0.0783,0.5451,False,True
+UCDP-B,1946–2024,39.0,27.85,0.9038,-0.4393,0.0004,False,True
+UCDP-C,1946–2024,39.0,25.46,0.8999,-0.453,0.0002,False,True
