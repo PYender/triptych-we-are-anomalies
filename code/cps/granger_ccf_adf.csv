@@ -1,0 +1,5 @@
+series,ADF stat,p-value,lags used,nobs,crit 1%,crit 5%,crit 10%,stationary @5%
+wars_smooth,-3.2831,0.0157,2,189,-3.4654,-2.877,-2.575,True
+Δwars_smooth,-4.7193,0.0001,1,189,-3.4654,-2.877,-2.575,True
+color,-2.2603,0.1851,1,190,-3.4652,-2.8769,-2.5749,False
+Δcolor,-21.274,0.0,0,190,-3.4652,-2.8769,-2.5749,True
