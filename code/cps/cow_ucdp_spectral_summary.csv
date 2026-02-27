@@ -1,0 +1,7 @@
+dataset,test,peak_T_yr,p_value,significant
+COW 1816-2007,"Fisher g (raw, white-noise null)",24.0,0.021417,True
+COW 1816-2007,Fisher g (AR(20) prewhitened raw),2.1,0.947363,False
+COW 1816-2007,AR(13) bootstrap (smooth),96.0,0.9505,False
+UCDP 1946-2024,"Fisher g (raw, white-noise null)",39.5,0.0,True
+UCDP 1946-2024,Fisher g (AR(12) prewhitened raw),2.8,0.932308,False
+UCDP 1946-2024,AR(3) bootstrap (smooth),39.5,0.5355,False
