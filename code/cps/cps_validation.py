@@ -136,7 +136,7 @@ def rolling_origin_validate(
                 # use actual future COLOR values
                 fut_exog = exog_full.iloc[t : t + h]
                 # fill any NaN with last known value
-                fut_exog = fut_exog.fillna(method="ffill").fillna(
+                fut_exog = fut_exog.ffill().fillna(
                     exog_full.iloc[:t].dropna().iloc[-1]
                 )
             else:
