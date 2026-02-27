@@ -1,0 +1,6 @@
+series,ADF stat,p-value,lags used,nobs,crit 5%,stationary @5%
+ucdp_smooth,-2.1983,0.2069,2,59,-2.9119,False
+ucdp_wars (raw),-1.6307,0.4671,1,60,-2.9111,False
+Δucdp_wars,-11.4058,0.0,0,60,-2.9111,True
+color,-2.5192,0.1109,4,57,-2.9138,False
+Δcolor,-7.7586,0.0,3,57,-2.9138,True
