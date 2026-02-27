@@ -1,4 +1,5 @@
 test,peak_period,g,p_value,significant
 "Fisher g (raw wars, white-noise null)",24.0,0.085415,0.021417,True
+Fisher g (raw wars AR(20) residuals),2.1,0.042043,0.947363,False
 Fisher g (wars_smooth AR(13) residuals),4.8,0.043504,0.885122,False
 AR(13) bootstrap g (wars_smooth),96.0,0.190744,0.9505,False
