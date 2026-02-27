@@ -261,16 +261,16 @@ def plot_all(results: dict, out_path: str) -> None:
     )
     ax1.legend(fontsize=7, loc="upper right")
 
-    # ── (c) AR residuals – Fisher g-test ─────────────────────────────────────
+    # ── (c) wars (raw) AR residuals – Fisher g-test ──────────────────────────
     ax2 = fig.add_subplot(gs[1, 0])
-    sr  = results["smooth_resid"]
-    f_resid = sr["freqs"]
-    I_resid = sr["psd"]
+    rr  = results["raw_resid"]
+    f_resid = rr["freqs"]
+    I_resid = rr["psd"]
 
     ax2.semilogy(f_resid, I_resid, color=C3, lw=1.2, alpha=0.85)
     ax2.semilogy(f_resid[I_resid.argmax()], I_resid.max(),
                  "o", color=C3, ms=7,
-                 label=f"peak T≈{sr['fg']['peak_period']:.1f} yr")
+                 label=f"peak T≈{rr['fg']['peak_period']:.1f} yr")
     # 95% critical line for white-noise Fisher g-test
     n_f   = len(f_resid)
     g_crit = (1 - ALPHA ** (1 / (n_f - 1))) / n_f   # approx critical g
@@ -279,16 +279,16 @@ def plot_all(results: dict, out_path: str) -> None:
                 label=f"I_crit (g₀.₀₅≈{g_crit:.4f})")
     vline_36(ax2)
 
-    plab2 = f"p = {sr['fg']['p_value']:.4f}" if sr['fg']['p_value'] >= 0.0001 \
+    plab2 = f"p = {rr['fg']['p_value']:.4f}" if rr['fg']['p_value'] >= 0.0001 \
             else "p < 0.0001"
-    sig2  = "***" if sr['fg']['p_value'] < 0.001 else \
-            "**"  if sr['fg']['p_value'] < 0.01  else \
-            "*"   if sr['fg']['p_value'] < 0.05  else "n.s."
+    sig2  = "***" if rr['fg']['p_value'] < 0.001 else \
+            "**"  if rr['fg']['p_value'] < 0.01  else \
+            "*"   if rr['fg']['p_value'] < 0.05  else "n.s."
     ax2.set_xlabel("Frequency  [yr⁻¹]")
     ax2.set_ylabel("PSD  (log scale)")
     ax2.set_title(
-        f"(c) wars_smooth AR({s['ar_p']}) residuals — Fisher g-test\n"
-        f"g={sr['fg']['g']:.4f}, {plab2}  {sig2}  [after prewhitening]",
+        f"(c) wars (raw) AR({rr['ar_p']}) residuals — Fisher g-test\n"
+        f"g={rr['fg']['g']:.4f}, {plab2}  {sig2}  [after prewhitening]",
         fontsize=9,
     )
     ax2.legend(fontsize=8)
@@ -373,6 +373,22 @@ if __name__ == "__main__":
     print("  NOTE: white-noise null may be too lenient for count data; "
           "        check if peak is at ~36 yr or elsewhere")
 
+    # ── TEST A2: raw wars, AR prewhitening ───────────────────────────────────
+    print("\n[A2] AR-prewhitening — wars (raw)")
+    print("  KEY TEST: does the peak from [A] survive after removing AR structure?")
+    ar_fit_raw, ar_p_raw, ar_resid_raw = fit_ar_aic(x_raw, max_lag=args.max_ar)
+    print(f"  AIC-selected AR order:    p = {ar_p_raw}")
+    fg_resid_raw = fisher_g_test(ar_resid_raw)
+    print(f"  Fisher g on AR({ar_p_raw}) residuals:")
+    print(f"    m:            {fg_resid_raw['n_freqs']}")
+    print(f"    g:            {fg_resid_raw['g']:.6f}")
+    print(f"    Peak period:  {fg_resid_raw['peak_period']:.1f} yr")
+    print(f"    p-value:      {fg_resid_raw['p_value']:.6f}  "
+          f"({'SIGNIFICANT' if fg_resid_raw['p_value'] < 0.05 else 'NOT significant'} at 5%)")
+
+    f_rr, I_rr = periodogram(ar_resid_raw - ar_resid_raw.mean(), fs=1.0, detrend=False)
+    mask_rr = (f_rr > 0) & (f_rr < 0.5)
+
     # ── TEST B: wars_smooth, AR prewhitening ─────────────────────────────────
     print("\n[B] AR-prewhitening — wars_smooth")
     x_smooth = detrend(wars_smooth, type="linear")
@@ -430,6 +446,13 @@ if __name__ == "__main__":
             "significant":  fg_raw["p_value"] < 0.05,
         },
         {
+            "test":         f"Fisher g (raw wars AR({ar_p_raw}) residuals)",
+            "peak_period":  f"{fg_resid_raw['peak_period']:.1f}",
+            "g":            round(fg_resid_raw["g"], 6),
+            "p_value":      round(fg_resid_raw["p_value"], 6),
+            "significant":  fg_resid_raw["p_value"] < 0.05,
+        },
+        {
             "test":         f"Fisher g (wars_smooth AR({ar_p}) residuals)",
             "peak_period":  f"{fg_resid['peak_period']:.1f}",
             "g":            round(fg_resid["g"], 6),
@@ -450,22 +473,27 @@ if __name__ == "__main__":
     # ── interpretation ────────────────────────────────────────────────────────
     print("\n" + "─" * 68)
     print("INTERPRETATION:")
-    print("  The key question is test [B.2] (AR bootstrap) and [B.1] (AR residuals).")
-    print("  If the cycle survives prewhitening: it is a genuine structural cycle,")
-    print("  not just autocorrelation from the 11-year MA smoothing.")
-    print("  If it does NOT survive: the 'cycle' is an artifact of autocorrelation")
-    print("  structure that any AR model would generate.")
+    print("  [A2] tests the raw wars peak directly: does it survive AR prewhitening?")
+    print("  [B.1/B.2] test wars_smooth: but AR structure from 11-yr MA dominates there.")
+    print("  The most informative test for the cyclicity hypothesis is [A2].")
+    print()
+    if fg_resid_raw["p_value"] < 0.05:
+        print(f"  [A2] RESULT: SIGNIFICANT (p={fg_resid_raw['p_value']:.4f})")
+        print(f"  → Peak at T≈{fg_resid_raw['peak_period']:.1f} yr survives AR({ar_p_raw}) prewhitening.")
+        print("  → Genuine spectral feature in raw wars beyond autocorrelation structure.")
+    else:
+        print(f"  [A2] RESULT: NOT significant (p={fg_resid_raw['p_value']:.4f})")
+        print(f"  → Peak at T≈{fg_resid_raw['peak_period']:.1f} yr is explained by AR({ar_p_raw}) structure.")
+        print("  → No robust cycle in raw wars beyond autocorrelation.")
     print()
     if fg_resid["p_value"] < 0.05 and p_boot < 0.05:
-        print("  RESULT: Both prewhitened tests are SIGNIFICANT.")
-        print("  → The ~36-year cycle is a genuine structural feature beyond AR structure.")
+        print("  [B.1/B.2] wars_smooth: Both prewhitened tests SIGNIFICANT.")
+        print("  → Cycle in smoothed series is a genuine structural feature.")
     elif fg_resid["p_value"] < 0.05 or p_boot < 0.05:
-        print("  RESULT: Mixed — one prewhitened test significant, one not.")
-        print("  → The cycle is borderline; interpret with caution.")
+        print("  [B.1/B.2] wars_smooth: Mixed — one significant, one not.")
     else:
-        print("  RESULT: Neither prewhitened test is significant at 5%.")
-        print("  → The peak at ~36 yr is explained by AR autocorrelation structure")
-        print("    and/or the 11-year MA filter. NOT a robust structural cycle.")
+        print("  [B.1/B.2] wars_smooth: Neither significant at 5%.")
+        print("  → Peak in smoothed series explained by AR + 11-yr MA filter artifact.")
     print("─" * 68)
 
     # ── save CSV ─────────────────────────────────────────────────────────────
@@ -488,25 +516,12 @@ if __name__ == "__main__":
             "g_obs":    g_obs,
             "ar_p":     ar_p,
         },
-        "smooth_resid": {
-            "freqs": periodogram(ar_resid - ar_resid.mean(), fs=1.0, detrend=False)[0][
-                (periodogram(ar_resid - ar_resid.mean(), fs=1.0, detrend=False)[0] > 0) &
-                (periodogram(ar_resid - ar_resid.mean(), fs=1.0, detrend=False)[0] < 0.5)
-            ],
-            "psd": periodogram(ar_resid - ar_resid.mean(), fs=1.0, detrend=False)[1][
-                (periodogram(ar_resid - ar_resid.mean(), fs=1.0, detrend=False)[0] > 0) &
-                (periodogram(ar_resid - ar_resid.mean(), fs=1.0, detrend=False)[0] < 0.5)
-            ],
-            "fg": fg_resid,
+        "raw_resid": {
+            "freqs":  f_rr[mask_rr],
+            "psd":    I_rr[mask_rr],
+            "fg":     fg_resid_raw,
+            "ar_p":   ar_p_raw,
         },
     }
-
-    # fix the residual psd computation (avoid recomputing 4 times)
-    f_res_tmp, I_res_tmp = periodogram(
-        ar_resid - ar_resid.mean(), fs=1.0, detrend=False
-    )
-    mask_res = (f_res_tmp > 0) & (f_res_tmp < 0.5)
-    all_results["smooth_resid"]["freqs"] = f_res_tmp[mask_res]
-    all_results["smooth_resid"]["psd"]   = I_res_tmp[mask_res]
 
     plot_all(all_results, str(out_dir / "spectral_significance.pdf"))

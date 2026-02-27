@@ -37,7 +37,7 @@ from statsmodels.tsa.stattools import adfuller, grangercausalitytests
 
 warnings.filterwarnings("ignore")
 
-MAX_LAG  = 12  # maximum lag for Granger tests and CCF
+MAX_LAG  = 25  # maximum lag for Granger tests and CCF
 ADF_LAGS = 5   # max lag for ADF (AIC-selected within this range)
 
 # ─────────────────────────────────────────────────────────────────────────────
