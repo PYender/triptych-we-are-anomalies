@@ -192,6 +192,7 @@ def plot_results(
     granger_fwd: pd.DataFrame,
     granger_rev: pd.DataFrame,
     out_path: str = "granger_ccf.pdf",
+    series_name: str = "wars_smooth",
 ) -> None:
     """
     4-panel figure:
@@ -209,16 +210,16 @@ def plot_results(
     ax0   = fig.add_subplot(gs[0, 0])
     ax0_r = ax0.twinx()
 
-    ax0.plot(df.index, df["wars_smooth"], color=C1, lw=1.8, label="wars_smooth")
+    ax0.plot(df.index, df[series_name], color=C1, lw=1.8, label=series_name)
     ax0_r.plot(df.index, df["color"], color=C2, lw=1.2, linestyle="--",
                alpha=0.85, label="COLOR")
 
     ax0.set_xlabel("Year")
-    ax0.set_ylabel("Wars (11-yr smooth)", color=C1)
+    ax0.set_ylabel(series_name, color=C1)
     ax0_r.set_ylabel("COLOR index", color=C2)
     ax0.tick_params(axis="y", labelcolor=C1)
     ax0_r.tick_params(axis="y", labelcolor=C2)
-    ax0.set_title("(a) Raw series: wars_smooth & COLOR")
+    ax0.set_title(f"(a) Raw series: {series_name} & COLOR")
 
     lines1, lab1 = ax0.get_legend_handles_labels()
     lines2, lab2 = ax0_r.get_legend_handles_labels()
@@ -241,7 +242,7 @@ def plot_results(
 
     ax1.set_xlabel("Lag  (positive = COLOR leads wars)")
     ax1.set_ylabel("Cross-correlation  r")
-    ax1.set_title("(b) CCF: COLOR vs. wars_smooth  [levels]")
+    ax1.set_title(f"(b) CCF: COLOR vs. {series_name}  [levels]")
     ax1.legend(fontsize=8)
     ax1.set_xticks(lags_lv[::2])
 
@@ -262,7 +263,7 @@ def plot_results(
 
     ax2.set_xlabel("Lag  (positive = ΔCOLOR leads Δwars)")
     ax2.set_ylabel("Cross-correlation  r")
-    ax2.set_title("(c) CCF: ΔCOLOR vs. Δwars_smooth  [first differences]")
+    ax2.set_title(f"(c) CCF: ΔCOLOR vs. Δ{series_name}  [first differences]")
     ax2.legend(fontsize=8)
     ax2.set_xticks(lags_df[::2])
 
@@ -279,13 +280,13 @@ def plot_results(
     ax3.set_yscale("log")
     ax3.set_xlabel("Lag (years)")
     ax3.set_ylabel("F-test p-value  (log scale)")
-    ax3.set_title("(d) Granger causality  [Δwars_smooth, ΔCOLOR]")
+    ax3.set_title(f"(d) Granger causality  [Δ{series_name}, ΔCOLOR]")
     ax3.legend(fontsize=7.5, loc="upper right")
     ax3.set_xticks(granger_fwd.index)
 
     plt.suptitle(
-        "CPS – Granger Causality & Cross-Correlation Analysis\n"
-        "COLOR (N-gram hostility index) vs. wars_smooth (COW 1816–2007)",
+        f"CPS – Granger Causality & Cross-Correlation Analysis\n"
+        f"COLOR (N-gram hostility index) vs. {series_name}  (COW 1816–2007)",
         fontsize=11,
         y=1.02,
     )
@@ -300,19 +301,31 @@ def plot_results(
 # ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    import argparse
     from pathlib import Path
 
-    csv_path = "wars_color.csv"
-    if len(sys.argv) > 1:
-        csv_path = sys.argv[1]
+    parser = argparse.ArgumentParser(
+        description="Granger causality and CCF analysis for CPS"
+    )
+    parser.add_argument("csv", nargs="?", default="wars_color.csv",
+                        help="Path to wars_color.csv")
+    parser.add_argument("--series", default="wars_smooth",
+                        choices=["wars_smooth", "wars"],
+                        help="War series to use: 'wars_smooth' (11-yr MA, default) "
+                             "or 'wars' (raw annual count, recommended for Granger)")
+    args = parser.parse_args()
 
-    out_dir = Path(csv_path).parent
+    csv_path   = args.csv
+    series_col = args.series
+    out_dir    = Path(csv_path).parent
+    suffix     = "" if series_col == "wars_smooth" else f"_{series_col}"
 
     print(f"Loading data from {csv_path} …")
+    print(f"  War series: {series_col}")
     df = load_df(csv_path)
     print(f"  Series length: {len(df)}  ({df.index[0]}–{df.index[-1]})")
 
-    wars  = df["wars_smooth"].dropna()
+    wars  = df[series_col].dropna()
     color = df["color"].dropna()
 
     wars_d  = wars.diff().dropna()
@@ -323,8 +336,8 @@ if __name__ == "__main__":
     print("ADF STATIONARITY TESTS")
     print("═" * 64)
     adf_df = pd.DataFrame([
-        adf_report(wars,    "wars_smooth"),
-        adf_report(wars_d,  "Δwars_smooth"),
+        adf_report(wars,    series_col),
+        adf_report(wars_d,  f"Δ{series_col}"),
         adf_report(color,   "color"),
         adf_report(color_d, "Δcolor"),
     ]).set_index("series")
@@ -381,34 +394,39 @@ if __name__ == "__main__":
     print("\n" + "═" * 64)
     print("GRANGER CAUSALITY TESTS  (on first-differenced series)")
     print("═" * 64)
-    print("  NOTE: wars_smooth is an 11-yr MA; effective n is reduced.")
-    print("  Interpret significance levels conservatively.\n")
+    if series_col == "wars_smooth":
+        print("  NOTE: wars_smooth is an 11-yr centred MA; effective n is reduced")
+        print("  and the series incorporates ±5 years of future data.")
+        print("  Interpret Granger results conservatively; run with --series wars")
+        print("  for a causal robustness check.\n")
+    else:
+        print("  Series: raw annual war count (no smoothing).\n")
 
     granger_fwd = run_granger(wars_d, color_d, maxlag=MAX_LAG)
     granger_rev = run_granger(color_d, wars_d, maxlag=MAX_LAG)
 
     print_granger_table(
         granger_fwd,
-        "H₀: ΔCOLOR does NOT Granger-cause Δwars_smooth  (COLOR → wars)"
+        f"H₀: ΔCOLOR does NOT Granger-cause Δ{series_col}  (COLOR → wars)"
     )
     print_granger_table(
         granger_rev,
-        "H₀: Δwars_smooth does NOT Granger-cause ΔCOLOR  (wars → COLOR,  reverse check)"
+        f"H₀: Δ{series_col} does NOT Granger-cause ΔCOLOR  (wars → COLOR,  reverse check)"
     )
 
     # ── 7E. Save CSV outputs ──────────────────────────────────────────────────
-    adf_path = out_dir / "granger_ccf_adf.csv"
+    adf_path = out_dir / f"granger_ccf_adf{suffix}.csv"
     adf_df.to_csv(adf_path)
     print(f"\n✓ Saved {adf_path}")
 
     ccf_out = pd.DataFrame({
-        "lag":        lags_lv,
-        "CCF_levels": np.round(ccf_lv, 6),
-        "CCF_diff":   np.round(ccf_df, 6),
+        "lag":          lags_lv,
+        "CCF_levels":   np.round(ccf_lv, 6),
+        "CCF_diff":     np.round(ccf_df, 6),
         "CI_95_levels": round(ci_lv, 6),
         "CI_95_diff":   round(ci_df, 6),
     }).set_index("lag")
-    ccf_path = out_dir / "granger_ccf_ccf.csv"
+    ccf_path = out_dir / f"granger_ccf_ccf{suffix}.csv"
     ccf_out.to_csv(ccf_path)
     print(f"✓ Saved {ccf_path}")
 
@@ -417,16 +435,17 @@ if __name__ == "__main__":
     granger_rev_out = granger_rev.copy()
     granger_rev_out["direction"] = "wars→COLOR"
     granger_all = pd.concat([granger_fwd_out, granger_rev_out])
-    granger_path = out_dir / "granger_ccf_granger.csv"
+    granger_path = out_dir / f"granger_ccf_granger{suffix}.csv"
     granger_all.to_csv(granger_path)
     print(f"✓ Saved {granger_path}")
 
     # ── 7F. Plot ──────────────────────────────────────────────────────────────
-    pdf_path = str(out_dir / "granger_ccf.pdf")
+    pdf_path = str(out_dir / f"granger_ccf{suffix}.pdf")
     plot_results(
         df,
         lags_lv, ccf_lv, ci_lv,
         lags_df, ccf_df, ci_df,
         granger_fwd, granger_rev,
         out_path=pdf_path,
+        series_name=series_col,
     )
