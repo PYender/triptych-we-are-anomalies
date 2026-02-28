@@ -201,7 +201,7 @@ def phase_stats(delta_psi: np.ndarray) -> tuple[float, float]:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
-             n_boot: int = B, criterion: str = "aic") -> dict:
+             n_boot: int = B, criterion: str = "aic", max_ar: int = 20) -> dict:
     """
     Full wavelet phase-coherence test for wars_smooth (full window only).
 
@@ -243,7 +243,7 @@ def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
 
     # ── AR surrogate null ────────────────────────────────────────────────────
     x_raw = detrend(wars_raw.astype(float), type="linear")
-    ar_fit, ar_p, ar_resid = fit_ar_criterion(x_raw, max_lag=min(20, N // 5),
+    ar_fit, ar_p, ar_resid = fit_ar_criterion(x_raw, max_lag=min(max_ar, N // 5),
                                                criterion=criterion)
     raw_std = x_raw.std()
 
@@ -545,11 +545,16 @@ if __name__ == "__main__":
     parser.add_argument("--boot", type=int, default=B)
     parser.add_argument("--criterion", choices=["aic", "bic"], default="aic",
                         help="AR order selection criterion (default: aic)")
+    parser.add_argument("--max-lag", type=int, default=20,
+                        help="Max AR order to consider (default: 20)")
     args    = parser.parse_args()
     B_run   = args.boot
     crit    = args.criterion
+    max_ar  = args.max_lag
     out_dir = Path(args.csv).parent
     suffix  = f"_{crit}" if crit != "aic" else ""
+    if max_ar != 20:
+        suffix += f"_ar{max_ar}"
 
     df_data = pd.read_csv(args.csv).set_index("year").sort_index()
 
@@ -561,11 +566,12 @@ if __name__ == "__main__":
     years       = sub.index.values
 
     print(f"{'='*70}")
-    print(f"  Running wavelet phase-coherence test [{crit.upper()}]  (n={len(wars_raw)})")
+    print(f"  Running wavelet phase-coherence test [{crit.upper()}, max_lag={max_ar}]  (n={len(wars_raw)})")
     print(f"  T_hyp={T_HYP} yr  |  s_target≈{S_TGT:.2f}  |  B={B_run}")
     print(f"{'='*70}")
 
-    r = run_test(years, wars_raw, wars_smooth, n_boot=B_run, criterion=crit)
+    r = run_test(years, wars_raw, wars_smooth, n_boot=B_run, criterion=crit,
+                 max_ar=max_ar)
 
     print_and_save(
         r,
