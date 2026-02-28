@@ -1,2 +1,2 @@
 split_year,T_hyp_yr,epoch1_label,epoch1_n,epoch1_ar_p,epoch1_chi2_obs,epoch1_p,epoch2_label,epoch2_n,epoch2_ar_p,epoch2_chi2_obs,epoch2_p,fisher_p,fisher_significant,pred_corr_obs,pred_corr_p,pred_corr_significant
-1914,35.1,1816–1913,98,19,8.6245,0.8655,1914–2007,94,18,47.577,0.2635,0.5652,False,0.148151,0.3635,False
+1914,35.1,1816–1913,98,3,8.6245,0.8655,1914–2007,94,3,47.577,0.1415,0.3796,False,0.148151,0.351,False
