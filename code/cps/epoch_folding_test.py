@@ -52,9 +52,27 @@ from scipy.signal import detrend
 
 # ── Import AR-bootstrap helpers (identical pipeline to spectral_significance_v2) ─
 sys.path.insert(0, str(Path(__file__).parent))
-from spectral_significance_v2 import apply_ma, fit_ar_aic, generate_surrogate
+from spectral_significance_v2 import apply_ma, generate_surrogate
+from statsmodels.tsa.ar_model import AutoReg
 
 warnings.filterwarnings("ignore")
+
+
+def fit_ar_criterion(x: np.ndarray, max_lag: int = 20,
+                     criterion: str = "aic"):
+    """Fit AR(p) to x, select p by AIC or BIC. Returns (fit, p, residuals)."""
+    best_val, best_p, best_res, best_fit = np.inf, 1, None, None
+    cap = min(max_lag, len(x) // 5)
+    for p in range(1, cap + 1):
+        try:
+            fit = AutoReg(x, lags=p, old_names=False).fit()
+            val = fit.bic if criterion == "bic" else fit.aic
+            if val < best_val:
+                best_val, best_p, best_res, best_fit = val, p, fit.resid, fit
+        except Exception:
+            pass
+    return best_fit, best_p, best_res
+
 
 RNG    = np.random.default_rng(20240301)   # same seed as spectral_significance_v2
 B      = 2000
@@ -117,7 +135,7 @@ def epoch_fold(x: np.ndarray, years: np.ndarray,
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
-             label: str, n_boot: int = B) -> dict:
+             label: str, n_boot: int = B, criterion: str = "aic") -> dict:
     """
     Full epoch-folding test with AR(p) surrogate null.
 
@@ -139,7 +157,8 @@ def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
 
     # ── AR(p) surrogate null ─────────────────────────────────────────────────
     x_raw = detrend(wars_raw.astype(float), type="linear")
-    ar_fit, ar_p, ar_resid = fit_ar_aic(x_raw, max_lag=min(20, N // 5))
+    ar_fit, ar_p, ar_resid = fit_ar_criterion(x_raw, max_lag=min(20, N // 5),
+                                               criterion=criterion)
     raw_std = x_raw.std()
 
     boot_chi2_primary = np.zeros(n_boot)
@@ -178,6 +197,7 @@ def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
 
     return {
         "label":             label,
+        "criterion":         criterion,
         "N":                 N,
         "ar_p":              ar_p,
         "years":             years,
@@ -298,8 +318,9 @@ def plot_results(results: list[dict], out_path: str) -> None:
         )
         ax_c.legend(fontsize=7.5)
 
+    criterion_used = results[0].get("criterion", "aic").upper()
     plt.suptitle(
-        "CPS — Epoch-folding phase-coherence test for ~36-year war cycle\n"
+        f"CPS — Epoch-folding phase-coherence test for ~36-year war cycle  [{criterion_used} null]\n"
         "Null: AR(p) surrogate wars_raw → MA(11) → fold at T_hyp = 35.1 yr\n"
         "Tests PHASE STABILITY (not amplitude) — aligned with Triptych model claim",
         fontsize=10.5, y=1.01,
@@ -380,9 +401,13 @@ if __name__ == "__main__":
     )
     parser.add_argument("csv", nargs="?", default="wars_color.csv")
     parser.add_argument("--boot", type=int, default=B)
-    args    = parser.parse_args()
-    B_run   = args.boot
-    out_dir = Path(args.csv).parent
+    parser.add_argument("--criterion", choices=["aic", "bic"], default="aic",
+                        help="AR order selection criterion (default: aic)")
+    args      = parser.parse_args()
+    B_run     = args.boot
+    crit      = args.criterion
+    out_dir   = Path(args.csv).parent
+    suffix    = f"_{crit}" if crit != "aic" else ""
 
     df = pd.read_csv(args.csv).set_index("year").sort_index()
 
@@ -399,17 +424,18 @@ if __name__ == "__main__":
         years       = sub.index.values
 
         print(f"\n{'='*70}")
-        print(f"  Running epoch-folding test — {label}  (n={len(wars_raw)})")
+        print(f"  Running epoch-folding test [{crit.upper()}] — {label}  (n={len(wars_raw)})")
         print(f"{'='*70}")
 
-        r = run_test(years, wars_raw, wars_smooth, label, n_boot=B_run)
+        r = run_test(years, wars_raw, wars_smooth, label,
+                     n_boot=B_run, criterion=crit)
         all_results.append(r)
 
     print_and_save(
         all_results,
-        csv_path=str(out_dir / "epoch_folding_test_results.csv"),
+        csv_path=str(out_dir / f"epoch_folding_test_results{suffix}.csv"),
     )
     plot_results(
         all_results,
-        out_path=str(out_dir / "epoch_folding_test.pdf"),
+        out_path=str(out_dir / f"epoch_folding_test{suffix}.pdf"),
     )

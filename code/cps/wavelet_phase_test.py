@@ -68,9 +68,26 @@ from pathlib import Path
 from scipy.signal import detrend
 
 sys.path.insert(0, str(Path(__file__).parent))
-from spectral_significance_v2 import apply_ma, fit_ar_aic, generate_surrogate
+from spectral_significance_v2 import apply_ma, generate_surrogate
+from statsmodels.tsa.ar_model import AutoReg
 
 warnings.filterwarnings("ignore")
+
+
+def fit_ar_criterion(x: np.ndarray, max_lag: int = 20,
+                     criterion: str = "aic"):
+    """Fit AR(p) to x, select p by AIC or BIC. Returns (fit, p, residuals)."""
+    best_val, best_p, best_res, best_fit = np.inf, 1, None, None
+    cap = min(max_lag, len(x) // 5)
+    for p in range(1, cap + 1):
+        try:
+            fit = AutoReg(x, lags=p, old_names=False).fit()
+            val = fit.bic if criterion == "bic" else fit.aic
+            if val < best_val:
+                best_val, best_p, best_res, best_fit = val, p, fit.resid, fit
+        except Exception:
+            pass
+    return best_fit, best_p, best_res
 
 RNG    = np.random.default_rng(20240301)
 B      = 2000
@@ -184,7 +201,7 @@ def phase_stats(delta_psi: np.ndarray) -> tuple[float, float]:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
-             n_boot: int = B) -> dict:
+             n_boot: int = B, criterion: str = "aic") -> dict:
     """
     Full wavelet phase-coherence test for wars_smooth (full window only).
 
@@ -226,7 +243,8 @@ def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
 
     # ── AR surrogate null ────────────────────────────────────────────────────
     x_raw = detrend(wars_raw.astype(float), type="linear")
-    ar_fit, ar_p, ar_resid = fit_ar_aic(x_raw, max_lag=min(20, N // 5))
+    ar_fit, ar_p, ar_resid = fit_ar_criterion(x_raw, max_lag=min(20, N // 5),
+                                               criterion=criterion)
     raw_std = x_raw.std()
 
     boot_sigma2 = np.zeros(n_boot)
@@ -259,6 +277,7 @@ def run_test(years: np.ndarray, wars_raw: np.ndarray, wars_smooth: np.ndarray,
 
     return {
         "N":                N,
+        "criterion":        criterion,
         "ar_p":             ar_p,
         "years":            years,
         "x_smooth":         x_smooth,
@@ -444,8 +463,9 @@ def plot_results(r: dict, out_path: str) -> None:
     )
     ax_e.legend(fontsize=7.5)
 
+    crit_label = r.get("criterion", "aic").upper()
     plt.suptitle(
-        "CPS — Wavelet phase-coherence test for ~36-year war cycle\n"
+        f"CPS — Wavelet phase-coherence test for ~36-year war cycle  [{crit_label} null]\n"
         f"Full window 1816–2007  |  Morlet CWT, ω₀={OMEGA0:.0f}, "
         f"T_hyp={r['T_hyp']:.1f} yr, s≈{r['S_tgt']:.1f}  |  "
         f"COI trim: ±{r['coi_trim']} yr  |  AR({r['ar_p']}) null, B={B}",
@@ -523,9 +543,13 @@ if __name__ == "__main__":
     )
     parser.add_argument("csv", nargs="?", default="wars_color.csv")
     parser.add_argument("--boot", type=int, default=B)
+    parser.add_argument("--criterion", choices=["aic", "bic"], default="aic",
+                        help="AR order selection criterion (default: aic)")
     args    = parser.parse_args()
     B_run   = args.boot
+    crit    = args.criterion
     out_dir = Path(args.csv).parent
+    suffix  = f"_{crit}" if crit != "aic" else ""
 
     df_data = pd.read_csv(args.csv).set_index("year").sort_index()
 
@@ -537,17 +561,17 @@ if __name__ == "__main__":
     years       = sub.index.values
 
     print(f"{'='*70}")
-    print(f"  Running wavelet phase-coherence test  (n={len(wars_raw)})")
+    print(f"  Running wavelet phase-coherence test [{crit.upper()}]  (n={len(wars_raw)})")
     print(f"  T_hyp={T_HYP} yr  |  s_target≈{S_TGT:.2f}  |  B={B_run}")
     print(f"{'='*70}")
 
-    r = run_test(years, wars_raw, wars_smooth, n_boot=B_run)
+    r = run_test(years, wars_raw, wars_smooth, n_boot=B_run, criterion=crit)
 
     print_and_save(
         r,
-        csv_path=str(out_dir / "wavelet_phase_test_results.csv"),
+        csv_path=str(out_dir / f"wavelet_phase_test_results{suffix}.csv"),
     )
     plot_results(
         r,
-        out_path=str(out_dir / "wavelet_phase_test.pdf"),
+        out_path=str(out_dir / f"wavelet_phase_test{suffix}.pdf"),
     )
