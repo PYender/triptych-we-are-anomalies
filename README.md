@@ -33,8 +33,14 @@ File: `/docs/triptych_v0.1.pdf`
 ### Addenda Series
 
 #### **Addendum I — Relational Sufficiency Hypothesis (RSH)**
-Published as a separate document within the same Zenodo record as the main *Triptych* release (shared DOI). 
-File: `/docs/addendum-i/addendum-i_relational-sufficiency-hypothesis_v0.1.pdf`
+
+**v0.1** — Published as a separate document within the same Zenodo record as the main *Triptych* release (shared DOI).
+DOI: [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502)
+File: `/docs/addendum-i/v0.1/Addendum I to the Triptych's_v0.1 definition of consciousness.pdf`
+
+**v0.2** — Updated release with new Zenodo record.
+DOI: [10.5281/zenodo.18945377](https://doi.org/10.5281/zenodo.18945377)
+File: `/docs/addendum-i/v0.2/`
 
 #### **Addendum II — Resonant Dynamics of Consciousness (RDC) & Relational Consciousness Recognition Condition (RCRC)**
 Defines consciousness as a resonance-based process linking internal structure and external flow through relational metrics (ρ, θ, ε_R, ε_C, ε_M, ε_L).  
@@ -59,7 +65,8 @@ File: `/docs/addendum-iii/addendum-iii_definition-of-consciousness_v0.1.pdf`
 | Document | DOI (Version) | DOI (Concept) |
 |----------|----------------|---------------|
 | Triptych (Main) | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
-| Addendum I | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
+| Addendum I (v0.1) | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
+| Addendum I (v0.2) | https://doi.org/10.5281/zenodo.18945377 | https://doi.org/10.5281/zenodo.18945376 |
 | Addendum II | https://zenodo.org/records/17359080 | https://doi.org/10.5281/zenodo.17359079 |  
 | Addendum III | https://doi.org/10.5281/zenodo.17542534 | https://doi.org/10.5281/zenodo.17542533 |
 |  Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1) | https://doi.org/10.5281/zenodo.17877280 | https://doi.org/10.5281/zenodo.17877280 |
@@ -73,9 +80,13 @@ GitHub repository: https://github.com/PYender/triptych-we-are-anomalies
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — v0.1.* Zenodo.  
 https://doi.org/10.5281/zenodo.17219502  
 
-**Addendum I:**  
-Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum I: Relational Sufficiency Hypothesis (RSH) (v0.1).* Zenodo.  
+**Addendum I (v0.1):**
+Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum I: Relational Sufficiency Hypothesis (RSH) (v0.1).* Zenodo.
 https://doi.org/10.5281/zenodo.17219502
+
+**Addendum I (v0.2):**
+Włodarczyk, M. (2026). *Triptych. We Are Anomal(i)es — Addendum I: Relational Sufficiency Hypothesis (RSH) (v0.2).* Zenodo.
+https://doi.org/10.5281/zenodo.18945377
 
 **Addendum II:**  
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum II: Definition of Consciousness (v0.1).* Zenodo.  
