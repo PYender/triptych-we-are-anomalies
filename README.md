@@ -60,7 +60,7 @@ File: `/docs/addendum-iii/addendum-iii_definition-of-consciousness_v0.1.pdf`
 |----------|----------------|---------------|
 | Triptych (Main) | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
 | Addendum I | https://doi.org/10.5281/zenodo.17219502 | https://doi.org/10.5281/zenodo.17219501 |
-| Addendum II | https://zenodo.org/records/17359080 | https://doi.org/10.5281/zenodo.17359079 |  
+| Addendum II | https://doi.org/10.5281/zenodo.17359080 | https://doi.org/10.5281/zenodo.17359079 |  
 | Addendum III | https://doi.org/10.5281/zenodo.17542534 | https://doi.org/10.5281/zenodo.17542533 |
 |  Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1) | https://doi.org/10.5281/zenodo.17877280 | https://doi.org/10.5281/zenodo.17877280 |
 GitHub repository: https://github.com/PYender/triptych-we-are-anomalies
