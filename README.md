@@ -38,7 +38,7 @@ File: `/docs/triptych_v0.1.pdf`
 DOI: [10.5281/zenodo.17219502](https://doi.org/10.5281/zenodo.17219502)
 File: `/docs/addendum-i/v0.1/Addendum I to the Triptych's_v0.1 definition of consciousness.pdf`
 
-**v0.2** — Updated release with new Zenodo record.
+**v0.2** — *Operational foundations for a relational theory of consciousness.* Updated release with new Zenodo record.
 DOI: [10.5281/zenodo.18945377](https://doi.org/10.5281/zenodo.18945377)
 File: `/docs/addendum-i/v0.2/`
 
@@ -85,7 +85,7 @@ Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum I: Relational
 https://doi.org/10.5281/zenodo.17219502
 
 **Addendum I (v0.2):**
-Włodarczyk, M. (2026). *Triptych. We Are Anomal(i)es — Addendum I: Relational Sufficiency Hypothesis (RSH) (v0.2).* Zenodo.
+Włodarczyk, M. (2026). *Addendum I to the Triptych: Relational Sufficiency Hypothesis (RSH) — Operational foundations for a relational theory of consciousness (v0.2).* Zenodo.
 https://doi.org/10.5281/zenodo.18945377
 
 **Addendum II:**  
