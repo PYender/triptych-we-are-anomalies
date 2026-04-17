@@ -1,0 +1,3 @@
+window,n,ar_p,dominant_T_yr,obs_band_power,p_band,band_significant,obs_peak_psd,p_peak,peak_significant,sin_r2
+Full 1816–2007,192,20,96.0,447.69,0.4645,False,274.3,0.5605,False,0.1529
+Post-WWI 1918–2007,90,18,30.0,380.37,0.55,False,134.97,0.4775,False,0.4618

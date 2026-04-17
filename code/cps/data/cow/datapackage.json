@@ -1,0 +1,49 @@
+{
+  "sources": [
+    {
+      "web": "http://www.correlatesofwar.org/datasets.htm"
+    }
+  ], 
+  "version": "4.0", 
+  "description": "### Description\r\n\r\nThe Correlates of War project hosts a variety of datasets related to the study of inter-state conflict.\r\n\r\n#### Details\r\n\r\nAs of 2007-09-22 the following datasets were listed:\r\n\r\nState System Membership (v2004.1): This data set records the fluctuating composition of the state system since 1816. It also identifies countries corresponding to the standard Correlates of War country codes. Access the system membership data here.\r\n\r\nInter-, Extra- and Intra-State War (v3.0): War takes many forms in the contemporary era, including serious military conflicts between states (inter-state war), between states and non-state actors (extra-state war), and within states (intra-state war). This data set records such events over the 1816-1997 period. Access the Interstate War data here. Access the Extrastate War data here. Access the Intrastate War data here.\r\n\r\nMilitarized Interstate Disputes (v3.02): This data set records all instances of when one state threatened, displayed, or used force against another. Version 3.0 covers the 1816-2001 period, and can be downloaded from this page.\r\n\r\nNational Material Capabilities (v3.02): Power is considered by many to be a central concept in explaining conflict, and six indicators\u2014military expenditure, military personnel, energy consumption, iron and steel production, urban population, and total population\u2014are included in this data set. It serves as the basis for the most widely used indicator of national capability, CINC (Composite Indicator of National Capability) and covers the period 1816-2001. Access the capabilities data here.\r\n\r\nFormal Alliances (v3.03): Alliances have been credited with preventing wars and provoking wars, and they have been important instruments of statecraft for centuries. This data set records all formal alliances among states between 1816 and 2000, including mutual defense pacts, non-aggression treaties, and ententes. This data set is hosted by Douglas Gibler, University of Kentucky. It may be downloaded here.\r\n\r\nTerritorial Change (v3.0): Territory has played an important role in interstate conflict, and this data set records all peaceful and violent changes of territory from 1816-2000. This data set is hosted by Paul Diehl, University of Illinois. Access the territorial change data here.\r\n\r\nDirect Contiguity (v3.0): Geographic factors are known to play an important role in conflict. The Direct Contiguity data set registers the land and sea borders of all states since the Congress of Vienna, and covers 1816-2000. This data set is hosted by Paul Diehl, University of Illinois. Access the direct contiguity data here.\r\n\r\nColonial/Dependency Contiguity (v3.0): The Colonial/Dependency Contiguity data set registers contiguity relationships between the colonies/dependencies of states (by land and by sea up to 400 miles) from 1816-2002. Access the colonial/dependency contiguity data here.\r\n\r\nIntergovernmental Organizations (v2.1): Although the number of intergovernmental organizations (IGOs) grew dramatically during the late 20th century, they have been part of the world scene for much longer. This data set tracks the status and membership of such organizations from 1815-2000. Access information about this data here. This data set is hosted by Timothy Nordstrom, University of Mississippi, and John Pevehouse, University of Wisconsin.\r\n\r\nDiplomatic Exchange (v2006.1): The Diplomatic Exchange data set tracks diplomatic representation at the level of charg\u00e9 d'affaires, minister, and ambassador between states from 1817-2005. Access information about this data here. This data set is hosted by Re\u015fat Bayer, Ko\u00e7 University.\r\n\r\nBilateral Trade: Trade is considered by many to have a pacifying effect on the relations of states. This collection of bilateral trade data begins in 1870 and covers most members of the interstate system. Access trade data here.\r\n\r\n### Openness: Open (?)\r\n\r\n  * Access: all datasets available for direct download in convenient formats (e.g. zipped csv)\r\n  * License: no license specified but does state on the datasets page: \"The data sets listed on this page are all available for download.\" Some datasets require citation as a condition of use (with the exact form stated on the website).\r\n", 
+  "license": {
+    "type": "other-open", 
+    "title": "Other (Open)"
+  }, 
+  "title": "Correlates of War", 
+  "keywords": [
+    "alliances", 
+    "broken_link", 
+    "diplomacy", 
+    "license-not-specified", 
+    "military", 
+    "power", 
+    "todo-split-up", 
+    "trade", 
+    "war"
+  ], 
+  "resources": [
+    {
+      "path": "http://www.correlatesofwar.org/COW2%20Data/WarData_NEW/InterStateWarData_v4.0.csv", 
+      "title": "InterStateWarData_v4.0", 
+      "description": "The Inter-State War Database.", 
+      "name": "interstatewardata-v4-0", 
+      "format": "CSV"
+    }, 
+    {
+      "path": "http://www.correlatesofwar.org/COW2%20Data/WarData_NEW/IntraStateWarData_v4.1.csv", 
+      "title": "IntraStateWarData", 
+      "description": "The Intra-State War Database. This dataset encompasses wars that predominantly take place within the recognized territory of a state, or intra-state wars.", 
+      "name": "intrastatewardata", 
+      "format": "CSV"
+    }, 
+    {
+      "path": "http://www.correlatesofwar.org/COW2%20Data/WarData_NEW/NonStateWarData_v4.0.csv", 
+      "title": "NonStateWarDatata", 
+      "description": "The Non-State War Database. Previously, the Correlates of War (COW) Project has examined only wars that involved the government of a member of the interstate system (a state) in one form or another. The inclusion of non-state wars in the data presented here represents an attempt to broaden our understanding of war by including wars between or among non-state entities. Such entities include governments of other types of geopolitical units (GPUs), such as dependencies or non-state autonomous entities, that do not meet the criteria of system membership. They also might involve nonterritorial entities (NTEs) or non-state armed groups (NSAs) that have no defined territorial base.", 
+      "name": "nonstatewardatata", 
+      "format": "CSV"
+    }
+  ], 
+  "name": "cow"
+}

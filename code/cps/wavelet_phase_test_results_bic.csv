@@ -1,0 +1,2 @@
+window,n,ar_p,T_hyp_yr,s_target,coi_trim_yr,n_obs_trimmed,n_cycles_trimmed,sigma2_obs,null_5th_pct_sigma2,p_sigma2,significant_sigma2,R_obs,null_95th_pct_R,p_R,significant_R
+Full 1816–2007,192,18,35.1,33.52,48,96,2.74,0.128102,0.006433,0.5975,False,0.937189,0.996786,0.598,False
