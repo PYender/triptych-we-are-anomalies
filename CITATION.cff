@@ -53,6 +53,24 @@ references:
     publisher: "Zenodo"
     doi: "10.5281/zenodo.17542534"
 
+  - type: report
+    title: "The Four Laws of Consciousness: A Relational Account"
+    authors:
+      - family-names: "Włodarczyk"
+        given-names: "Mariusz"
+    year: 2026
+    publisher: "Zenodo"
+    doi: "10.5281/zenodo.20778245"
+
+  - type: report
+    title: "Gods as Hyper-Consciousness in a Relational Network (A Supra Deos Stance) and Relational Persistence After the Death of the Body (of the Code Carrier)"
+    authors:
+      - family-names: "Włodarczyk"
+        given-names: "Mariusz"
+    year: 2026
+    publisher: "Zenodo"
+    doi: "10.5281/zenodo.19470404"
+
 preferred-citation:
   type: report
   title: "Triptych. We Are Anomal(i)es — v0.1"
