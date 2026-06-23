@@ -89,9 +89,15 @@ Methodological notes extending the Triptych framework to collective consciousnes
 DOI: [10.5281/zenodo.19470404](https://doi.org/10.5281/zenodo.19470404)  
 File: `/docs/gods-as-hyperconsciousness/gods-as-hyperconsciousness_v0.1.pdf`
 
+### **Methodological Note — Ancient War Speeches as Leading Signals of War**
+Applies the Triptych's War–Peace Cycle validator to classical historiography, using preserved war speeches as leading signals of military conflict. Analyzes six cases spanning from Cato's speech before the Third Punic War (153 BCE) through Demosthenes, Philip II, and Cicero, testing whether semantic thresholds (ε_C, ε_R, RCRC) can coherently describe war-peace dynamics across both historical episodes and modern corpora. Proposes a shared formal vocabulary for analyzing political discourse, conflict dynamics, and their regulatory patterns, scalable to contemporary systems and AI language infrastructures.
+
+DOI: [10.5281/zenodo.17877280](https://doi.org/10.5281/zenodo.17877280)  
+File: `/docs/methodological-note-ancient-war-speeches/`
+
 ---
 
-## 🔗 Related Identifiers
+## 📚 Publication Registry
 
 | Document | DOI (Version) | DOI (Concept) |
 |----------|----------------|---------------|
