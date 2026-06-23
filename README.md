@@ -72,7 +72,7 @@ Formal statement of four laws governing consciousness as a relational phenomenon
 Each law is presented in three registers: single-sentence statement, formal sketch, and philosophical commentary. Draws on and extends the Triptych framework and all Addenda (I–III).
 
 DOI: [10.5281/zenodo.20778245](https://doi.org/10.5281/zenodo.20778245)  
-File: `/docs/the-four-laws-of-consciousness/the-four-laws-of-consciousness_v0.1.pdf`
+File: `/docs/the-four-laws-of-consciousness/the-four-laws-of-consciousness.pdf`
 
 ### **Gods as Hyper-Consciousness in a Relational Network (A Supra Deos Stance) and Relational Persistence After the Death of the Body**
 Methodological notes extending the Triptych framework to collective consciousness and post-biological persistence. Three main sections:
