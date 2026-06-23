@@ -129,8 +129,17 @@ https://zenodo.org/records/17359080
 Włodarczyk, M. (2025). *Triptych. We Are Anomal(i)es — Addendum III: Gradient of Self-Awareness, Cognitive Code Replacement Hypothesis & Reversal Principle (v0.1).* Zenodo.  
 https://doi.org/10.5281/zenodo.17542534  
 
-**GitHub release (mn-ancient-war-v0.1):**  
-Włodarczyk, M. (2025). Triptych. We Are Anomal(i)es — Core Framework and Addenda I–III (mn-ancient-war-v0.1). Zenodo. https://doi.org/10.5281/zenodo.17877280
+**Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1):**  
+Włodarczyk, M. (2025). *Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1).* Zenodo.  
+https://doi.org/10.5281/zenodo.17877280  
+
+**The Four Laws of Consciousness:**  
+Włodarczyk, M. (2026). *The Four Laws of Consciousness: A Relational Account.* Zenodo.  
+https://doi.org/10.5281/zenodo.20778245  
+
+**Gods as Hyper-Consciousness:**  
+Włodarczyk, M. (2026). *Gods as Hyper-Consciousness in a Relational Network (A Supra Deos Stance) and Relational Persistence After the Death of the Body (of the Code Carrier).* Zenodo.  
+https://doi.org/10.5281/zenodo.19470404
 
 ---
 
