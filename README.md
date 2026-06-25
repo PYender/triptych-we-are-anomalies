@@ -69,7 +69,7 @@ DOI: [10.5281/zenodo.17877280](https://doi.org/10.5281/zenodo.17877280)
 File: `/docs/methodological-note-ancient-war-speeches/`
 
 ### **Nuclear Use Risk Assessment — Estimating the Probability of Nuclear Weapon Deployment Through 2050**
-Applies quantitative foresight methods to estimate tactical nuclear weapon use probability through 2050. Integrates war-peace cycle validation data from the Triptych framework with Bayesian networks and expert elicitation. Examines historical escalation patterns, doctrinal shifts, and strategic stability factors to generate actionable forecasts for defense planning and arms control policy. Provides both English and Polish versions.
+Applies quantitative foresight methods to estimate tactical nuclear weapon use probability through 2050. Integrates war-peace cycle validation data from the Triptych framework with Bayesian networks and expert elicitation. Examines historical escalation patterns, doctrinal shifts, and strategic stability factors to generate actionable forecasts for defense planning and arms control policy.
 
 DOI: [10.5281/zenodo.19367797](https://doi.org/10.5281/zenodo.19367797)  
 File: `/docs/nuclear-use-risk-assessment/nuclear-use-risk-assessment_v0.1.1.pdf`
