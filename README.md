@@ -68,6 +68,12 @@ Applies the Triptych's War–Peace Cycle validator to classical historiography, 
 DOI: [10.5281/zenodo.17877280](https://doi.org/10.5281/zenodo.17877280)  
 File: `/docs/methodological-note-ancient-war-speeches/`
 
+### **Nuclear Use Risk Assessment — Estimating the Probability of Nuclear Weapon Deployment Through 2050**
+Applies quantitative foresight methods to estimate tactical nuclear weapon use probability through 2050. Integrates war-peace cycle validation data from the Triptych framework with Bayesian networks and expert elicitation. Examines historical escalation patterns, doctrinal shifts, and strategic stability factors to generate actionable forecasts for defense planning and arms control policy. Provides both English and Polish versions.
+
+DOI: [10.5281/zenodo.19367797](https://doi.org/10.5281/zenodo.19367797)  
+File: `/docs/nuclear-use-risk-assessment/nuclear-use-risk-assessment_v0.1.1.pdf`
+
 ### **Gods as Hyper-Consciousness in a Relational Network (A Supra Deos Stance) and Relational Persistence After the Death of the Body**
 Methodological notes extending the Triptych framework to collective consciousness and post-biological persistence. Three main sections:
 
@@ -95,12 +101,6 @@ Each law is presented in three registers: single-sentence statement, formal sket
 DOI: [10.5281/zenodo.20778245](https://doi.org/10.5281/zenodo.20778245)  
 File: `/docs/the-four-laws-of-consciousness/the-four-laws-of-consciousness.pdf`
 
-### **Nuclear Use Risk Assessment — Estimating the Probability of Nuclear Weapon Deployment Through 2050**
-Applies quantitative foresight methods to estimate tactical nuclear weapon use probability through 2050. Integrates war-peace cycle validation data from the Triptych framework with Bayesian networks and expert elicitation. Examines historical escalation patterns, doctrinal shifts, and strategic stability factors to generate actionable forecasts for defense planning and arms control policy. Provides both English and Polish versions.
-
-DOI: [10.5281/zenodo.19367797](https://doi.org/10.5281/zenodo.19367797)  
-File: `/docs/nuclear-use-risk-assessment/nuclear-use-risk-assessment_v0.1.1.pdf`
-
 ---
 
 ## 📚 Publication Registry
@@ -113,9 +113,9 @@ File: `/docs/nuclear-use-risk-assessment/nuclear-use-risk-assessment_v0.1.1.pdf`
 | Addendum II | https://doi.org/10.5281/zenodo.17359080 | https://doi.org/10.5281/zenodo.17359079 |  
 | Addendum III | https://doi.org/10.5281/zenodo.17542534 | https://doi.org/10.5281/zenodo.17542533 |
 | Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1) | https://doi.org/10.5281/zenodo.17877280 | https://doi.org/10.5281/zenodo.17877279 |
+| Nuclear Use Risk Assessment (v0.1.1) | https://doi.org/10.5281/zenodo.19367797 | https://doi.org/10.5281/zenodo.19186538 |
 | Gods as Hyper-Consciousness (v0.1) | https://doi.org/10.5281/zenodo.19470404 | https://doi.org/10.5281/zenodo.19470403 |
 | The Four Laws of Consciousness | https://doi.org/10.5281/zenodo.20778245 | https://doi.org/10.5281/zenodo.20778244 |
-| Nuclear Use Risk Assessment (v0.1.1) | https://doi.org/10.5281/zenodo.19367797 | https://doi.org/10.5281/zenodo.19186538 |
 | GitHub repository: https://github.com/PYender/triptych-we-are-anomalies
 
 ---
@@ -146,6 +146,10 @@ https://doi.org/10.5281/zenodo.17542534
 Włodarczyk, M. (2025). *Methodological Note — Ancient War Speeches as Leading Signals of War (v0.1).* Zenodo.  
 https://doi.org/10.5281/zenodo.17877280  
 
+**Nuclear Use Risk Assessment (v0.1.1):**  
+Włodarczyk, M. (2025). *Nuclear Use Risk Assessment — Estimating the Probability of Nuclear Weapon Deployment Through 2050 (v0.1.1).* Zenodo.  
+https://doi.org/10.5281/zenodo.19367797
+
 **Gods as Hyper-Consciousness:**  
 Włodarczyk, M. (2026). *Gods as Hyper-Consciousness in a Relational Network (A Supra Deos Stance) and Relational Persistence After the Death of the Body (of the Code Carrier).* Zenodo.  
 https://doi.org/10.5281/zenodo.19470404
@@ -153,10 +157,6 @@ https://doi.org/10.5281/zenodo.19470404
 **The Four Laws of Consciousness:**  
 Włodarczyk, M. (2026). *The Four Laws of Consciousness: A Relational Account.* Zenodo.  
 https://doi.org/10.5281/zenodo.20778245
-
-**Nuclear Use Risk Assessment (v0.1.1):**  
-Włodarczyk, M. (2025). *Nuclear Use Risk Assessment — Estimating the Probability of Nuclear Weapon Deployment Through 2050 (v0.1.1).* Zenodo.  
-https://doi.org/10.5281/zenodo.19367797
 
 ---
 
