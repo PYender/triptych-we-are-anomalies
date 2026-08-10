@@ -70,9 +70,17 @@ Wszystkie brakujące pliki to małe CSV — nic nie stoi na przeszkodzie, by je 
 Do czasu ich uzupełnienia blok COW w `wars_color.csv` jest **przyjmowany jako dany**
 (kryterium D1 z Testu 0 niespełnione) i musi być tak opisany w rozdziale.
 
-**Uwaga o formacie.** Pliki COW w repo są w `.dta`, a `load_warfile` w opublikowanym
-skrypcie czyta CSV. Kanoniczne mają być CSV; `.dta` może leżeć obok. Nie przepisuj
-loadera pod `.dta` bez uzgodnienia.
+**Uwaga o formacie.** Obok CSV leżą kopie `.dta` (Stata) — kanoniczne są CSV.
+Pliki COW mają zakończenia linii **CR** (starszy format Mac), ale pandas obsługuje
+je poprawnie dzięki uniwersalnym końcom linii; nie wymagają konwersji. Uwaga na
+wykrywanie w bashu: `grep -qU $'\r\n'` daje fałszywie pozytywny wynik, bo znak
+nowej linii jest tam traktowany jako separator wzorca.
+
+**Nazwy plików.** Skrypty `test0b_*` i `test0c_*` dopasowują nazwy po normalizacji
+(same znaki alfanumeryczne, bez wielkości liter) i szukają rekurencyjnie w `--data-dir`,
+więc działają zarówno na układzie repo (`data/cow/Inter-StateWarData_v4.0.csv`),
+jak i na płaskiej kopii roboczej. Nie zmieniaj nazw plików danych — mają odpowiadać
+dystrybucji źródłowej COW.
 
 **Niewykorzystany zasób.** INTRA-STATE jest w wersji v5.1 (do 2014), pozostałe zbiory
 kończą się na 2007, a skrypt ucina wszystko na `range(1816, 2008)` — lata 2008–2014
