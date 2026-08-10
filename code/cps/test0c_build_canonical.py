@@ -55,7 +55,11 @@ def find_input(data_dir: Path, wanted: str) -> Path:
     kopie robocze bywają płaskie i z podkreśleniami. Porównujemy nazwy po
     normalizacji do samych znaków alfanumerycznych, rekurencyjnie w --data-dir.
     """
-    norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())
+    def norm(s: str) -> str:
+        s = re.sub(r"[^a-z0-9]", "", s.lower())
+        while s.endswith("csv"):          # 'INTRA-STATE WARS v5.1 CSV' == '... v5.1'
+            s = s[:-3]
+        return s
     target = norm(Path(wanted).stem)
     exact = data_dir / wanted
     if exact.exists():

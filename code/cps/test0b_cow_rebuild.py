@@ -47,8 +47,9 @@ FILES = {
 
 
 def load_cow(path: Path) -> pd.DataFrame:
-    """Pliki COW mają zakończenia linii CR (starsze Mac); pandas czyta je wtedy
-    jako jeden wiersz o tysiącach kolumn. Normalizujemy przed parsowaniem."""
+    """Pliki COW mają zakończenia linii CR (starszy format Mac). Pandas radzi
+    sobie z nimi dzięki uniwersalnym końcom linii, więc normalizacja nie jest
+    konieczna — robimy ją dla niezależności od implementacji parsera."""
     with open(path, encoding="latin-1", newline="") as fh:
         raw = fh.read()
     raw = raw.replace("\r\n", "\n").replace("\r", "\n")
@@ -63,7 +64,11 @@ def find_input(data_dir: Path, wanted: str) -> Path:
     kopie robocze bywają płaskie i z podkreśleniami. Porównujemy nazwy po
     normalizacji do samych znaków alfanumerycznych, rekurencyjnie w --data-dir.
     """
-    norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())
+    def norm(s: str) -> str:
+        s = re.sub(r"[^a-z0-9]", "", s.lower())
+        while s.endswith("csv"):          # 'INTRA-STATE WARS v5.1 CSV' == '... v5.1'
+            s = s[:-3]
+        return s
     target = norm(Path(wanted).stem)
     exact = data_dir / wanted
     if exact.exists():
