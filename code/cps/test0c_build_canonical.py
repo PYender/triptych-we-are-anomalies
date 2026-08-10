@@ -16,7 +16,7 @@ Warianty: A_COW_W, A_COW_P, B_UCDP, C_SPLICED_W, C_SPLICED_P
 Kolumny wartości: value, value_ma11c (centrowana), value_ma11t (jednostronna)
 """
 from __future__ import annotations
-import argparse, hashlib, io, json
+import argparse, hashlib, io, json, re
 from pathlib import Path
 
 import numpy as np
@@ -47,6 +47,28 @@ def load_cow(path: Path) -> pd.DataFrame:
     return pd.read_csv(io.StringIO(raw.replace("\r\n", "\n").replace("\r", "\n")))
 
 
+def find_input(data_dir: Path, wanted: str) -> Path:
+    """Znajduje plik wejściowy niezależnie od konwencji nazw i układu katalogów.
+
+    Repozytorium używa nazw oryginalnych COW ('Inter-StateWarData_v4.0.csv',
+    'INTRA-STATE WARS v5.1 CSV.csv') rozłożonych po data/cow i data/ucdp;
+    kopie robocze bywają płaskie i z podkreśleniami. Porównujemy nazwy po
+    normalizacji do samych znaków alfanumerycznych, rekurencyjnie w --data-dir.
+    """
+    norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())
+    target = norm(Path(wanted).stem)
+    exact = data_dir / wanted
+    if exact.exists():
+        return exact
+    hits = [p for p in data_dir.rglob("*.csv") if norm(p.stem) == target]
+    if len(hits) == 1:
+        return hits[0]
+    if not hits:
+        raise FileNotFoundError(
+            f"nie znaleziono '{wanted}' (ani odpowiednika po normalizacji nazwy) "
+            f"w {data_dir} — sprawdź --data-dir")
+    raise FileNotFoundError(f"niejednoznaczne dopasowanie '{wanted}': {[str(h) for h in hits]}")
+
 def war_id(df: pd.DataFrame) -> pd.Series:
     col = [c for c in df.columns if c.lower() == "warnum"][0]
     return df[col]
@@ -73,12 +95,12 @@ def counts(df, phases, weight, cutoff, level):
 def build_cow(dd: Path, level: str) -> pd.Series:
     tot = np.zeros(len(YEARS))
     for fname, w, ph, cut in COW.values():
-        tot += counts(load_cow(dd / fname), ph, w, cut, level)
+        tot += counts(load_cow(find_input(dd, fname)), ph, w, cut, level)
     return pd.Series(tot, index=YEARS, name="value")
 
 
 def build_ucdp(dd: Path) -> pd.Series:
-    u = pd.read_csv(dd / "UcdpPrioConflict_v25_1.csv")
+    u = pd.read_csv(find_input(dd, "UcdpPrioConflict_v25_1.csv"))
     g = u[u.type_of_conflict.isin(UCDP_W)].copy()
     g["w"] = g.type_of_conflict.map(UCDP_W)
     return g.groupby("year")["w"].sum().sort_index()

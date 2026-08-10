@@ -28,7 +28,7 @@ na poziomie uczestnika. Non-State (62) i Intra-State (420) są na poziomie wojny
 Seria miesza więc "uczestniko-lata" z "wojno-latami".
 """
 from __future__ import annotations
-import argparse, hashlib, io
+import argparse, hashlib, io, re
 from pathlib import Path
 
 import numpy as np
@@ -55,6 +55,28 @@ def load_cow(path: Path) -> pd.DataFrame:
     return pd.read_csv(io.StringIO(raw))
 
 
+def find_input(data_dir: Path, wanted: str) -> Path:
+    """Znajduje plik wejściowy niezależnie od konwencji nazw i układu katalogów.
+
+    Repozytorium używa nazw oryginalnych COW ('Inter-StateWarData_v4.0.csv',
+    'INTRA-STATE WARS v5.1 CSV.csv') rozłożonych po data/cow i data/ucdp;
+    kopie robocze bywają płaskie i z podkreśleniami. Porównujemy nazwy po
+    normalizacji do samych znaków alfanumerycznych, rekurencyjnie w --data-dir.
+    """
+    norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())
+    target = norm(Path(wanted).stem)
+    exact = data_dir / wanted
+    if exact.exists():
+        return exact
+    hits = [p for p in data_dir.rglob("*.csv") if norm(p.stem) == target]
+    if len(hits) == 1:
+        return hits[0]
+    if not hits:
+        raise FileNotFoundError(
+            f"nie znaleziono '{wanted}' (ani odpowiednika po normalizacji nazwy) "
+            f"w {data_dir} — sprawdź --data-dir")
+    raise FileNotFoundError(f"niejednoznaczne dopasowanie '{wanted}': {[str(h) for h in hits]}")
+
 def active_counts(df: pd.DataFrame, phases: list[tuple[str, str]],
                   weight: float, fix_ongoing: bool, cutoff: int) -> np.ndarray:
     num = {c: pd.to_numeric(df[c], errors="coerce")
@@ -79,7 +101,7 @@ def phase_pairs(df: pd.DataFrame, base_s: str, base_e: str, kmax: int):
 
 
 def build(data_dir: Path, fixed: bool) -> np.ndarray:
-    d = {k: load_cow(data_dir / v) for k, v in FILES.items()}
+    d = {k: load_cow(find_input(data_dir, v)) for k, v in FILES.items()}
     total = np.zeros(len(YEARS))
     # Inter-State — PATCH 3A: fazy 1 i 2
     total += active_counts(d["inter"], [("StartYear1", "EndYear1"),
@@ -116,8 +138,12 @@ def main():
         cols["wars_fixed"] = build(dd, fixed=True)
     out = pd.DataFrame(cols)
 
-    if "wars_replica" in out and (dd / a.verify).exists():
-        ref = pd.read_csv(dd / a.verify).set_index("year")["wars"].reindex(YEARS).values
+    try:
+        vpath = find_input(dd, a.verify)
+    except FileNotFoundError:
+        vpath = None
+    if "wars_replica" in out and vpath is not None:
+        ref = pd.read_csv(vpath).set_index("year")["wars"].reindex(YEARS).values
         dmax = float(np.nanmax(np.abs(out.wars_replica.values - ref)))
         print(f"[D1] replika vs {a.verify}: maks|Δ| = {dmax:.6f} "
               f"→ {'PASS — seria odtwarzalna' if dmax < 1e-9 else 'FAIL'}")
@@ -129,7 +155,7 @@ def main():
         print(f"     średnia 1998–2007: {r[-10:].mean():.2f} → {f[-10:].mean():.2f}")
         print(f"     rok 2007:          {r[-1]:.2f} → {f[-1]:.2f}")
 
-    hdr = f"# {VERSION} | sha256(inter)={hashlib.sha256((dd/FILES['inter']).read_bytes()).hexdigest()[:16]}"
+    hdr = f"# {VERSION} | sha256(inter)={hashlib.sha256(find_input(dd, FILES['inter']).read_bytes()).hexdigest()[:16]}"
     with open(od / "cow_rebuilt.csv", "w", encoding="utf-8") as fh:
         fh.write(hdr + "\n"); out.to_csv(fh, index=False)
     print(f"\nZapisano {od/'cow_rebuilt.csv'}")
