@@ -1,0 +1,75 @@
+# CPS_DECISION_LOG
+
+Rejestr decyzji metodycznych podejmowanych **przed** uruchomieniem testów.
+Każdy wpis jest datowany i zawiera uzasadnienie niezależne od wyniku, którego dotyczy.
+Wpisów nie usuwa się ani nie modyfikuje — zmiany wchodzą jako nowe decyzje
+z odwołaniem do poprzedniej.
+
+---
+
+## D-001 · 2026-08-10 · Poziom agregacji serii COW
+
+**Rozstrzygnięcie.** Serią pierwszorzędną dla rodzin testów 1–3 jest
+**`A_COW_W`** — poziom wojny, z deduplikacją po `WarNum`.
+Seria `A_COW_P` (poziom uczestnika) pozostaje w obiegu jako wariant porównawczy
+i jako przedmiot odrębnego pytania badawczego (D-002).
+
+**Uzasadnienie, niezależne od wyniku testu.**
+
+1. Rozdział III.3.2 definiuje zmienną jako liczbę wojen. `A_COW_W` jest jedyną
+   serią zgodną z tą definicją. Zmiana definicji po zobaczeniu wyników byłaby
+   naruszeniem zakazu nr 10.
+2. `A_COW_W` koreluje z niezależnym zbiorem UCDP na poziomie 0,73–0,88 na wszystkich
+   badanych oknach wspólnych; `A_COW_P` koreluje na poziomie 0,00–0,24, miejscami
+   ujemnie. Kryterium zbieżności dwóch niezależnie kodowanych zbiorów wskazuje
+   jednoznacznie na poziom wojny.
+3. Poziom wojny jest jednorodny między czterema kategoriami COW. Poziom uczestnika
+   jest dostępny tylko dla Inter- i Extra-State, więc seria `P` miesza dwa poziomy
+   agregacji w jednej wielkości.
+
+**Świadomie przyjęty koszt.** Wybór jest niekorzystny dla dotychczasowego wyniku:
+przy poziomie wojny kontrast epok odwraca się (χ² 14,53 w epoce 1 wobec 6,97
+w epoce 2), podczas gdy przy poziomie uczestnika wynosi 7,43 wobec 39,49.
+Decyzja zapada mimo tego i właśnie dlatego jest wiążąca.
+
+**Zakres.** Obowiązuje dla rodzin 1, 2 i 3. Rodzina 4 testuje wrażliwość na ten
+wybór i raportuje oba warianty obok siebie.
+
+---
+
+## D-002 · 2026-08-10 · Rozdzielenie dwóch hipotez
+
+**Rozstrzygnięcie.** Twierdzenie bronione w Tryptyku v0.1 zostaje rozdzielone na
+dwie niezależne hipotezy, testowane osobno i raportowane osobno.
+
+**H1 — cykliczność (hipoteza główna, seria `A_COW_W`).**
+W epoce post-1914 seria konfliktów wykazuje strukturę fazową w paśmie 32–40 lat
+silniejszą niż w epoce przed 1914.
+*Status wstępny: przesłanki są NEGATYWNE.* Statystyki orientacyjne wskazują kierunek
+przeciwny do przewidywanego. Rodzina 2 rozstrzyga formalnie.
+*Kryterium falsyfikacji:* jeżeli χ² epoki 2 nie przewyższa χ² epoki 1 przy
+serii pierwszorzędnej i nullu AR(3), hipoteza w tej postaci zostaje odrzucona.
+
+**H2 — umiędzynarodowienie (hipoteza poboczna, seria `A_COW_P`).**
+Po 1914 konflikty angażują istotnie więcej stron naraz, a seria ważona liczbą
+uczestników wykazuje strukturę fazową nieobecną przed 1914.
+*Status wstępny: przesłanki są POZYTYWNE, ale niejednoznaczne co do interpretacji.*
+*Zastrzeżenie obowiązkowe:* na poziomie uczestnika I i II wojna światowa wnoszą
+po kilkanaście–kilkadziesiąt wierszo-lat i leżą blisko siebie fazowo. Profil złożony
+zdominowany przez dwa zdarzenia **nie jest** dowodem okresowości. Rodzina 2 musi
+zawierać wariant z wyłączeniem lat 1914–1918 i 1939–1945 albo z winsoryzacją.
+
+**Konsekwencja redakcyjna.** H1 i H2 nie mogą być prezentowane jako jedno
+twierdzenie. Jeżeli H1 upada, a H2 się broni, rozdział opisuje falsyfikację
+własnej wcześniejszej tezy oraz nową hipotezę — nie „potwierdzenie modelu".
+
+---
+
+## D-003 · 2026-08-10 · Zakres serii COW
+
+**Rozstrzygnięcie.** Seria COW biegnie do **2007** (bez odcięcia na 2003).
+
+**Uzasadnienie.** Odcięcie z Testu 0 wynikało z diagnozy „cenzurowania ogona",
+która okazała się błędna. Faktyczną przyczyną deformacji końcówki był błąd obsługi
+kodu `-7` w kodzie agregującym (Test 0B, korekta F1). Po korekcie ogon nie jest
+zdeformowany i nie ma podstaw do skracania szeregu.
