@@ -1,0 +1,20 @@
+# {"script": "test1_band_power.py v1.0", "seed": 20260810, "B": 2000, "sha256_data": "145aed0053af0d79", "scan_T_max_descriptive": 40.5}
+id,wariant,okno,n,filtr,detrend,statystyka,pasmo,null,ar_p,B,S_obs,null_p95,p,rola,decyzja
+P1,A_COW_W,1816-2007,192,surowa,True,S1,32-40,AR(3),3.0,2000,0.009616,0.183523,0.9555,PIERWSZORZĘDNY,"ORZEKA — próg p<0,05 NIESPEŁNIONY"
+P2,A_COW_W,1816-2007,192,surowa,True,S1,32-40,blok~geom(śr. 10),,2000,0.009616,0.159944,0.9405,współpierwszorzędny,"POTWIERDZA — próg p<0,10 NIESPEŁNIONY"
+S1a,A_COW_W,1816-2007,192,MA11,True,S1,32-40,AR(3),3.0,2000,0.027406,0.349462,0.937,pomocniczy,opisowy — nie orzeka
+S1b,A_COW_W,1816-2007,192,surowa,True,S1,32-40,AR(1) [AIC],1.0,2000,0.009616,0.171657,0.9465,wrażliwość: rząd,opisowy — nie orzeka
+S1c1,A_COW_W,1816-2007,192,surowa,True,S1,32-40,AR(1),1.0,2000,0.009616,0.180361,0.9545,wrażliwość: rząd,"KONTROLA — warunek p≤0,50 NIESPEŁNIONY"
+S1c5,A_COW_W,1816-2007,192,surowa,True,S1,32-40,AR(5),5.0,2000,0.009616,0.194466,0.9535,wrażliwość: rząd,"KONTROLA — warunek p≤0,50 NIESPEŁNIONY"
+S1d,A_COW_W,1816-2007,192,surowa,False,S1,32-40,AR(3),3.0,2000,0.009677,0.210203,0.977,wrażliwość: detrending,opisowy — nie orzeka
+S1e,A_COW_W,1816-2007,192,surowa,True,S1,30-42,AR(3),3.0,2000,0.023584,0.238609,0.9265,wrażliwość: pasmo,opisowy — nie orzeka
+S2a,A_COW_W,1816-2007,192,surowa,True,S2,-,AR(3),3.0,2000,19.45384,38.347247,0.4408,dziedzina fazy,opisowy — nie orzeka
+S2b,A_COW_W,1816-2007,192,surowa,True,S2,-,AR(1) [AIC],1.0,2000,19.45384,39.283404,0.4613,porównanie z sesją lutową,opisowy — nie orzeka
+E1_S1,A_COW_W,1914-2007,94,surowa,True,S1,32-40,AR(3),3.0,2000,0.019096,0.111616,0.6952,opis epoki 2,opisowy — nie orzeka
+E1_S2,A_COW_W,1914-2007,94,surowa,True,S2,-,AR(3),3.0,2000,25.770335,35.948897,0.2704,opis epoki 2,opisowy — nie orzeka
+E2_S1,A_COW_W,1816-1913,98,surowa,True,S1,32-40,AR(3),3.0,2000,0.11304,0.196314,0.2774,opis epoki 1,opisowy — nie orzeka
+E2_S2,A_COW_W,1816-1913,98,surowa,True,S2,-,AR(3),3.0,2000,22.044747,33.316532,0.2774,opis epoki 1,opisowy — nie orzeka
+R1_S1,A_COW_P,1816-2007,192,surowa,True,S1,32-40,AR(3),3.0,2000,0.092406,0.181182,0.2699,hipoteza H2,opisowy — nie orzeka
+R1_S2,A_COW_P,1816-2007,192,surowa,True,S2,-,AR(3),3.0,2000,31.488373,36.935326,0.1019,hipoteza H2,opisowy — nie orzeka
+R2_S1,B_UCDP,1946-2024,79,surowa,True,S1,32-40,AR(3),3.0,2000,0.199295,0.219325,0.0965,replikacja,opisowy — nie orzeka
+R2_S2,B_UCDP,1946-2024,79,surowa,True,S2,-,AR(3),3.0,2000,26.886827,42.266291,0.3118,replikacja,opisowy — nie orzeka

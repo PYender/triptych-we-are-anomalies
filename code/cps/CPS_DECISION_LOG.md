@@ -73,3 +73,35 @@ własnej wcześniejszej tezy oraz nową hipotezę — nie „potwierdzenie model
 która okazała się błędna. Faktyczną przyczyną deformacji końcówki był błąd obsługi
 kodu `-7` w kodzie agregującym (Test 0B, korekta F1). Po korekcie ogon nie jest
 zdeformowany i nie ma podstaw do skracania szeregu.
+
+---
+
+## D-004 · 2026-08-11 · Zakres detrendingu przesądza znak kontrastu epok (wiążące dla rodziny 2)
+
+**Ustalenie (empiryczne, z Testu 1).** Znak kontrastu epok w statystyce χ²
+epoch-folding (T = 35,1, faza od pierwszego roku okna) na `A_COW_W` **odwraca się**
+w zależności od zakresu, na jakim wykonano detrending liniowy:
+
+| Zakres detrendingu | χ² epoka 2 (1914–2007) | χ² epoka 1 (1816–1913) | Znak |
+|---|---|---|---|
+| bez detrendingu | 14,73 | 22,23 | epoka 1 > epoka 2 |
+| detrending w oknie epoki | 25,77 | 22,04 | epoka 2 > epoka 1 |
+| detrending na całej serii | 18,00 | 20,54 | epoka 1 > epoka 2 |
+
+χ² epoki 2 waha się od 14,7 do 25,8 wyłącznie od tej decyzji. Tylko detrending
+w oknie stawia epokę 2 wyżej (kierunek zgodny z hipotezą H1).
+
+**Rozstrzygnięcie.** Zakres detrendingu jest decyzją metodyczną zastrzeżoną dla
+autora (context pack §8: granice okien). **Protokół rodziny 2 musi deklarować
+zakres detrendingu przed policzeniem jakiejkolwiek statystyki.** Bez tej deklaracji
+znak rdzeniowego wyniku tezy (kontrast epok) zależy od wyboru podjętego po
+zobaczeniu danych — naruszenie zakazu nr 10. Ten wpis **nie wybiera** zakresu;
+ustala wymóg jego jawnej pre-rejestracji.
+
+**Uwaga o nieporównywalności.** Powyższe liczby używają fazy „od pierwszego roku
+okna" (konwencja kodu Testu 1). Przy konwencji lutowej `rok mod T` od roku 0 te
+same okna dają: detrending w oknie 11,25 / 15,03; seria MA(11) 6,97 / 14,53
+(odtworzenie orientacyjnych χ² z context packu §2). Konwencja fazy jest drugą osią
+nieporównywalności i również musi być zadeklarowana w protokole rodziny 2.
+
+**Powiązane:** `TEST1_REPORT.md` §6.1.
