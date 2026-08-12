@@ -3,8 +3,9 @@
 TEST 2B — natężenie zaburzeń a odchylenie od rytmu (model 2, rodzina 8).
 Realizuje TEST2B_PROTOCOL_v2.md (zamrożony 11.08.2026). Lista zdarzeń: D-007.
 
-SZKIELET DO PRZEGLĄDU — Etap B. NIE uruchamiać przed przeglądem autora (TASK_2B §B1).
-β nie jest wynikiem, dopóki lista i ten kod nie przejdą przeglądu.
+Etap B. Przegląd autora zaliczony (mechanika sprawdzona na danych syntetycznych;
+null trzyma nominalny poziom przy autokorelacji do φ=0,9). Poprawki poprzeglądowe:
+S5 bez arbitralnego progu; kolumna `decyzja` dla Q1 nie czyta się jako pozytywna.
 
 Sześć punktów, na których ten test typowo się psuje (TASK_2B §B1) — jak są tu
 rozwiązane:
@@ -44,7 +45,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-VERSION = "test2b_disturbance.py v0.1 (szkielet do przeglądu)"
+VERSION = "test2b_disturbance.py v1.0"
 
 # --- parametry zamrożone w protokole v2.0; NIE zmieniać bez nowego protokołu ----
 T_HYP = 35.1                       # ustalony okres (Tryptyk s. 73; D-005) [lata]
@@ -200,11 +201,15 @@ def run_variant(spec: dict, events: pd.DataFrame, series_cache: dict,
 
 
 def verdict(rid: str, beta: float, p: float) -> str:
-    """Orzeka wyłącznie Q1 (§8). Pozytywny Q1 wymaga dodatkowo S3 (znak) i S5
-    (nie jedna kategoria) — sprawdzane w main(), nie tutaj."""
+    """Orzeka wyłącznie Q1 (§8), i to warunkowo: werdykt pozytywny wymaga dodatkowo
+    S3 (brak odwrócenia znaku) i oceny S5 (efekt nie z jednej kategorii), które są
+    rozstrzygane w raporcie, nie w tym wierszu. Komórka `decyzja` musi być czytelna
+    samodzielnie i nie może sugerować pozytywnego rozstrzygnięcia bez S3/S5."""
     if rid == "Q1":
-        ok = (beta < 0) and (p < 0.05)
-        return f"ORZEKA — β<0 i p<0,05 {'SPEŁNIONE' if ok else 'NIESPEŁNIONE'} (warunkowo od S3/S5)"
+        if not (beta < 0 and p < 0.05):
+            return "Q1: kryterium mechaniczne (β<0 i p<0,05) NIESPEŁNIONE — falsyfikacja §8"
+        return ("Q1: β<0 i p<0,05 spełnione; werdykt pozytywny NIEROZSTRZYGNIĘTY tutaj — "
+                "wymaga S3 (znak) i oceny S5 w raporcie §8")
     return "opisowy — nie orzeka"
 
 
@@ -306,14 +311,21 @@ def main():
     q1, s3 = g("Q1"), g("S3")
     s5 = [g(f"S5_{c}") for c in CATEGORIES]
     q1_ok = q1 and (q1["beta_obs"] < 0) and (q1["p"] < 0.05)
-    s3_ok = s3 and (np.sign(s3["beta_obs"]) == np.sign(q1["beta_obs"]))
-    s5_neg = sum(1 for r in s5 if r and r["beta_obs"] < 0)
-    print(f"\nREGUŁA §8: Q1 β={q1['beta_obs']} p={q1['p']} | "
-          f"S3 znak {'zgodny' if s3_ok else 'ODWRÓCONY'} | "
-          f"S5: {s5_neg}/4 kategorii z β<0")
-    print("WYNIK: " + ("POZYTYWNY (warunkowy)" if (q1_ok and s3_ok and s5_neg >= 2)
-                       else "NEGATYWNY / NIEJEDNOZNACZNY"))
-    print("Orzeka wyłącznie Q1. Wariant S6 i T1 wymagają uzupełnienia danych.")
+    s3_sign_ok = s3 and q1 and (np.sign(s3["beta_obs"]) == np.sign(q1["beta_obs"]))
+    print("\n§8 — orzeka wyłącznie Q1:")
+    print(f"  Q1: β = {q1['beta_obs']}  p = {q1['p']}  -> kryterium mechaniczne β<0 i p<0,05: "
+          f"{'SPEŁNIONE' if q1_ok else 'NIESPEŁNIONE'}")
+    print(f"  S3 (bez lat wojen): β = {s3['beta_obs']}  -> znak "
+          f"{'zgodny z Q1' if s3_sign_ok else 'ODWRÓCONY względem Q1'}")
+    # S5: rozkład β po kategoriach — bez progu (próg 2/4 byłby arbitralny, niezadeklarowany).
+    print("  S5 (β po kategoriach): " + ", ".join(
+        f"{r['id'].replace('S5_','')}={r['beta_obs']}" for r in s5 if r))
+    if not q1_ok or not s3_sign_ok:
+        print("WYNIK: NEGATYWNY / NIEJEDNOZNACZNY — kryterium falsyfikacji §8 spełnione.")
+    else:
+        print("WYNIK: Q1 i S3 spełnione. Ocena S5 (czy efekt nie pochodzi z jednej kategorii) "
+              "oraz werdykt końcowy — w raporcie §8; kod nie orzeka progiem.")
+    print("Wariant S6 i T1 to zaślepki — wymagają uzupełnienia danych (COLOR / rozbicie W:P).")
 
 
 if __name__ == "__main__":

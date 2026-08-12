@@ -1,0 +1,16 @@
+# {"script": "test2b_disturbance.py v1.0", "T_hyp": 35.1, "n_events": 34, "sha256_data": "145aed0053af0d79", "sha256_events": "555108fbea4c48ac", "null": "wyczerpujące przesunięcie cykliczne, p dokładne, bez ziarna"}
+id,podokres,n,zanik,T,beta_obs,null_p05,p,decyzja
+Q1,1900-2007,108.0,rect,35.1,-0.059837,-0.653119,0.6389,"Q1: kryterium mechaniczne (β<0 i p<0,05) NIESPEŁNIONE — falsyfikacja §8"
+Q2,1816-1899,84.0,rect,35.1,-0.81534,-0.952245,0.1429,opisowy — nie orzeka
+Q3,1816-2007,192.0,rect,35.1,-0.365582,-0.56182,0.25,opisowy — nie orzeka
+S1,1900-2007,108.0,exp,35.1,-0.05072,-0.970006,0.6481,opisowy — nie orzeka
+S2_T32,1900-2007,108.0,rect,32.0,-0.08672,-0.574018,0.6389,opisowy — nie orzeka
+S2_T40,1900-2007,108.0,rect,40.0,0.087124,-0.755059,0.6389,opisowy — nie orzeka
+S3,1900-2007,96.0,rect,35.1,-0.233381,-0.671759,0.4375,opisowy — nie orzeka
+S4,1900-2007,108.0,rect,35.1,-0.096623,-0.799699,0.4537,opisowy — nie orzeka
+S5_earthquake,1900-2007,108.0,rect,35.1,-0.87255,-0.933938,0.0833,opisowy — nie orzeka
+S5_pandemic,1900-2007,108.0,rect,35.1,0.81839,-1.154884,0.8056,opisowy — nie orzeka
+S5_enso,1900-2007,108.0,rect,35.1,2.210166,-2.315665,0.9259,opisowy — nie orzeka
+S5_volcano,1900-2007,108.0,rect,35.1,0.77752,-2.313079,0.5926,opisowy — nie orzeka
+S6,-,,-,-,,,,"NIEZAIMPLEMENTOWANY — wymaga wpiętej serii COLOR (d vs COLOR, §7)"
+T1,-,,-,-,,,,NIEZAIMPLEMENTOWANY — inna statystyka: udział wojen międzypaństwowych i relacja A_COW_W:A_COW_P przed/po 1945 (v1.0 §3a)

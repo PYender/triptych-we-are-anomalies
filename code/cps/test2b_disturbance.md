@@ -1,42 +1,40 @@
-# `test2b_disturbance.py` — kod do niezależnej oceny (Etap B, SZKIELET)
+# `test2b_disturbance.py` — kod do niezależnej oceny (Etap B)
 
-Wersja bliźniacza skryptu Testu 2B, wystawiona do przeglądu przed uruchomieniem
-(`CPS_OPERATING_BRIEF.md` §5). Ten plik nie jest wykonywany.
+Wersja bliźniacza skryptu Testu 2B (`CPS_OPERATING_BRIEF.md` §5). Ten plik nie jest wykonywany.
 
 **Realizuje:** `TEST2B_PROTOCOL_v2.md` (zamrożony) · lista zdarzeń wg D-007 (34 zdarzenia)
-**Status:** szkielet do przeglądu — **nieuruchamiany**; β nie jest jeszcze wynikiem.
+**Status:** przegląd autora zaliczony (mechanika sprawdzona na danych syntetycznych;
+null trzyma nominalny poziom przy autokorelacji do φ=0,9). Naniesiono dwie poprawki
+poprzeglądowe (S5 bez progu; kolumna `decyzja` dla Q1 nie czyta się jako pozytywna).
 **Zależności:** numpy, pandas, matplotlib. Bez `curve_fit` — dopasowanie sinusoidy jest liniowe.
 
-## Na co zwrócić uwagę przy przeglądzie (sześć punktów z TASK_2B §B1)
+## Sześć punktów z TASK_2B §B1 — jak są rozwiązane
 
-1. **Detrending raz, na całej serii 1816–2007** (D-004, B1.1) — `compute_reference()`
-   liczy detrend na `fit_mask` obejmującej pełny zakres; podokres (Q1/Q2/Q3) wybiera
-   tylko lata do regresji β, nie do detrendingu.
-2. **Sinusoida o ustalonym T; tylko amplituda i faza** (B1.2) — `fit_cycle()` używa
-   liniowych najmniejszych kwadratów w bazie [cos, sin]; `curve_fit` nie występuje.
-   Sinusoida jest układem odniesienia, nie testem (zakaz nr 1).
-3. **S(t) całkowitoliczbowa, nie binarna** (B1.3) — `intensity()` sumuje wskaźniki
-   okien; to jedyna różnica wobec v1.0.
-4. **Przesunięcie cykliczne wyczerpujące, p dokładne, bez ziarna** (B1.4) —
-   `shift_null()` przechodzi k=1…n−1, β liczone dla każdego przesunięcia.
-5. **Bez błędów standardowych OLS** (B1.5) — `beta_slope()` zwraca wyłącznie β;
-   istotność liczona tylko z rozkładu przesunięć.
-6. **S3 usuwa lata wojen PRZED dopasowaniem** (B1.6) — `fit_mask` wyklucza
-   1914–1918 i 1939–1945, więc detrend i sinusoida są liczone bez nich; czas liczony
-   w latach (nie indeksie), żeby luki były respektowane.
+1. **Detrending raz, na całej serii 1816–2007** (D-004) — `compute_reference()` na
+   `fit_mask` = pełny zakres; podokres wybiera tylko lata do regresji β.
+2. **Sinusoida o ustalonym T; tylko amplituda i faza** — `fit_cycle()` liniowo
+   w bazie [cos, sin]; `curve_fit` nie występuje (zakaz nr 1).
+3. **S(t) całkowitoliczbowa, nie binarna** — `intensity()` sumuje wskaźniki okien.
+4. **Przesunięcie cykliczne wyczerpujące, p dokładne, bez ziarna** — `shift_null()`, k=1…n−1.
+5. **Bez błędów standardowych OLS** — `beta_slope()` zwraca wyłącznie β; istotność
+   tylko z rozkładu przesunięć. (Weryfikacja autora: przy φ=0,8 SE z OLS dałoby 0,220
+   fałszywych odrzuceń zamiast 0,05 — zakaz uzasadniony.)
+6. **S3 usuwa lata wojen PRZED dopasowaniem** — `fit_mask` wyklucza 1914–1918 i
+   1939–1945; czas liczony w latach (nie indeksie), więc luki są respektowane.
 
-## Punkty otwarte, zgłoszone do rozstrzygnięcia w przeglądzie
+## Punkty rozstrzygnięte w przeglądzie
 
-- **Efekt brzegowy** (parametr `include_prewindow`, domyślnie `True`): czy S(t)
-  w oknie 1900–2007 ma być zasilana przez zdarzenie sprzed okna — jedyny przypadek
-  to VI pandemia cholery 1899, rzucająca cień na 1900–1903. Domyślnie tak (globalna
-  definicja S z §3); do potwierdzenia.
-- **S6 (COLOR) i T1 (relacja W:P przed/po 1945)** nie są zaimplementowane — brak
-  wpiętej serii COLOR i rozbicia międzypaństwowego. Zwracają wiersz-zaślepkę,
-  żeby nie podać fałszywej liczby. Do uzupełnienia po przeglądzie.
-- **Przesunięcie po pozycjach przy lukach (S3):** `np.roll` działa na wektorze
-  zachowanych lat; przy niecięgłych latach S3 jest to przesunięcie pozycyjne — do
-  potwierdzenia jako zgodne z intencją nulla.
+- **Efekt brzegowy:** `include_prewindow=True` (potwierdzone). Cień VI pandemii
+  cholery 1899 na lata 1900–1903 jest realny; S(t) jest zdefiniowana globalnie (§3),
+  a obcięcie zdarzeń do okna dałoby sztuczne zero natężenia w pierwszych latach.
+- **Przesunięcie pozycyjne przy lukach (S3):** zaakceptowane. Q1 nie ma luk, więc
+  test pierwszorzędny jest nietknięty; w S3 `np.roll` przesuwa po pozycjach, nie po
+  latach, więc przesunięcie o k nie odpowiada dokładnie k latom — dla celu nulla
+  (zniszczenie wyrównania przy zachowaniu struktury obu wektorów) to bez znaczenia.
+  Odnotowane w raporcie.
+- **S6 i T1 jako zaślepki:** zaakceptowane (jawny brak > wartość pozorna). S6 do
+  wpięcia w kolejnym kroku z `data/ngrams/ngram_color_rebuilt.csv`; T1 wymaga
+  rozbicia serii COW na typy konfliktu (osobna praca).
 
 ## Kod
 
@@ -46,8 +44,9 @@ Wersja bliźniacza skryptu Testu 2B, wystawiona do przeglądu przed uruchomienie
 TEST 2B — natężenie zaburzeń a odchylenie od rytmu (model 2, rodzina 8).
 Realizuje TEST2B_PROTOCOL_v2.md (zamrożony 11.08.2026). Lista zdarzeń: D-007.
 
-SZKIELET DO PRZEGLĄDU — Etap B. NIE uruchamiać przed przeglądem autora (TASK_2B §B1).
-β nie jest wynikiem, dopóki lista i ten kod nie przejdą przeglądu.
+Etap B. Przegląd autora zaliczony (mechanika sprawdzona na danych syntetycznych;
+null trzyma nominalny poziom przy autokorelacji do φ=0,9). Poprawki poprzeglądowe:
+S5 bez arbitralnego progu; kolumna `decyzja` dla Q1 nie czyta się jako pozytywna.
 
 Sześć punktów, na których ten test typowo się psuje (TASK_2B §B1) — jak są tu
 rozwiązane:
@@ -87,7 +86,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-VERSION = "test2b_disturbance.py v0.1 (szkielet do przeglądu)"
+VERSION = "test2b_disturbance.py v1.0"
 
 # --- parametry zamrożone w protokole v2.0; NIE zmieniać bez nowego protokołu ----
 T_HYP = 35.1                       # ustalony okres (Tryptyk s. 73; D-005) [lata]
@@ -243,11 +242,15 @@ def run_variant(spec: dict, events: pd.DataFrame, series_cache: dict,
 
 
 def verdict(rid: str, beta: float, p: float) -> str:
-    """Orzeka wyłącznie Q1 (§8). Pozytywny Q1 wymaga dodatkowo S3 (znak) i S5
-    (nie jedna kategoria) — sprawdzane w main(), nie tutaj."""
+    """Orzeka wyłącznie Q1 (§8), i to warunkowo: werdykt pozytywny wymaga dodatkowo
+    S3 (brak odwrócenia znaku) i oceny S5 (efekt nie z jednej kategorii), które są
+    rozstrzygane w raporcie, nie w tym wierszu. Komórka `decyzja` musi być czytelna
+    samodzielnie i nie może sugerować pozytywnego rozstrzygnięcia bez S3/S5."""
     if rid == "Q1":
-        ok = (beta < 0) and (p < 0.05)
-        return f"ORZEKA — β<0 i p<0,05 {'SPEŁNIONE' if ok else 'NIESPEŁNIONE'} (warunkowo od S3/S5)"
+        if not (beta < 0 and p < 0.05):
+            return "Q1: kryterium mechaniczne (β<0 i p<0,05) NIESPEŁNIONE — falsyfikacja §8"
+        return ("Q1: β<0 i p<0,05 spełnione; werdykt pozytywny NIEROZSTRZYGNIĘTY tutaj — "
+                "wymaga S3 (znak) i oceny S5 w raporcie §8")
     return "opisowy — nie orzeka"
 
 
@@ -349,14 +352,21 @@ def main():
     q1, s3 = g("Q1"), g("S3")
     s5 = [g(f"S5_{c}") for c in CATEGORIES]
     q1_ok = q1 and (q1["beta_obs"] < 0) and (q1["p"] < 0.05)
-    s3_ok = s3 and (np.sign(s3["beta_obs"]) == np.sign(q1["beta_obs"]))
-    s5_neg = sum(1 for r in s5 if r and r["beta_obs"] < 0)
-    print(f"\nREGUŁA §8: Q1 β={q1['beta_obs']} p={q1['p']} | "
-          f"S3 znak {'zgodny' if s3_ok else 'ODWRÓCONY'} | "
-          f"S5: {s5_neg}/4 kategorii z β<0")
-    print("WYNIK: " + ("POZYTYWNY (warunkowy)" if (q1_ok and s3_ok and s5_neg >= 2)
-                       else "NEGATYWNY / NIEJEDNOZNACZNY"))
-    print("Orzeka wyłącznie Q1. Wariant S6 i T1 wymagają uzupełnienia danych.")
+    s3_sign_ok = s3 and q1 and (np.sign(s3["beta_obs"]) == np.sign(q1["beta_obs"]))
+    print("\n§8 — orzeka wyłącznie Q1:")
+    print(f"  Q1: β = {q1['beta_obs']}  p = {q1['p']}  -> kryterium mechaniczne β<0 i p<0,05: "
+          f"{'SPEŁNIONE' if q1_ok else 'NIESPEŁNIONE'}")
+    print(f"  S3 (bez lat wojen): β = {s3['beta_obs']}  -> znak "
+          f"{'zgodny z Q1' if s3_sign_ok else 'ODWRÓCONY względem Q1'}")
+    # S5: rozkład β po kategoriach — bez progu (próg 2/4 byłby arbitralny, niezadeklarowany).
+    print("  S5 (β po kategoriach): " + ", ".join(
+        f"{r['id'].replace('S5_','')}={r['beta_obs']}" for r in s5 if r))
+    if not q1_ok or not s3_sign_ok:
+        print("WYNIK: NEGATYWNY / NIEJEDNOZNACZNY — kryterium falsyfikacji §8 spełnione.")
+    else:
+        print("WYNIK: Q1 i S3 spełnione. Ocena S5 (czy efekt nie pochodzi z jednej kategorii) "
+              "oraz werdykt końcowy — w raporcie §8; kod nie orzeka progiem.")
+    print("Wariant S6 i T1 to zaślepki — wymagają uzupełnienia danych (COLOR / rozbicie W:P).")
 
 
 if __name__ == "__main__":
