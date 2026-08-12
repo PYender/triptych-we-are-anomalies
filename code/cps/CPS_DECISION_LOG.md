@@ -105,3 +105,95 @@ same okna dają: detrending w oknie 11,25 / 15,03; seria MA(11) 6,97 / 14,53
 nieporównywalności i również musi być zadeklarowana w protokole rodziny 2.
 
 **Powiązane:** `TEST1_REPORT.md` §6.1.
+
+---
+
+## D-005 · 2026-08-11 · Okres 35,1 roku jest produktem łańcucha przetwarzania
+
+**Ustalenie.** Obie procedury z Tryptyku odtworzone wiernie na serii oryginalnej:
+
+| procedura | oryginał (przed F1–F3) | `A_COW_W` po korektach |
+|---|---|---|
+| sin-fit (`curve_fit`, p0 = 2π/50) | **35,08** (Tryptyk podaje 35,1) | **42,9** |
+| pik periodogramu | **96,0 lat** | 64,0 lat |
+
+Dwa wnioski:
+
+1. **Wartość 35,1 nie była błędem rachunkowym.** Procedura była zaimplementowana
+   poprawnie; liczba odtwarza się co do drugiego miejsca po przecinku. Jest jednak
+   produktem konkretnego łańcucha decyzji (poziom agregacji, wygładzanie, obsługa
+   kodów braku) — po korektach ta sama procedura daje 42,9 roku dla wojen
+   i 47,6 dla uczestników.
+2. **Periodogram nigdy nie potwierdzał 36 lat.** Najsilniejszy pik widma serii
+   oryginalnej leży przy **96 latach** (moc 328); 38,4 roku jest pikiem **drugim**
+   (moc 274). Wartość 0,028/rok podana na s. 57 nie odpowiada żadnemu prążkowi
+   Fouriera przy n = 192 (sąsiednie: 0,0260 i 0,0312), co wskazuje na odczyt
+   z wykresu log-log. Twierdzenie o „niezależnym potwierdzeniu" nie ma podstawy —
+   była jedna metoda, nie dwie.
+
+**Konsekwencja dla erraty.** Pozycja 13 (PSD jako niezależne potwierdzenie sin-fitu)
+zostaje uzupełniona o powyższe liczby. Dochodzi nowa pozycja: okres nie jest
+wielkością zmierzoną, lecz zależną od łańcucha przetwarzania — zmiana dowolnego
+ogniwa przesuwa go o kilkanaście lat.
+
+**Konsekwencja dla Testu 2B.** T = 35,1 przyjmujemy, by testować hipotezę
+w jej oryginalnej postaci — nie dlatego, że jest to wartość wyprowadzona z danych.
+
+---
+
+## D-006 · 2026-08-11 · Zaniechanie Testu 2A i status katalogu zaburzeń
+
+**Test 2A zaniechany.** Okna C1–C8 (Tryptyk s. 70–72) opisują *fazy* przebiegu
+krzywej („climb up to a high ridge", „sustained ridge and tail", „the rise before
+World War I", „plateau"), nie punkty szczytowe, i pokrywają 65% szeregu. Nie nadają
+się na listę do testu trafień. Wcześniejszy rachunek odstępów między środkami tych
+okien (mediana 19,5 roku) opierał się na błędnym odczycie i **zostaje wycofany**.
+
+**Katalog zaburzeń jest otwarty.** Ustalenie autora: Tryptyk podaje czynniki
+zaburzające jako przykłady, nie jako listę zamkniętą. Priorytetu dokumentacyjnego
+zatem nie ma. Zastępuje go generowanie list z **progów zewnętrznych i wyczerpujących
+katalogów** (Test 2B §3), z zakazem redakcji listy wynikowej.
+
+**Zdarzenie 1945 (użycie broni jądrowej) traktowane osobno.** Tryptyk (C9) twierdzi,
+że odstraszanie **przesuwa ciężar konfliktu na mniejsze wojny zastępcze**, a nie że
+go tłumi. To predykcja o zmianie struktury, nie o spadku liczby — testowana wariantem
+T1, nie w liście tłumiącej.
+
+**Obserwacja post-hoc do zbadania na danych wstrzymanych.** W serii `A_COW_P` pasmo
+20–32 lat mieści 31,4% mocy wobec 8,9% w paśmie 32–40 (Test 1). Obserwacja
+wygenerowana przez dane, **nie hipoteza postawiona przed nimi** — nie wolno jej
+testować na tym samym materiale. Droga czysta: UCDP 2008–2024 albo okres przed 1900
+zatrzymany jako próba wstrzymana.
+
+---
+
+## D-007 · 2026-08-11 · Wyłączenie kategorii endogenicznych z listy zaburzeń
+
+**Rozstrzygnięcie.** Kategorie `treaty` (3 pozycje) i `energy` (2 pozycje) zostają
+usunięte z listy zdarzeń zaburzających. Lista finalna: **34 zdarzenia** w czterech
+kategoriach — trzęsienia ziemi (13), pandemie (12), ENSO (5), wulkany (4).
+
+**Uzasadnienie.** Wersja 1.0 protokołu (§3b) wykluczyła „koszty wyczerpania po
+wielkich wojnach" jako endogeniczne — zdefiniowane przez samą serię wojenną, więc ich
+użycie do wyjaśniania odchyleń tej serii jest kołowe. To samo kryterium stosuje się do
+dwóch kategorii, które w szkicu listy zostały uwzględnione niekonsekwentnie:
+
+- **Traktaty rozbrojeniowe** są zawierane w okresach odprężenia, czyli jako skutek
+  opadającego napięcia. Wyjaśnianie spadku konfliktowości traktatami odwraca kierunek
+  zależności.
+- **Szoki naftowe** w naszym oknie są następstwem konfliktów: 1973 — embargo OPEC
+  w odpowiedzi na wojnę Jom Kipur, 1979 — rewolucja irańska.
+
+Cztery pozostałe kategorie (aktywność sejsmiczna, wulkaniczna, pandemie, ENSO) są
+bezspornie zewnętrzne wobec dynamiki konfliktu.
+
+**Kolejność.** Decyzja zapadła przed obliczeniem jakiejkolwiek statystyki wiążącej
+odchylenia z zaburzeniami i wynika z kryterium zadeklarowanego w v1.0, nie
+z obserwacji wyniku. Wykrycie niespójności zawdzięczamy przeglądowi listy przez
+Claude Code w Etapie A.
+
+**Skutek liczbowy.** Pokrycie 1900–2007 przy L = 5: 79% → **75%**. S(t): średnia
+1,35 → **1,12**, odchylenie 1,07 → **0,93**. Zmienność objaśniająca zachowana.
+
+**Konsekwencja uboczna.** Znika jedyna kategoria bez wyczerpującego katalogu, czyli
+najbardziej podatna na arbitralność doboru.
