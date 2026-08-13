@@ -125,6 +125,26 @@ Kontrole spójności: `W/inherited/raw` daje 2007 = 3,80 i średnią 5,765 (zgod
 kontrolną); `P/inherited/raw` daje 2007 = 11,50. Wagi `equal` (wszystkie 1,0) podnoszą
 poziom, `steep` obniżają — zgodnie z konstrukcją. `pc_1950` ma n = 58 (1950–2007).
 
+**Aktualizacja po poprawce interpolacji 1816–1819 (wersja z Etapu A nieaktualna dla
+`pc_full`).** Wiersze `pc_full` przeliczono na poprawionym mianowniku. Przy trzech
+cyfrach znaczących liczby w tabeli **nie zmieniają się** (korekta dotyczy 4 z 192 lat),
+ale wartości realnie się przesunęły: dla `W/inherited/pc_full` średnia +0,018%,
+odch. +0,014%, a **lokalnie rok 1816 o +1,40%** (1,314×10⁻⁹ → 1,332×10⁻⁹). `raw`
+i `pc_1950` bez zmian (nie używają interpolowanych lat sprzed 1950). Istotniejszy od
+wielkości jest **charakter** poprawki: backfill dawał w latach 1816–1819 płaską
+ludność (zerowy przyrost przez cztery lata, potem skok), czyli **sztuczną nieciągłość
+mianownika na samym początku szeregu**, gdzie danych jest najmniej; interpolacja
+zastępuje ją gładkim przyrostem. Wersja tych czterech kombinacji `pc_full` z Etapu A
+jest tym samym nieaktualna.
+
+**Uwaga do przeglądu Etapu C (interakcja skali).** W kombinacjach `pc_full`
+z wygładzaniem MA(11) dwie skale gładkości leżą blisko siebie: sztuczna ~10-letnia
+gładkość mianownika (interpolacja dekadowa do 1940) i okno MA(11). Mogą się nałożyć
+i wzmocnić gładkość w paśmie sąsiadującym z badanym — do odnotowania przy
+interpretacji wariantów `pc_full × MA(11) × detrending`. Nie jest to błąd potoku
+(normalizacja jest przed filtrami, B2.4), lecz obciążenie do opisania w raporcie
+Testu 3. `pc_1950` tej pułapki nie ma (dane roczne, brak interpolacji).
+
 ## 5. Uwaga (propozycja, nie wykonanie — §A2)
 
 Nie wydzielałem funkcji budującej do osobnego modułu (§A2 zabrania robić to samemu).
