@@ -118,14 +118,15 @@ def build_cow(dd: Path, level: str, weights: dict | None = None) -> pd.Series:
 
 
 def world_population(dd: Path) -> pd.Series:
-    """Ludność świata (OWID), reindeksowana na 1816–2007 i interpolowana liniowo.
-    Dane są dekadowe do 1940 i roczne od 1950 (71 pomiarów). Lata przed pierwszym
-    pomiarem (1816–1819, przed 1820) są wypełniane wartością najbliższą (backfill) —
-    to jedyna ekstrapolacja; jest zadeklarowana i policzona w raporcie buildera."""
+    """Ludność świata (OWID) interpolowana liniowo do lat rocznych 1816–2007.
+    Dane w oknie są dekadowe do 1940 i roczne od 1950 (71 pomiarów). Interpolację
+    liczymy na serii natywnej z punktami sprzed 1816 (1800, 1810 istnieją), więc
+    lata 1816–1819 są INTERPOLOWANE (między 1810 a 1820), nie ekstrapolowane —
+    w oknie 1816–2007 nie ma ekstrapolacji."""
     df = pd.read_csv(find_input(dd, "population.csv"))
     w = df[df["Entity"] == "World"].set_index("Year")["Population (historical)"].sort_index()
-    full = w.reindex(range(YEARS.min(), YEARS.max() + 1))
-    return full.interpolate(method="linear", limit_direction="both")
+    full = w.reindex(range(1800, YEARS.max() + 1)).interpolate(method="linear")
+    return full.loc[YEARS.min():YEARS.max()]
 
 
 def apply_normalization(s: pd.Series, mode: str, dd: Path) -> pd.Series:

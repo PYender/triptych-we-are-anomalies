@@ -59,33 +59,34 @@ nienaruszone" jest spełniony — dane są identyczne. Ale §A2 żąda pełnej i
 pliku i mówi „jakakolwiek różnica = zatrzymanie i zgłoszenie", więc **zgłaszam** i nie
 rozstrzygam sam. Tu §A2 (pełny sha) i §A5 (wersja v2.1 w nagłówku) są w sprzeczności.
 
-**Do decyzji autora:** (a) zaakceptować zmianę nagłówka — dane identyczne, nagłówek
-i tak niewidoczny dla testów (rekomendacja); albo (b) zamrozić nagłówek domyślnego
-biegu do postaci v2.0, żeby zachować sha `145aed00` (wersję v2.1 zostawić w docstringu
-skryptu). Wprowadzę wybraną opcję przed Etapem B.
+**Rozstrzygnięte (autor).** Zaakceptowano zmianę nagłówka: kryterium regresji to
+**suma kontrolna wierszy danych po pominięciu nagłówka** plus zgodność linii
+kontrolnej — oba spełnione. Nagłówek `#` niesie proweniencję i ma się zmieniać wraz
+ze skryptem. Bez zmiany kodu.
 
 ## 3. Normalizacja i interpolacja (deklaracja, §A4 / §2.1)
 
 Ludność: `population.csv`, `Entity == "World"`, kolumna `Population (historical)`,
-reindeksowana na 1816–2007 i **interpolowana liniowo**. Diagnostyka pokrycia:
+**interpolowana liniowo** na serii natywnej (z punktami sprzed 1816) i wycięta do
+1816–2007. Diagnostyka pokrycia (pełny rozkład, zaakceptowany przez autora):
 
 | podokres | lata | pomiary | interpolowane | udział interpolacji |
 |---|---|---|---|---|
-| 1816–1899 | 84 | 8 | 76 | 90% |
-| 1816–1949 | 134 | 13 | 121 | **90%** |
+| 1816–1949 | 134 | 13 | 121 | **90,3%** |
 | 1950–2007 | 58 | 58 | 0 | 0% |
-| całość 1816–2007 | 192 | 71 | 121 | 63% |
+| całość 1816–2007 | 192 | 71 | 121 | **63,0%** |
 
-Lata **1816–1819** (przed pierwszym pomiarem, 1820) wypełniono wartością najbliższą
-(backfill z 1820 = 1,066×10⁹) — jedyna ekstrapolacja, zadeklarowana.
+Pomiary dekadowe do 1940, roczne od 1950. Punkty 1800 i 1810 istnieją w danych, więc
+lata **1816–1819 są INTERPOLOWANE** (między 1810 a 1820: 1050,95 → 1065,62 mln), nie
+ekstrapolowane — **w oknie 1816–2007 nie ma ekstrapolacji** (sprostowanie wcześniejszej
+uwagi buildera; potwierdzone przez autora).
 
-**Uwaga: rozbieżność z §2.1 protokołu.** Protokół podaje, że wariant per capita przed
-1950 opiera się „w ~79%" na interpolacji; faktyczna wartość to **90%** (121/134 lat
-1816–1949; 76/84 lat 1816–1899). Liczba pomiarów (71) i pustych lat (121 na 192)
-zgadza się z §2.1; rozbieżny jest tylko odsetek pre-1950. Kierunek rozbieżności
-**wzmacnia** ostrzeżenie z §2.1 (więcej interpolacji, nie mniej) i nie zmienia planu
-(per capita wchodzi do siatki, D-A). Zgłaszam jako korektę liczby do zapisania
-w raporcie/erracie.
+**Korekta liczby w §2.1 protokołu (zaakceptowana).** Protokół podawał „~79%"
+interpolacji przed 1950; poprawna wartość to **90,3%** (121/134 lat 1816–1949) —
+poprzednia liczba była błędem rachunkowym (błędna podstawa dzielenia). Liczba pomiarów
+(71) i pustych lat (121 na 192) była poprawna. Korekta jest **niekorzystna**:
+wzmacnia ostrzeżenie o wariancie per capita (więcej interpolacji, nie mniej), i tak
+należy ją zapisać. Nie zmienia planu — per capita wchodzi do siatki (D-A).
 
 ## 4. Tabela kontrolna — 12 kombinacji wag × normalizacji, oba poziomy
 
@@ -131,8 +132,10 @@ Gdyby Etap C miał wołać builder 192+ razy, czystsze byłoby zaimportowanie
 `build_cow`/`apply_normalization` (już importowalne) niż 192 uruchomienia CLI.
 To jest propozycja do akceptacji, nie zmiana wykonana.
 
-## 6. STOP
+## 6. Status
 
-Etap A zamknięty. Kod testu (`test3_multiverse.py`) **nie** napisany. Czekam na przegląd:
-(1) rozstrzygnięcie kwestii nagłówka/sha z §2.1, (2) potwierdzenie korekty odsetka
-interpolacji (90% vs 79%), (3) ewentualną zgodę na import funkcji buildera w Etapie B.
+Etap A **zaakceptowany** przez autora. Rozstrzygnięcia: (1) nagłówek — kryterium to
+suma kontrolna wierszy danych (spełnione); (2) interpolacja pre-1950 = 90,3% (korekta
+§2.1 przyjęta); (3) import funkcji buildera w Etapie C — zgoda, pod warunkiem braku
+efektów ubocznych przy imporcie (spełnione: `main()` pod `__main__`, brak zapisu/wypisu
+na poziomie modułu). Przechodzę do Etapu B (kod testu do przeglądu, bez uruchamiania).
