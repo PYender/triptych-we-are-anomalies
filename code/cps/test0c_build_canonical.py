@@ -22,7 +22,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-VERSION = "test0c_build_canonical.py v2.0"
+VERSION = "test0c_build_canonical.py v2.1"
 YEARS = np.arange(1816, 2008)
 SMOOTH = 11
 CAL_WINDOWS = [(1946, 2007), (1970, 2007), (1989, 2006), (1989, 2007),
@@ -30,7 +30,7 @@ CAL_WINDOWS = [(1946, 2007), (1970, 2007), (1989, 2006), (1989, 2007),
 CAL_PRIMARY = (1989, 2007)
 D2_MAX_RATIO, D3_MAX_SD = 1.5, 0.5
 UCDP_W = {2: 1.0, 3: 0.4, 4: 0.7}
-COW = {  # plik, waga, kolumny faz, rok zamknięcia zbioru
+COW = {  # plik, waga (domyślna = inherited), kolumny faz, rok zamknięcia zbioru
     "inter": ("InterStateWarData_v4_0.csv", 1.0, [("StartYear1", "EndYear1"),
                                                   ("StartYear2", "EndYear2")], 2007),
     "extra": ("ExtraStateWarData_v4_0.csv", 0.7, [("StartYear1", "EndYear1"),
@@ -39,6 +39,18 @@ COW = {  # plik, waga, kolumny faz, rok zamknięcia zbioru
     "intra": ("INTRASTATE_WARS_v5_1_CSV.csv", 0.4,
               [(f"StartYr{k}", f"EndYr{k}") for k in (1, 2, 3, 4)], 2014),
 }
+
+# --- Test 3 (rodzina 4): wagi i normalizacja jako parametry multiwersum (D-008) ---
+# Domyślne wartości odtwarzają zachowanie v2.0 bit w bit (dowód regresji: §A2 zadania).
+# Wagi F1–F3 to poprawki błędów, NIE wymiar multiwersum — obowiązują we wszystkich.
+WEIGHT_SETS = {                       # Inter / Extra / Non / Intra
+    "inherited": {"inter": 1.0, "extra": 0.7, "non": 0.4,  "intra": 0.4},   # jak opublikowano
+    "equal":     {"inter": 1.0, "extra": 1.0, "non": 1.0,  "intra": 1.0},
+    "steep":     {"inter": 1.0, "extra": 0.5, "non": 0.25, "intra": 0.25},
+    "flat":      {"inter": 1.0, "extra": 0.7, "non": 0.7,  "intra": 0.7},
+}
+NORMALIZATIONS = ("raw", "pc_full", "pc_1950")
+PC_1950_RANGE = (1950, 2007)
 
 
 def load_cow(path: Path) -> pd.DataFrame:
@@ -96,11 +108,39 @@ def counts(df, phases, weight, cutoff, level):
     return out
 
 
-def build_cow(dd: Path, level: str) -> pd.Series:
+def build_cow(dd: Path, level: str, weights: dict | None = None) -> pd.Series:
+    """weights=None → zestaw odziedziczony (wartości z COW) → zachowanie v2.0."""
     tot = np.zeros(len(YEARS))
-    for fname, w, ph, cut in COW.values():
+    for cat, (fname, w_default, ph, cut) in COW.items():
+        w = w_default if weights is None else weights[cat]
         tot += counts(load_cow(find_input(dd, fname)), ph, w, cut, level)
     return pd.Series(tot, index=YEARS, name="value")
+
+
+def world_population(dd: Path) -> pd.Series:
+    """Ludność świata (OWID), reindeksowana na 1816–2007 i interpolowana liniowo.
+    Dane są dekadowe do 1940 i roczne od 1950 (71 pomiarów). Lata przed pierwszym
+    pomiarem (1816–1819, przed 1820) są wypełniane wartością najbliższą (backfill) —
+    to jedyna ekstrapolacja; jest zadeklarowana i policzona w raporcie buildera."""
+    df = pd.read_csv(find_input(dd, "population.csv"))
+    w = df[df["Entity"] == "World"].set_index("Year")["Population (historical)"].sort_index()
+    full = w.reindex(range(YEARS.min(), YEARS.max() + 1))
+    return full.interpolate(method="linear", limit_direction="both")
+
+
+def apply_normalization(s: pd.Series, mode: str, dd: Path) -> pd.Series:
+    """raw → bez zmian (identyczność, gwarancja regresji). Normalizacja jest
+    własnością zmiennej i jest nakładana PRZED wygładzaniem/detrendingiem (frame())."""
+    if mode == "raw":
+        return s
+    pop = world_population(dd)
+    if mode == "pc_full":
+        return (s / pop.reindex(s.index)).rename("value")
+    if mode == "pc_1950":
+        a, b = PC_1950_RANGE
+        s2 = s.loc[a:b]
+        return (s2 / pop.reindex(s2.index)).rename("value")
+    raise ValueError(mode)
 
 
 def build_ucdp(dd: Path) -> pd.Series:
@@ -137,26 +177,36 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data-dir", default="/mnt/project")
     ap.add_argument("--out-dir", default=".")
+    ap.add_argument("--weights", choices=list(WEIGHT_SETS), default="inherited",
+                    help="zestaw wag kategorii COW (D-008 §3.2); domyślnie odziedziczone")
+    ap.add_argument("--normalization", choices=list(NORMALIZATIONS), default="raw",
+                    help="normalizacja serii (D-008 §3.3); domyślnie raw")
     a = ap.parse_args()
     dd, od = Path(a.data_dir), Path(a.out_dir)
     od.mkdir(parents=True, exist_ok=True)
 
+    # Domyślne (inherited, raw) → weights=None, brak normalizacji → ścieżka v2.0 bit w bit.
+    weights = None if a.weights == "inherited" else WEIGHT_SETS[a.weights]
     ucdp = build_ucdp(dd)
-    parts, cal_all, meta = [], [], {"script": VERSION, "ucdp_weights": UCDP_W}
+    parts, cal_all = [], []
+    meta = {"script": VERSION, "ucdp_weights": UCDP_W,
+            "weights": a.weights, "normalization": a.normalization}
 
     for level in ("W", "P"):
-        cow = build_cow(dd, level)
-        t, ratio, scale, jump = calibrate(cow, ucdp)
+        cow = build_cow(dd, level, weights)
+        t, ratio, scale, jump = calibrate(cow, ucdp)   # kalibracja zawsze na surowym cow
         t.insert(0, "poziom", level)
         cal_all.append(t)
         meta[f"level_{level}"] = {"scale": round(scale, 4), "D2_ratio": round(ratio, 3),
                                   "D2_pass": bool(ratio < D2_MAX_RATIO),
                                   "D3_jump_sd": round(float(jump), 3),
                                   "D3_pass": bool(abs(jump) < D3_MAX_SD)}
-        parts.append(frame(cow, f"A_COW_{level}", "COW"))
+        cow_v = apply_normalization(cow, a.normalization, dd)   # identyczność, gdy raw
+        parts.append(frame(cow_v, f"A_COW_{level}", "COW"))
         spl = pd.concat([cow, ucdp.loc[YEARS.max() + 1:] * scale])
-        parts.append(frame(spl, f"C_SPLICED_{level}",
-                           np.where(spl.index <= YEARS.max(), "COW", "UCDP_scaled")))
+        spl_v = apply_normalization(spl, a.normalization, dd)
+        parts.append(frame(spl_v, f"C_SPLICED_{level}",
+                           np.where(spl_v.index <= YEARS.max(), "COW", "UCDP_scaled")))
         print(f"[{level}] skala={scale:.3f} | D2 iloraz={ratio:.2f} "
               f"{'PASS' if ratio < D2_MAX_RATIO else 'FAIL'} | "
               f"D3 skok={jump:+.2f} SD {'PASS' if abs(jump) < D3_MAX_SD else 'FAIL'} | "
