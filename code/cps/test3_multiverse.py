@@ -231,18 +231,42 @@ def interpolation_control(dd: Path):
     reinterp = true.where(true.index.isin(knots)).interpolate(method="linear")
     rel = ((reinterp - true).abs() / true)
     interp_years = [y for y in yy if y not in knots]
+    # Wariant NIEZAKOTWICZONY (węzły 1950..2000, ogon 2001–2007 ekstrapolowany płasko):
+    # daje większe maksimum przy 2007, ale to błąd EKSTRAPOLACJI, którego pre-1950 nie ma
+    # (tam każdy rok leży między obecnymi węzłami). Podajemy dla pełności, poprawnie przypisany.
+    knots_open = [y for y in range(1950, 2008, 10)]
+    reint_open = true.where(true.index.isin(knots_open)).interpolate(method="linear",
+                                                                     limit_direction="both")
+    rel_open = ((reint_open - true).abs() / true)
     # (A) identyczność pc_full vs pc_1950 na wspólnym oknie (jeden reprezentatywny wariant)
     cow = bld.build_cow(dd, "W", None)
     pcf = bld.apply_normalization(cow, "pc_full", dd).loc[1950:2007]
     pc50 = bld.apply_normalization(cow, "pc_1950", dd)
     ident_maxreldiff = float((pcf - pc50).abs().div(pc50).max())
+
+    # (C) reprezentatywność przeniesienia na okres wcześniejszy: krzywizna log-ludności
+    # na skali dekadowej w obu okresach. Jeśli porównywalna, błąd zmierzony na 1950–2007
+    # jest REPREZENTATYWNY dla okresu wcześniejszego — NIE ograniczeniem górnym.
+    def decadal_curv(y0, y1):
+        yrs = list(range(y0, y1 + 1, 10))
+        lp = np.log(w.reindex(yrs).to_numpy(float))
+        return float(np.sqrt(np.mean(np.diff(lp, 2) ** 2)))     # RMS drugiej różnicy log
+    curv_19 = decadal_curv(1820, 1940)                          # okres wcześniejszy
+    curv_20 = decadal_curv(1950, 2000)                          # okres pomiaru kontroli
     return {
         "A_pc_full_vs_pc1950_corr": float(np.corrcoef(pcf, pc50)[0, 1]),
         "A_pc_full_vs_pc1950_maxreldiff": ident_maxreldiff,     # ~0 z konstrukcji
         "B_pop_reinterp_corr": float(np.corrcoef(true, reinterp)[0, 1]),
-        "B_maxreldiff_all_pct": float(rel.max() * 100),
-        "B_maxreldiff_interp_years_pct": float(rel.loc[interp_years].max() * 100),
-        "B_maxreldiff_knot_years_pct": float(rel.loc[knots].max() * 100),  # ~0 (węzły zachowane)
+        # ZAKOTWICZONE (interpolacja między węzłami — wierny odpowiednik pre-1950):
+        "B_anchored_meanreldiff_pct": float(rel.mean() * 100),
+        "B_anchored_maxreldiff_pct": float(rel.max() * 100),
+        "B_anchored_maxreldiff_interp_years_pct": float(rel.loc[interp_years].max() * 100),
+        # NIEZAKOTWICZONE (ogon 2001–2007 ekstrapolowany — błąd ekstrapolacji, nie interpolacji):
+        "B_open_meanreldiff_pct": float(rel_open.mean() * 100),
+        "B_open_maxreldiff_pct": float(rel_open.max() * 100),
+        "C_curv_1820_1940": curv_19,
+        "C_curv_1950_2000": curv_20,
+        "C_curv_ratio_20_19": curv_20 / curv_19,               # autor: ~0,87 (XIX w. nieco bardziej zakrzywiony)
         "_curve": (yy, (rel.to_numpy() * 100)),
     }
 
@@ -308,7 +332,7 @@ def diagnostics(df: pd.DataFrame, interp_ctrl: dict, vshare_m1, vshare_m2, out: 
         fig, ax = plt.subplots(figsize=(11, 4))
         ax.plot(yy, relpct, lw=1)
         ax.set_title("Kontrola interpolacji: |re-interpolacja dekadowa − prawda| / prawda, "
-                     f"1950–2007 (maks {interp_ctrl['B_maxreldiff_all_pct']:.2f}%)")
+                     f"1950–2007; zakotwiczone maks {interp_ctrl['B_anchored_maxreldiff_pct']:.2f}%)")
         ax.set_xlabel("rok"); ax.set_ylabel("różnica względna [%]")
         ax.grid(alpha=.3); fig.tight_layout(); pdf.savefig(fig); plt.close(fig)
 
@@ -349,8 +373,9 @@ def main():
           f"[składniki: M1 p<0,05 {frac['frac_M1_p05']*100:.1f}%, M2>0 {frac['frac_M2_pos']*100:.1f}%, "
           f"najostrzejszy {frac['frac_H1_sharp']*100:.1f}%].")
     print("Reguła §6 (na koniunkcji):", interpretation(frac["frac_H1"]))
-    print(f"Kontrola interpolacji: artefakt dekadowy maks {interp['B_maxreldiff_all_pct']:.2f}% "
-          f"(lata interpolowane {interp['B_maxreldiff_interp_years_pct']:.2f}%).")
+    print(f"Kontrola interpolacji (zakotwiczone): mean {interp['B_anchored_meanreldiff_pct']:.2f}% "
+          f"max {interp['B_anchored_maxreldiff_pct']:.2f}%; niezakotwiczony ogon max {interp['B_open_maxreldiff_pct']:.2f}% "
+          f"(ekstrapolacja); krzywizna 19w/20w ratio {interp['C_curv_ratio_20_19']:.2f}.")
     print("\nNajwiększy udział w wariancji M1:")
     print(vshare_m1.head(5).to_string(index=False))
     print("\nUWAGA: odsetek wspierających NIE jest wartością p (kombinacje dzielą dane).")
