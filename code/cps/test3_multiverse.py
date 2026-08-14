@@ -60,7 +60,9 @@ PERIODS = (32.0, 35.1, 40.0)
 EPOCH_SPLIT = 1914             # epoka 2: rok >= 1914; epoka 1: 1816..1913
 EPOCH1 = (1816, 1913)
 DIMS = ["level", "weights", "norm", "smooth", "detrend", "period"]
-# odniesienia narracyjne (§5.1)
+# odniesienia narracyjne (§5.1). Oryginalna: T=35,1 pochodzi z dopasowania sinusoidy
+# do wars_smooth BEZ detrendingu i BEZ per capita (mw-8 w kodzie v0.1); detrending
+# pojawiał się dopiero w periodogramie, czyli w innej procedurze.
 SPEC_ORIGINAL = dict(level="P", weights="inherited", norm="raw",
                      smooth=True, detrend=False, period=35.1)   # jak opublikowano
 SPEC_PRIMARY = dict(level="W", weights="equal", norm="raw",
@@ -71,13 +73,14 @@ SPEC_PRIMARY = dict(level="W", weights="equal", norm="raw",
 # ============================ budowa serii (cache) ============================
 def build_series_cache(dd: Path) -> dict:
     """(level, weights, norm) → pd.Series(value). COW liczone raz na (level, weights);
-    normalizacja nakładana na gotową serię. Zawiera też pc_1950 (kontrola)."""
+    normalizacja (raw, pc_full) nakładana na gotową serię. pc_1950 NIE liczone jako
+    wariant siatki — kontrola interpolacji jest osobna (patrz interpolation_control)."""
     cache = {}
     for level in LEVELS:
         for wk in WEIGHTS:
             weights = None if wk == "inherited" else bld.WEIGHT_SETS[wk]
             cow = bld.build_cow(dd, level, weights)                 # surowa seria ważona
-            for nz in ("raw", "pc_full", "pc_1950"):
+            for nz in NORMS_GRID:                                   # raw, pc_full
                 cache[(level, wk, nz)] = bld.apply_normalization(cow, nz, dd)
     return cache
 
@@ -134,12 +137,6 @@ def main_grid_specs():
         yield dict(level=level, weights=wk, norm=nz, smooth=ma, detrend=det, period=T)
 
 
-def control_specs():                                   # pc_1950, poza siatką główną
-    for level, wk, ma, det, T in itertools.product(
-            LEVELS, WEIGHTS, SMOOTHINGS, DETRENDINGS, PERIODS):
-        yield dict(level=level, weights=wk, norm="pc_1950", smooth=ma, detrend=det, period=T)
-
-
 def evaluate(specs, cache, rng) -> pd.DataFrame:
     rows = []
     for s in specs:
@@ -183,18 +180,24 @@ def variance_shares(df: pd.DataFrame, outcome: str) -> pd.DataFrame:
 
 
 def support_fractions(df: pd.DataFrame) -> dict:
-    """§5.2 — odsetek kombinacji wspierających H1: M1 z p<0,05, oraz osobno M2>0.
-    NIE jest to wartość p (kombinacje dzielą dane, §7.3 protokołu)."""
-    n = len(df)
-    frac_m1 = float((df.p_M1 < 0.05).mean())
-    frac_m2 = float((df.M2 > 0).mean())          # kontrast zgodny z H1 (znak)
-    frac_m2_sig = float(((df.M2 > 0) & (df.p_M2 < 0.05)).mean())
-    return {"n": n, "frac_M1_p05": frac_m1, "frac_M2_pos": frac_m2,
-            "frac_M2_pos_sig": frac_m2_sig}
+    """§5.2 — cztery odsetki, żeby było widać, który składnik H1 zawodzi. H1 (D-002)
+    to KONIUNKCJA: moc w paśmie ORAZ kontrast w kierunku przewidywanym. Reguła §6
+    orzeka na `frac_H1` = M1 p<0,05 ∧ M2>0. Żaden z tych odsetków NIE jest wartością p
+    (kombinacje dzielą dane, §7.3).
+    Uwaga: samo M2>0 przy braku efektu wypada ~50% przypadków (rzut monetą) — nie jest
+    kryterium, ma sens wyłącznie w koniunkcji."""
+    m1 = df.p_M1 < 0.05
+    m2pos = df.M2 > 0
+    m2sig = df.p_M2 < 0.05
+    return {"n": len(df),
+            "frac_M1_p05": float(m1.mean()),                       # moc w paśmie obecna
+            "frac_M2_pos": float(m2pos.mean()),                    # kontrast w kierunku H1 (~rzut monetą)
+            "frac_H1": float((m1 & m2pos).mean()),                 # H1 jak sformułowana — ORZEKA §6
+            "frac_H1_sharp": float((m1 & m2sig & m2pos).mean())}   # odczyt najostrzejszy
 
 
 def interpretation(frac: float) -> str:
-    """Reguła §6, zadeklarowana przed uruchomieniem. Stosowana do frac_M1_p05."""
+    """Reguła §6, zadeklarowana przed uruchomieniem. Stosowana do frac_H1 (koniunkcja)."""
     if frac < 0.05:
         return ("<5%: hipoteza nie broni się w przestrzeni specyfikacji; "
                 "pojedyncze wyniki wspierające to oczekiwana liczba z 192 porównań")
@@ -203,6 +206,45 @@ def interpretation(frac: float) -> str:
                 "wymagającym niezależnego uzasadnienia — samo jego istnienie nie jest dowodem")
     return (">25%: negatywny wynik Testu 1 był specyficzny dla przyjętej tam "
             "specyfikacji i wymaga ponownego rozważenia")
+
+
+def interpolation_control(dd: Path):
+    """Zastępuje widmową kontrolę pc_1950. Powód (§C, decyzja autora): przy n=58
+    pasmo 32–40 lat jest węższe niż komórka rozdzielcza (Δf≈0,0172; ~0,38 komórki),
+    więc M1 tam nie jest estymowalne — mierzyłoby położenie prążka względem granic
+    pasma, nie dane. M2 i tak niedefiniowane (brak epoki 1). Zamiast liczyć widmo na
+    pc_1950, pytamy wprost: czy interpolacja deformuje wynik.
+
+    (A) pc_full vs pc_1950 na 1950–2007: identyczne z konstrukcji (normalizacja jest
+        punktowa, a po 1950 ludność jest mierzona rocznie), więc korelacja = 1 i różnica
+        = 0 — potwierdzenie, że pc_1950 to dokładnie ogon pc_full.
+    (B) Artefakt interpolacji dekadowej, zmierzony tam, gdzie mamy prawdę (1950–2007,
+        dane roczne): decymujemy ludność do węzłów dekadowych, re-interpolujemy liniowo
+        i porównujemy z prawdą. Ponieważ normalizacja jest punktowa, WZGLĘDNA deformacja
+        serii per capita RÓWNA SIĘ względnej deformacji mianownika — więc ta liczba
+        ogranicza, o ile interpolacja mogłaby zniekształcić per capita przed 1950."""
+    df = pd.read_csv(bld.find_input(dd, "population.csv"))
+    w = df[df["Entity"] == "World"].set_index("Year")["Population (historical)"].sort_index()
+    yy = np.arange(1950, 2008)
+    true = w.reindex(yy).astype(float)                      # prawda: roczna, mierzona
+    knots = [y for y in range(1950, 2008, 10)] + [2007]     # węzły dekadowe (jak przed 1940)
+    reinterp = true.where(true.index.isin(knots)).interpolate(method="linear")
+    rel = ((reinterp - true).abs() / true)
+    interp_years = [y for y in yy if y not in knots]
+    # (A) identyczność pc_full vs pc_1950 na wspólnym oknie (jeden reprezentatywny wariant)
+    cow = bld.build_cow(dd, "W", None)
+    pcf = bld.apply_normalization(cow, "pc_full", dd).loc[1950:2007]
+    pc50 = bld.apply_normalization(cow, "pc_1950", dd)
+    ident_maxreldiff = float((pcf - pc50).abs().div(pc50).max())
+    return {
+        "A_pc_full_vs_pc1950_corr": float(np.corrcoef(pcf, pc50)[0, 1]),
+        "A_pc_full_vs_pc1950_maxreldiff": ident_maxreldiff,     # ~0 z konstrukcji
+        "B_pop_reinterp_corr": float(np.corrcoef(true, reinterp)[0, 1]),
+        "B_maxreldiff_all_pct": float(rel.max() * 100),
+        "B_maxreldiff_interp_years_pct": float(rel.loc[interp_years].max() * 100),
+        "B_maxreldiff_knot_years_pct": float(rel.loc[knots].max() * 100),  # ~0 (węzły zachowane)
+        "_curve": (yy, (rel.to_numpy() * 100)),
+    }
 
 
 # ============================ wykresy ============================
@@ -240,8 +282,8 @@ def specification_curve(df: pd.DataFrame, outcome: str, out: Path):
         fig.tight_layout(); pdf.savefig(fig); plt.close(fig)
 
 
-def diagnostics(df: pd.DataFrame, ctrl: pd.DataFrame, vshare_m1, vshare_m2, out: Path):
-    """§5.1 rozkłady, §5.3 rozbicie wariancji, kontrola pc_1950."""
+def diagnostics(df: pd.DataFrame, interp_ctrl: dict, vshare_m1, vshare_m2, out: Path):
+    """§5.1 rozkłady, §5.3 rozbicie wariancji, kontrola interpolacji (nie pc_1950 widmowe)."""
     with PdfPages(out) as pdf:
         for outcome in ("M1", "M2"):
             fig, ax = plt.subplots(figsize=(11, 4))
@@ -261,11 +303,14 @@ def diagnostics(df: pd.DataFrame, ctrl: pd.DataFrame, vshare_m1, vshare_m2, out:
             ax.set_title(f"Rozbicie wariancji {name} — udział sumy kwadratów (nie test istotności)")
             ax.set_xlabel("udział SS"); ax.grid(alpha=.3, axis="x")
             fig.tight_layout(); pdf.savefig(fig); plt.close(fig)
-        # kontrola pc_1950 — rozkład M1 (M2 nieokreślone: brak epoki 1)
+        # kontrola interpolacji: artefakt decymacji dekadowej na prawdzie 1950–2007
+        yy, relpct = interp_ctrl["_curve"]
         fig, ax = plt.subplots(figsize=(11, 4))
-        ax.hist(ctrl.M1.dropna(), bins=30, color="darkorange", alpha=.75)
-        ax.set_title("Kontrola pc_1950 (1950–2007, dane roczne) — rozkład M1; M2 nieokreślone")
-        ax.set_xlabel("M1"); ax.grid(alpha=.3); fig.tight_layout(); pdf.savefig(fig); plt.close(fig)
+        ax.plot(yy, relpct, lw=1)
+        ax.set_title("Kontrola interpolacji: |re-interpolacja dekadowa − prawda| / prawda, "
+                     f"1950–2007 (maks {interp_ctrl['B_maxreldiff_all_pct']:.2f}%)")
+        ax.set_xlabel("rok"); ax.set_ylabel("różnica względna [%]")
+        ax.grid(alpha=.3); fig.tight_layout(); pdf.savefig(fig); plt.close(fig)
 
 
 def main():
@@ -280,29 +325,32 @@ def main():
     rng = np.random.default_rng(SEED)                  # jedno ziarno na cały bieg (B2.5)
 
     grid = evaluate(main_grid_specs(), cache, rng)     # 192
-    ctrl = evaluate(control_specs(), cache, rng)       # pc_1950, kontrola
+    interp = interpolation_control(dd)                 # kontrola interpolacji (nie widmowa pc_1950)
 
     vshare_m1 = variance_shares(grid, "M1")
     vshare_m2 = variance_shares(grid, "M2")
     frac = support_fractions(grid)
 
     meta = {"script": VERSION, "seed": SEED, "B": B, "null": f"AR({AR_ORDER})",
-            "n_main": len(grid), "n_control_pc1950": len(ctrl),
-            "sha256_builder": hashlib.sha256(Path("test0c_build_canonical.py").read_bytes()).hexdigest()[:16]}
+            "n_main": len(grid),
+            "sha256_builder": hashlib.sha256(Path("test0c_build_canonical.py").read_bytes()).hexdigest()[:16],
+            "interp_control": {k: v for k, v in interp.items() if not k.startswith("_")}}
     with open(od / "test3_results.csv", "w", encoding="utf-8") as fh:
         fh.write("# " + json.dumps({**meta, "support": frac,
-                                    "interpretation_M1": interpretation(frac["frac_M1_p05"])},
+                                    "interpretation_H1": interpretation(frac["frac_H1"])},
                                    ensure_ascii=False) + "\n")
-        pd.concat([grid.assign(grid="main"), ctrl.assign(grid="control_pc1950")],
-                  ignore_index=True).to_csv(fh, index=False)
+        grid.to_csv(fh, index=False)
 
     specification_curve(grid, "M1", od / "test3_curve.pdf")
-    diagnostics(grid, ctrl, vshare_m1, vshare_m2, od / "test3_diagnostics.pdf")
+    diagnostics(grid, interp, vshare_m1, vshare_m2, od / "test3_diagnostics.pdf")
 
-    print(f"Siatka główna: {len(grid)} kombinacji; kontrola pc_1950: {len(ctrl)}.")
-    print(f"Wsparcie H1: M1 p<0,05 w {frac['frac_M1_p05']*100:.1f}% · "
-          f"M2>0 w {frac['frac_M2_pos']*100:.1f}% (z tego istotnych {frac['frac_M2_pos_sig']*100:.1f}%).")
-    print("Reguła §6:", interpretation(frac["frac_M1_p05"]))
+    print(f"Siatka główna: {len(grid)} kombinacji (kontrola pc_1950 widmowa wycofana).")
+    print(f"Wsparcie H1 (koniunkcja M1 p<0,05 ∧ M2>0): {frac['frac_H1']*100:.1f}% "
+          f"[składniki: M1 p<0,05 {frac['frac_M1_p05']*100:.1f}%, M2>0 {frac['frac_M2_pos']*100:.1f}%, "
+          f"najostrzejszy {frac['frac_H1_sharp']*100:.1f}%].")
+    print("Reguła §6 (na koniunkcji):", interpretation(frac["frac_H1"]))
+    print(f"Kontrola interpolacji: artefakt dekadowy maks {interp['B_maxreldiff_all_pct']:.2f}% "
+          f"(lata interpolowane {interp['B_maxreldiff_interp_years_pct']:.2f}%).")
     print("\nNajwiększy udział w wariancji M1:")
     print(vshare_m1.head(5).to_string(index=False))
     print("\nUWAGA: odsetek wspierających NIE jest wartością p (kombinacje dzielą dane).")
