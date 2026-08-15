@@ -18,9 +18,16 @@ Test dotyczy **wyłącznie H2** (umiędzynarodowienie), nie H1 i nie istnienia c
 (warunek 2: w paśmie S4 — spełniony). To **pierwszy pozytywny wynik w całym projekcie**.
 
 Kontrast **nie jest funkcją kilku lat skrajnych**: usuwanie kolejnych najwyższych lat
-epoki 2 nie znosi go, lecz go umacnia (k = 10: M2 = 30,23, p = 0,0020). Odpowiedź na
-pytanie „ile obserwacji trzeba usunąć, żeby wynik zniknął" brzmi: **nie znika nawet
-po dziesięciu** (protokół §4: „kontrast jest własnością rozkładu").
+epoki 2 **nie znosi go** (k = 10: M2 = 30,23, p = 0,0020). Odpowiedź na pytanie
+„ile obserwacji trzeba usunąć, żeby wynik zniknął" brzmi: **nie znika nawet po dziesięciu**
+(protokół §4: „kontrast jest własnością rozkładu").
+
+**Uwaga o mechanizmie (istotna).** Wzrost χ² przy rosnącym k **nie** oznacza wzmocnienia
+struktury fazowej. χ² ma wariancję w mianowniku; surowa rozbieżność między koszami
+fazowymi (licznik = χ²·wariancja) **maleje** monotonicznie: 1234 → 1000 (k=5) → 911 (k=10).
+χ² rośnie wyłącznie dlatego, że wariancja spada szybciej niż licznik (34,4 → 27,5 → 21,9).
+Właściwy wniosek brzmi: kontrast **przeżywa** usunięcie skrajnych obserwacji — a nie
+„rośnie, gdy je usuwamy".
 
 **Czego ten wynik NIE mówi** (§7, §B2):
 - nie dotyczy H1 ani istnienia cyklu — Test 3 wykazał brak mocy w paśmie w **0/192**
@@ -47,10 +54,17 @@ Pasmo S4 = usuwanie k **losowych** lat, 500 powtórzeń, osobny strumień losowy
 | 9 | 85 | 27,66 | 0,0025 | 21,55 | 1,83 |
 | 10 | 84 | 30,23 | 0,0020 | 21,05 | 2,11 |
 
-**Interpretacja.** Usuwanie *najwyższych* lat trzyma M2 na poziomie 23–30 i obniża p,
-podczas gdy usuwanie *losowych* lat systematycznie obniża M2 (24,4 → 21,1). Znaczy to,
-że najwyższe lata **nie są** nośnikiem kontrastu — gdyby były, ich usunięcie zbijałoby
-M2 mocniej niż losowe. Jest odwrotnie: kontrast leży w **rozkładzie**, nie w ogonie.
+**Interpretacja — z zastrzeżeniem o wariancji.** Usuwanie *najwyższych* lat trzyma M2
+(χ²-różnicę) na poziomie 23–30, podczas gdy usuwanie *losowych* systematycznie ją obniża
+(24,4 → 21,1). **Ale to zestawienie krzywych jest odniesieniem częściowym.** χ² dzieli
+przez wariancję, a usuwanie najwyższych lat **silnie obniża wariancję epoki 2**
+(34,4 → 21,9 przy k=10), podczas gdy usuwanie losowych prawie jej nie rusza (34,4 → 34,3).
+Pasmo S4 **nie odwzorowuje** więc redukcji wariancji towarzyszącej usuwaniu najwyższych,
+przez co margines wygląda na większy, niż jest. Najwyższe lata **wnoszą** do surowej
+rozbieżności między koszami (licznik maleje 1234 → 911) — ale po normalizacji wariancją
+kontrast się utrzymuje. To, co P1 realnie pokazuje, jest zatem węższe, lecz wystarczające
+dla §6: usunięcie pięciu (i do dziesięciu) najwyższych lat **nie znosi** istotnego
+kontrastu (p < 0,05).
 
 ## 3. Lista k najwyższych lat epoki 2 (obie serie, obie listy)
 
@@ -132,7 +146,14 @@ tę samą ścieżkę detrendingu epokowego. Zatwierdzone w przeglądzie.
 
 **Oba warunki §6 spełnione** dla P1: M2 > 0 i p < 0,05 przy k = 5 (M2 = 24,91, p = 0,0085)
 **oraz** spadek M2 (k=0→k=5) w paśmie S4 (−0,54 wobec 1,63 ± 3,07). Twierdzenie
-**„kontrast epok jest własnością rozkładu, nie kilku lat"** jest **wsparte**.
+**„kontrast epok jest własnością rozkładu, nie kilku lat"** jest **wsparte** — w postaci
+„kontrast **przeżywa** usunięcie skrajnych obserwacji", nie „umacnia się przy nim" (§1).
+
+**Zastrzeżenie do warunku 2.** Pasmo S4 jest odniesieniem **częściowym**: usuwanie
+losowych lat nie redukuje wariancji epoki 2 tak jak usuwanie najwyższych (34,4 vs 21,9),
+więc margines jest mniejszy, niż sugeruje samo zestawienie krzywych. Kryterium pozostaje
+spełnione, bo pytało wyłącznie o to, czy usunięcie pięciu najwyższych lat **znosi**
+kontrast — nie znosi (p = 0,0085).
 
 Wykonano P1, P2, S1 (×2 progi), S2 (×2 okresy), S3 (R1/R2/R3), S4 (pasmo), S5 (2 serie) —
 **orzeka wyłącznie P1**; pozostałe są potwierdzające lub opisowe.
