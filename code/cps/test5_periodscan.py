@@ -122,14 +122,23 @@ def load(data: Path, variant: str, y0: int, y1: int):
     return s.index.to_numpy(), s.to_numpy(float)
 
 
-RUNS = [   # id, seria, y0, y1, ma, statystyki, rola
-    ("P1", "A_COW_W", 1816, 2007, False, ("W1",),        "PIERWSZORZĘDNY — ORZEKA"),
-    ("P2", "A_COW_W", 1816, 2007, False, ("W2",),        "współpierwszorzędny"),
-    ("S1", "A_COW_P", 1816, 2007, False, ("W1", "W2"),   "H2"),
-    ("S2", "A_COW_W", 1914, 2007, False, ("W1", "W2"),   "epoka 2, opisowy"),
-    ("S3", "A_COW_P", 1914, 2007, False, ("W1", "W2"),   "epoka 2, H2, opisowy"),
-    ("S4", "B_UCDP",  1946, 2024, False, ("W1", "W2"),   "replikacja niezależna"),
-    ("S5", "A_COW_W", 1816, 2007, True,  ("W1",),        "ile skan przesuwa MA(11)"),
+# Uruchomienia grupowane po KONFIGURACJI (seria, okno, filtr): jeden zestaw surogatów
+# na konfigurację (A2.4), więc P1(W1) i P2(W2) dzielą te same realizacje A_COW_W —
+# obie statystyki liczone na wspólnym zestawie surogatów (zatwierdzone). Kolejność
+# konfiguracji przesądza, które realizacje trafiają gdzie (jeden strumień rng), dlatego
+# jest zapisywana w nagłówku CSV (run_order) — inaczej ten sam seed po zmianie kolejności
+# dałby inne liczby.
+CONFIGS = [   # seria, y0, y1, ma, [(statystyka, id, rola), ...]
+    ("A_COW_W", 1816, 2007, False, [("W1", "P1", "PIERWSZORZĘDNY — ORZEKA"),
+                                    ("W2", "P2", "współpierwszorzędny")]),
+    ("A_COW_P", 1816, 2007, False, [("W1", "S1", "H2"), ("W2", "S1", "H2")]),
+    ("A_COW_W", 1914, 2007, False, [("W1", "S2", "epoka 2, opisowy"),
+                                    ("W2", "S2", "epoka 2, opisowy")]),
+    ("A_COW_P", 1914, 2007, False, [("W1", "S3", "epoka 2, H2, opisowy"),
+                                    ("W2", "S3", "epoka 2, H2, opisowy")]),
+    ("B_UCDP",  1946, 2024, False, [("W1", "S4", "replikacja niezależna"),
+                                    ("W2", "S4", "replikacja niezależna")]),
+    ("A_COW_W", 1816, 2007, True,  [("W1", "S5", "ile skan przesuwa MA(11)")]),
 ]
 
 
@@ -149,11 +158,13 @@ def main():
     out = Path(a.out_dir); out.mkdir(parents=True, exist_ok=True)
     rng = np.random.default_rng(SEED)                        # jedno ziarno na cały bieg
 
-    res_rows, scan_rows, plot = [], [], {}
-    for rid, var, y0, y1, ma, stats, rola in RUNS:
+    res_rows, scan_rows, plot, run_order = [], [], {}, []
+    for var, y0, y1, ma, items in CONFIGS:
+        stats = tuple(dict.fromkeys(s for s, _, _ in items))   # unikalne statystyki, kolejność zachowana
         years, vals = load(Path(a.data), var, y0, y1)
-        r = run_config(vals, years, y0, ma, stats, rng)
-        for s in stats:
+        r = run_config(vals, years, y0, ma, stats, rng)        # jeden zestaw surogatów na konfigurację
+        run_order.append(f"{var}:{y0}-{y1}:{'MA11' if ma else 'surowa'}({','.join(stats)})")
+        for s, rid, rola in items:
             d = r[s]
             res_rows.append({"id": rid, "seria": var, "okno": f"{y0}-{y1}",
                              "filtr": "MA11" if ma else "surowa", "statystyka": s,
@@ -165,12 +176,15 @@ def main():
                                   "T": round(float(T), 1), "W_obs": round(float(wobs), 6),
                                   "W_sur_p95": round(float(wp95), 6)})
             plot[(rid, s)] = d
-        print(f"{rid} {var} {y0}-{y1} {'MA11' if ma else 'surowa':7s} | " +
-              " · ".join(f"{s}: Wmax={r[s]['Wmax']:.4g} @T={r[s]['Targmax']} p={r[s]['p']:.4f}" for s in stats))
+        print(f"{var} {y0}-{y1} {'MA11' if ma else 'surowa':7s} | " +
+              " · ".join(f"{rid}/{s}: Wmax={r[s]['Wmax']:.4g} @T={r[s]['Targmax']} p={r[s]['p']:.4f}"
+                         for s, rid, _ in items))
 
     res = pd.DataFrame(res_rows)
     meta = {"script": VERSION, "seed": SEED, "B": B, "null": f"AR({AR_ORDER})",
             "scan": f"[{SCAN[0]:.0f},{SCAN[-1]:.0f}] krok 0,5 ({len(SCAN)} pkt)",
+            "run_order": run_order,      # kolejność losowania (jeden strumień rng) — dla odtwarzalności
+            "note_P1P2": "P1(W1) i P2(W2) na wspólnych realizacjach surogatów A_COW_W — skorelowane, nie dwa niezależne potwierdzenia",
             "sha256_data": hashlib.sha256(Path(a.data).read_bytes()).hexdigest()[:16]}
     with open(out / "test5_results.csv", "w", encoding="utf-8") as fh:
         fh.write("# " + json.dumps(meta, ensure_ascii=False) + "\n"); res.to_csv(fh, index=False)
