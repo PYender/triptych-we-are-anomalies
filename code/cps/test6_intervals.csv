@@ -1,0 +1,89 @@
+# {"builder": "test6_build_intervals.py v1.0", "zrodlo": "Inter-StateWarData_v4.0.csv", "sha256_src": "2535e30b145141c3", "wierszy_-7": 0, "diad_>=3": 25, "odstepy_pelne": 62, "odstepy_cenzurowane": 25, "ujemne": 8, "zerowe": 3}
+diada,ccode_a,ccode_b,rok_konca_poprz,rok_poczatku_nast,dlugosc_odstepu,czas_trwania_poprz,cenzurowany,epoka_1914,epoka_1945,flag,wojna_poprz,wojna_nast
+United States of America–Vietnam,2,816,1975,1968,-7,10,0,po,po,negatywny,"Vietnam War, Phase 2","Second Laotian, Phase 2"
+United States of America–Vietnam,2,816,1973,1970,-3,5,0,po,po,negatywny,"Second Laotian, Phase 2",Communist Coalition
+United States of America–Vietnam,2,816,1971,2007,36,1,1,po,po,ok,Communist Coalition,(cenzurowany do 2007)
+Guatemala–El Salvador,90,92,1876,1885,9,0,0,przed,przed,ok,First Central American,Second Central American
+Guatemala–El Salvador,90,92,1885,1906,21,0,0,przed,przed,ok,Second Central American,Third Central American
+Guatemala–El Salvador,90,92,1906,2007,101,0,1,przed,przed,ok,Third Central American,(cenzurowany do 2007)
+France–Germany,220,255,1871,1914,43,1,0,przed,przed,ok,Franco-Prussian,World War I
+France–Germany,220,255,1918,1939,21,4,0,po,przed,ok,World War I,World War II
+France–Germany,220,255,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+France–Bulgaria,220,355,1918,1939,21,4,0,po,przed,ok,World War I,World War II
+France–Bulgaria,220,355,1945,1939,-6,6,0,po,po,negatywny,World War II,World War II
+France–Bulgaria,220,355,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+France–China,220,710,1885,1900,15,1,0,przed,przed,ok,Sino-French,Boxer Rebellion
+France–China,220,710,1900,1939,39,0,0,przed,przed,ok,Boxer Rebellion,World War II
+France–China,220,710,1945,1950,5,6,0,po,po,ok,World War II,Korean
+France–China,220,710,1953,2007,54,3,1,po,po,ok,Korean,(cenzurowany do 2007)
+Spain–Morocco,230,600,1860,1909,49,1,0,przed,przed,ok,First Spanish-Moroccan,Second Spanish-Moroccan
+Spain–Morocco,230,600,1910,1957,47,1,0,przed,przed,ok,Second Spanish-Moroccan,IfniWar
+Spain–Morocco,230,600,1958,2007,49,1,1,po,po,ok,IfniWar,(cenzurowany do 2007)
+Germany–Yugoslavia,255,345,1918,1939,21,4,0,po,przed,ok,World War I,World War II
+Germany–Yugoslavia,255,345,1945,1999,54,6,0,po,po,ok,World War II,War for Kosovo
+Germany–Yugoslavia,255,345,1999,2007,8,0,1,po,po,ok,War for Kosovo,(cenzurowany do 2007)
+Germany–USSR,255,365,1918,1918,0,4,0,po,przed,zero,World War I,Latvian Liberation
+Germany–USSR,255,365,1920,1939,19,2,0,po,przed,ok,Latvian Liberation,World War II
+Germany–USSR,255,365,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+Austria-Hungary–Italy,300,325,1849,1859,10,1,0,przed,przed,ok,Austro-Sardinian,Italian Unification
+Austria-Hungary–Italy,300,325,1859,1866,7,0,0,przed,przed,ok,Italian Unification,Seven Weeks
+Austria-Hungary–Italy,300,325,1866,1914,48,0,0,przed,przed,ok,Seven Weeks,World War I
+Austria-Hungary–Italy,300,325,1918,2007,89,4,1,po,przed,ok,World War I,(cenzurowany do 2007)
+Italy–Bulgaria,325,355,1918,1939,21,4,0,po,przed,ok,World War I,World War II
+Italy–Bulgaria,325,355,1945,1939,-6,6,0,po,po,negatywny,World War II,World War II
+Italy–Bulgaria,325,355,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+Yugoslavia–Bulgaria,345,355,1913,1914,1,0,0,przed,przed,ok,Second Balkan,World War I
+Yugoslavia–Bulgaria,345,355,1918,1939,21,4,0,po,przed,ok,World War I,World War II
+Yugoslavia–Bulgaria,345,355,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+Yugoslavia–Turkey,345,640,1913,1914,1,1,0,przed,przed,ok,First Balkan,World War I
+Yugoslavia–Turkey,345,640,1918,1999,81,4,0,po,przed,ok,World War I,War for Kosovo
+Yugoslavia–Turkey,345,640,1999,2007,8,0,1,po,po,ok,War for Kosovo,(cenzurowany do 2007)
+Greece–Bulgaria,350,355,1913,1914,1,0,0,przed,przed,ok,Second Balkan,World War I
+Greece–Bulgaria,350,355,1918,1939,21,4,0,po,przed,ok,World War I,World War II
+Greece–Bulgaria,350,355,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+Greece–Turkey,350,640,1897,1912,15,0,0,przed,przed,ok,Greco-Turkish,First Balkan
+Greece–Turkey,350,640,1913,1914,1,1,0,przed,przed,ok,First Balkan,World War I
+Greece–Turkey,350,640,1918,1919,1,4,0,po,przed,ok,World War I,Second Greco-Turkish
+Greece–Turkey,350,640,1922,2007,85,3,1,po,przed,ok,Second Greco-Turkish,(cenzurowany do 2007)
+Bulgaria–Romania,355,360,1913,1914,1,0,0,przed,przed,ok,Second Balkan,World War I
+Bulgaria–Romania,355,360,1918,1939,21,4,0,po,przed,ok,World War I,World War II
+Bulgaria–Romania,355,360,1945,1939,-6,6,0,po,po,negatywny,World War II,World War II
+Bulgaria–Romania,355,360,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+USSR–Finland,365,375,1920,1939,19,2,0,po,przed,ok,Estonian Liberation,Russo-Finnish
+USSR–Finland,365,375,1940,1939,-1,1,0,po,przed,negatywny,Russo-Finnish,World War II
+USSR–Finland,365,375,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+USSR–Turkey,365,640,1829,1853,24,1,0,przed,przed,ok,First Russo-Turkish,Crimean
+USSR–Turkey,365,640,1856,1877,21,3,0,przed,przed,ok,Crimean,Second Russo-Turkish
+USSR–Turkey,365,640,1878,1914,36,1,0,przed,przed,ok,Second Russo-Turkish,World War I
+USSR–Turkey,365,640,1918,2007,89,4,1,po,przed,ok,World War I,(cenzurowany do 2007)
+USSR–China,365,710,1900,1900,0,0,0,przed,przed,zero,Boxer Rebellion,Sino-Russian
+USSR–China,365,710,1900,1929,29,0,0,przed,przed,ok,Sino-Russian,Manchurian
+USSR–China,365,710,1929,2007,78,0,1,po,przed,ok,Manchurian,(cenzurowany do 2007)
+USSR–Japan,365,740,1905,1938,33,1,0,przed,przed,ok,Russo-Japanese,Changkufeng
+USSR–Japan,365,740,1938,1939,1,0,0,po,przed,ok,Changkufeng,Nomonhan
+USSR–Japan,365,740,1939,1939,0,0,0,po,przed,zero,Nomonhan,World War II
+USSR–Japan,365,740,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+Egypt–Israel,651,666,1949,1956,7,1,0,po,po,ok,Arab-Israeli,Sinai War
+Egypt–Israel,651,666,1956,1967,11,0,0,po,po,ok,Sinai War,Six Day War
+Egypt–Israel,651,666,1967,1969,2,0,0,po,po,ok,Six Day War,War of Attrition
+Egypt–Israel,651,666,1970,1973,3,1,0,po,po,ok,War of Attrition,Yom Kippur War
+Egypt–Israel,651,666,1973,2007,34,0,1,po,po,ok,Yom Kippur War,(cenzurowany do 2007)
+Syria–Israel,652,666,1949,1967,18,1,0,po,po,ok,Arab-Israeli,Six Day War
+Syria–Israel,652,666,1967,1973,6,0,0,po,po,ok,Six Day War,Yom Kippur War
+Syria–Israel,652,666,1973,1982,9,0,0,po,po,ok,Yom Kippur War,War over Lebanon
+Syria–Israel,652,666,1982,2007,25,0,1,po,po,ok,War over Lebanon,(cenzurowany do 2007)
+Jordan–Israel,663,666,1949,1967,18,1,0,po,po,ok,Arab-Israeli,Six Day War
+Jordan–Israel,663,666,1967,1973,6,0,0,po,po,ok,Six Day War,Yom Kippur War
+Jordan–Israel,663,666,1973,2007,34,0,1,po,po,ok,Yom Kippur War,(cenzurowany do 2007)
+China–Japan,710,740,1895,1900,5,1,0,przed,przed,ok,First Sino-Japanese,Boxer Rebellion
+China–Japan,710,740,1900,1931,31,0,0,przed,przed,ok,Boxer Rebellion,Second Sino-Japanese
+China–Japan,710,740,1933,1937,4,2,0,po,przed,ok,Second Sino-Japanese,Third Sino-Japanese
+China–Japan,710,740,1941,1939,-2,4,0,po,przed,negatywny,Third Sino-Japanese,World War II
+China–Japan,710,740,1945,2007,62,6,1,po,po,ok,World War II,(cenzurowany do 2007)
+India–Pakistan,750,770,1949,1965,16,2,0,po,po,ok,First Kashmir,Second Kashmir
+India–Pakistan,750,770,1965,1971,6,0,0,po,po,ok,Second Kashmir,Bangladesh
+India–Pakistan,750,770,1971,1999,28,0,0,po,po,ok,Bangladesh,Kargil War
+India–Pakistan,750,770,1999,2007,8,0,1,po,po,ok,Kargil War,(cenzurowany do 2007)
+Cambodia–Vietnam,811,816,1975,1970,-5,10,0,po,po,negatywny,"Vietnam War, Phase 2",Communist Coalition
+Cambodia–Vietnam,811,816,1971,1977,6,1,0,po,po,ok,Communist Coalition,Vietnamese-Cambodian
+Cambodia–Vietnam,811,816,1979,2007,28,2,1,po,po,ok,Vietnamese-Cambodian,(cenzurowany do 2007)
