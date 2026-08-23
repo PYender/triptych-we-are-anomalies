@@ -463,3 +463,82 @@ wielkości obok siebie i nie traktować rozbieżności jako błędu.
 **Ograniczenie nr 3 protokołu pozostaje w mocy i się pogłębia.** Próg wybiera pary walczące
 często; scalanie dodatkowo zmniejsza liczbę epizodów właśnie u par o konfliktach gęstych.
 Kierunek obciążenia bez zmian — w stronę pozornej regularności.
+
+---
+
+## D-014 · 2026-08-23 · Odstęp liczony jako czas ekspozycji, nie jako różnica dat
+
+**Kontekst.** Przegląd przebudowanej warstwy danych Testu 6 (`TEST6_DATA_REPORT.md` v2,
+builder v2.0) wykazał, że odstępy i czasy cenzurowane liczone są w latach kalendarzowych,
+bez kontroli, czy w tych latach **obie strony diady są członkami systemu państw COW**.
+`system2016.csv` pokazuje, że w kilku przypadkach nie są.
+
+### Rozstrzygnięcie
+
+**1. Definicja odstępu.** Odstęp między epizodami oraz odstęp cenzurowany liczony jest jako
+**liczba lat ekspozycji** — lat w przedziale, w których **oba** kody państw występują w
+`system2016.csv` — a nie jako różnica dat kalendarzowych.
+
+**2. Wariant kalendarzowy** (obecna definicja) zostaje jako wrażliwość, raportowany obok,
+poza regułą decyzyjną §8 protokołu.
+
+**3. Kontrola.** Jeżeli po korekcie jakikolwiek odstęp **pełny** miałby ekspozycję zero,
+kod zatrzymuje się i zgłasza — oznaczałoby to konflikt między zbiorem wojen a zbiorem
+członkostwa. Odstęp **cenzurowany** o ekspozycji zero jest dopuszczalny i wnosi do
+log-wiarygodności log S(0) = 0, czyli nic; diada pozostaje w zbiorze przez swoje odstępy pełne.
+
+### Uzasadnienie
+
+Kryterium nie jest nowe. §2 protokołu definiuje mierzoną wielkość jako **czas regeneracji**
+między konfliktami tej samej pary. Para, której jedna strona nie istnieje jako podmiot
+systemu międzynarodowego, nie jest w tym czasie narażona na konflikt — brak wojny między
+stronami, z których jedna nie istnieje, nie jest obserwacją o czasie oczekiwania. Liczenie
+takich lat jest tą samą klasą błędu co obsługa kodu −7 w wersji v0.1 (F1): kod przypisuje
+danym treść, której one nie mają.
+
+### Skutek liczbowy
+
+Dotkniętych jest 9 z 63 obserwacji, wszystkie z ogona rozkładu:
+
+| diada | typ | lata kalendarzowe | lata ekspozycji | przyczyna |
+|---|---|---|---|---|
+| Austria-Hungary–Italy | cenzurowany | 89 | **0** | ccode 300 opuszcza system w 1918 |
+| France–Germany | cenzurowany | 62 | **18** | ccode 255 nieobecny 1945–1990 |
+| Germany–Yugoslavia | pełny 1945→1999 | 54 | **10** | ccode 255 nieobecny 1945–1990 |
+| Spain–Morocco | pełny 1910→1957 | 47 | **4** | ccode 600 nieobecny 1912–1956 |
+| China–Japan | cenzurowany | 62 | 56 | ccode 740 nieobecny 1945–1952 |
+| USSR–Japan | cenzurowany | 62 | 56 | ccode 740 nieobecny 1945–1952 |
+| Greece–Turkey | cenzurowany | 85 | 83 | ccode 350 nieobecny 1941–1944 |
+| Yugoslavia–Turkey | pełny 1918→1999 | 81 | 79 | ccode 345 nieobecny 1941–1944 |
+| Syria–Israel | pełny 1949→1967 | 18 | 16 | ccode 652 nieobecny 1958–1961 |
+
+Sumy: odstępy pełne 839 → **748** lat, cenzurowane 956 → **809** lat.
+
+### Kolejność i ujawnienie
+
+Decyzja zapada przed policzeniem parametru Weibulla i przed napisaniem kodu testu; Code
+zatrzymał się na STOP po Kroku 1 i żadnej statystyki testowej nie wyliczono.
+
+**Ujawnienie wymagane przez zakaz nr 10:** przed sformułowaniem tego rozstrzygnięcia
+policzono pulowy współczynnik zmienności odstępów pełnych w obu wersjach — **0,955**
+kalendarzowo i **0,983** po korekcie ekspozycji (n = 45 w obu przypadkach). Różnica jest
+znikoma, obie wartości leżą blisko jedności, a uzasadnienie odwołuje się wyłącznie do §2
+protokołu — ale liczby zostały obejrzane i musi to być zapisane.
+
+### Konsekwencje uboczne
+
+**Ograniczenie zakresu, o którym trzeba napisać wprost.** Po korekcie Francja–Niemcy ma
+osiemnaście lat ekspozycji od 1945, nie sześćdziesiąt dwa, ponieważ COW nie zna
+zjednoczonych Niemiec w latach 1945–1990 (RFN 260 i NRD 265 to inne kody). Twierdzenie o
+konsolidacji Europy po II wojnie światowej jest w tym zbiorze **niemierzalne** dla par
+niemieckich; wariant epokowy S6 (podział 1945) musi to odnotować jako ograniczenie danych,
+a nie prezentować jako wynik.
+
+**Kierunek obciążenia progu epizodowego (D-013) jest teraz znany.** Siedem diad, które
+wypadły po scaleniu, to dokładnie pary o konfliktach nachodzących na siebie, czyli
+najsilniej zgrupowane w całym zbiorze (USA–Vietnam: trzy konflikty w dziesięć lat, jeden
+epizod, zero odstępów pełnych). Grupowanie jest hipotezą alternatywną wobec rytmu, więc
+reguła progowa usuwa selektywnie świadectwa przeciwko hipotezie. Reguły **nie zmieniamy** —
+byłaby to zmiana po zobaczeniu, które diady wypadły — ale wariant wrażliwości z progiem na
+wierszach surowych przestaje być formalnością i musi być raportowany na równi z wynikiem
+głównym, z jawnie nazwanym kierunkiem obciążenia.

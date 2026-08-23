@@ -1,10 +1,12 @@
 # TEST 6 — RAPORT DANYCH (Etap A: zbiór odstępów między konfliktami)
 
-**Protokół:** `TEST6_PROTOCOL.md` v1.0 (D-012) · **Rozstrzygnięcie:** `TASK_6A_RESOLUTION.md` / **D-013**
-(scalanie w epizody) · **Zadanie:** `TASK_6.md` Etap A · **Data:** 2026-08-23
-**Źródło:** `Inter-StateWarData_v4.0.csv` (sha256 `2535e30b…`) · **Builder:** `test6_build_intervals.py` v2.0
-**Status:** **STOP (Krok 1, TASK_6A_RESOLUTION.md §6)** — zbiór przebudowany wg D-013, parametr
-Weibulla nie liczony, kod testu nie pisany. Czeka na przegląd warstwy danych przed Etapem B.
+**Protokół:** `TEST6_PROTOCOL.md` v1.0 (D-012) · **Rozstrzygnięcia:** `TASK_6A_RESOLUTION.md` / **D-013**
+(scalanie w epizody), `TASK_6A_ADDENDUM.md` / **D-014** (ekspozycja) · **Zadanie:** `TASK_6.md` Etap A
+**Źródło wojen:** `Inter-StateWarData_v4.0.csv` (sha256 `2535e30b…`)
+**Status:** 🛑 **ZABLOKOWANE przed Krokiem 1b** — brak pliku `system2016.csv` w repo, patrz §10.
+Krok 1 (D-013, sekcje 1–9 poniżej) **przyjęty i niezmieniony**; opisuje ostatni działający build
+(builder v2.0, odstępy kalendarzowe). Builder v3.0 (D-014, ekspozycja) jest napisany i czeka
+na przegląd kodu, ale **NIEURUCHOMIONY** — CSV-y na tej gałęzi to wciąż wyjście v2.0.
 
 ---
 
@@ -124,14 +126,47 @@ Niemcy–Polska nie wchodzą — nie mają trzech wspólnych wojen **międzypań
 faktem o zbiorze danych, nie o historii tych par. Rozszerzenie na Extra-/Intra-State zmieniałoby
 definicję diady i nie jest podejmowane teraz.
 
-## 9. STOP (Krok 1, TASK_6A_RESOLUTION.md §6)
+## 9. Krok 1 — przyjęty (TASK_6A_RESOLUTION.md §6)
 
 Zbiór przebudowany zgodnie z D-013; liczby kontrolne §4 podane obok siebie; tabela scaleń i
-lista diad odrzuconych jawne. **Nie liczę Weibulla, nie piszę kodu testu.** Zgłaszam do
-przeglądu warstwy danych — dopiero po akceptacji przechodzę do Etapu B (`test6_intervals.py` +
-bliźniaczy `.md`, sześć punktów B1 z `TASK_6.md`, bez uruchamiania do czasu przeglądu kodu).
+lista diad odrzuconych jawne. Ten krok jest **zaakceptowany** (`TASK_6A_ADDENDUM.md` §0)
+niezależnie zweryfikowany co do cyfry (epizody, diady, odstępy, CV). **Aktualnym punktem
+zatrzymania jest §10 poniżej**, nie ten paragraf.
 
-**Uwaga do Etapu B, zapisana już teraz:** przy 18 diadach i 45 odstępach pełnych + 18
-cenzurowanych, estymacja dwuparametrowa (kształt + skala Weibulla) z cenzurowaniem będzie miała
-**szeroki przedział ufności dla parametru kształtu**. Raport Etapu C poda przedział ufności
-(profil wiarygodności albo bootstrap diadowy), nie samą wartość punktową i p.
+## 10. STOP — Krok 1b zablokowany: brak `system2016.csv` (D-014)
+
+**D-014** rozstrzyga, że odstęp liczony jest jako **liczba lat ekspozycji** — lat, w których
+oba kody ccode diady są członkami systemu państw COW wg `system2016.csv` (COW State System
+Membership v2016) — a nie jako różnica dat kalendarzowych. Dziewięć z 63 obserwacji jest
+dotkniętych (wszystkie z ogona rozkładu, m.in. Austria-Hungary–Italy: 89 lat kalendarzowych →
+**0** lat ekspozycji, bo ccode 300 opuszcza system w 1918; France–Germany: 62 → 18, bo ccode
+255 nieobecny 1945–1990). Pełne uzasadnienie i tabela w `CPS_DECISION_LOG.md` D-014.
+
+**Blokada.** Pliku `system2016.csv` **nie ma w repozytorium** (sprawdzone: `data/cow/`, cała
+reszta `data/`). Próba pobrania go z dystrybucji COW (correlatesofwar.org) kończy się błędem
+sieciowym na poziomie proxy tego środowiska (`CONNECT tunnel failed, response 403`) — to ten
+sam rodzaj blokady egress, na którą trafiliśmy przy katalogach zewnętrznych w Teście 2B. Nie
+próbuję obejść tej blokady ani zgadywać zawartości pliku.
+
+**Kod jest gotowy, nieuruchomiony.** `test6_build_intervals.py` v3.0 implementuje D-014
+(funkcje `load_membership`, `exposure`) zgodnie z `TASK_6A_ADDENDUM.md` §3: wczytuje
+`ccode`,`year` z `system2016.csv`, liczy ekspozycję jako lata w przedziale (t0, t1] obecne dla
+obu stron, buduje **trzy warianty naraz** (główny: próg epizodowy × ekspozycja; S-A: próg
+epizodowy × kalendarz; S-B: próg surowy × ekspozycja — zgodnie z §4 addendum, bez krzyżowania
+w cztery komórki). Asercja zatrzymuje bieg, jeśli jakikolwiek odstęp **pełny** wyjdzie z
+ekspozycją zero (§3.3); odstęp **cenzurowany** o ekspozycji zero jest dopuszczalny. Sprawdzone
+składniowo (`py_compile`), **nie uruchomione** — brak danych wejściowych. CSV-y na tej gałęzi
+(`test6_intervals.csv`, `test6_episodes.csv`, `test6_intervals_sensitivity.csv`) są wciąż
+wyjściem **v2.0** (kalendarzowym) i zostaną zastąpione wyjściem v3.0 (plus nowe pliki
+`test6_intervals_sensitivity_SA.csv`, `_SB.csv`) po dostarczeniu pliku i uruchomieniu builda.
+
+**Potrzebne od autora:** plik `system2016.csv` (COW State System Membership v2016; kolumny co
+najmniej `ccode`, `year`) — w dowolnym miejscu pod `code/cps/data/` (np. `data/cow/`),
+`find_input` znajdzie go niezależnie od dokładnej ścieżki. Po dostarczeniu: uruchamiam builder
+v3.0, aktualizuję ten raport wg `TASK_6A_ADDENDUM.md` §5, i **dopiero wtedy** zgłaszam Krok 1b
+do przeglądu przed Etapem B.
+
+**Uwaga do Kroku 3, zapisana już teraz** (`TASK_6A_ADDENDUM.md` §6): przedział ufności dla
+parametru kształtu Weibulla musi być bootstrapowany **na poziomie diady, nie odstępu** —
+odstępy tej samej diady (np. Egypt–Israel, 4 wnoszone odstępy) nie są niezależnymi
+obserwacjami; bootstrap po odstępach zaniżyłby przedział ok. dwukrotnie.
