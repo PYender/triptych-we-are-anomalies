@@ -542,3 +542,41 @@ reguła progowa usuwa selektywnie świadectwa przeciwko hipotezie. Reguły **nie
 byłaby to zmiana po zobaczeniu, które diady wypadły — ale wariant wrażliwości z progiem na
 wierszach surowych przestaje być formalnością i musi być raportowany na równi z wynikiem
 głównym, z jawnie nazwanym kierunkiem obciążenia.
+
+**Sprostowanie (D-017): wniosek liczbowy powyżej jest błędny.** Zobacz D-017.
+
+---
+
+## D-017 · 2026-08-23 · Sprostowanie D-014: kierunek obciążenia progu epizodowego jest nieustalony
+
+**Kontekst.** D-014 („konsekwencje uboczne") stwierdziła, że próg epizodowy (D-013) „usuwa
+selektywnie świadectwa przeciwko hipotezie" i że kierunek obciążenia jest „teraz znany" —
+w stronę korzystną dla hipotezy H1 rodziny 9. Argument strukturalny (siedem odrzuconych diad
+to najsilniej zgrupowane pary w zbiorze) jest poprawny. **Wniosek liczbowy nie jest.**
+
+### Sprostowanie
+
+Sześć odstępów pełnych, które wariant S-B dokłada do zbioru głównego (18 diad → 25 diad),
+wynosi **2, 19, 19, 21, 21 i 29 lat**. Pięć z sześciu leży blisko średniej zbioru głównego
+(16,6 roku) i powyżej jego mediany (11 lat). Ich włączenie **obniża** pulowy CV z 0,983
+(główny) do 0,926 (S-B) — zbiór wygląda **bardziej** regularny po dołożeniu tych odstępów,
+nie mniej. Para faktycznie najsilniej zgrupowana, USA–Vietnam, **nie wnosi żadnego odstępu
+pełnego w żadnym wariancie** — po scaleniu ma jeden epizod, więc nie ma czego wnieść.
+
+Próg nie usuwa w rozpoznany sposób świadectw przeciwko regularności — usuwa parę bez
+odstępów w ogóle (USA–Vietnam) i pary, których dołożone odstępy akurat zbliżają zbiór do
+średniej. **Kierunek obciążenia progu epizodowego jest nieustalony**, nie „znany i
+niekorzystny dla wiarygodności wyniku pozytywnego".
+
+### Co zostaje w mocy
+
+Wymóg raportowania S-B na równi z wynikiem głównym w Etapie C **nie zmienia się** — ale
+uzasadnienie jest inne: nie dlatego, że S-B ujawnia ukryte świadectwa przeciwne hipotezie,
+lecz dlatego, że próg widocznie przesuwa CV (w tym wypadku w dół, nie w górę) i wyboru
+między wariantami nie wolno dokonywać po zobaczeniu wyniku (zakaz nr 5, protokół rodziny 9).
+
+### Pochodzenie
+
+Błąd wykryty w przeglądzie przed otwarciem rodziny 9b (D-016), nie przez Code. Sprostowanie
+dotyczy wyłącznie interpretacji liczb już policzonych w Kroku 1b — nie wymaga przebudowy
+zbioru ani nowego biegu.

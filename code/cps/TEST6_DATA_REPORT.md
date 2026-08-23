@@ -189,14 +189,22 @@ budowane są na `Inter-StateWarData_v4.0.csv`, gdzie występuje wyłącznie ccod
 epokowy 1945 (§6, niezmieniony przez ekspozycję: 31 przed / 14 po) **nie może** być czytany
 jako świadectwo o powojennej konsolidacji — to ograniczenie danych, nie wynik.
 
-**Kierunek obciążenia progu epizodowego (D-013) jest teraz znany, nie tylko zadeklarowany
-jako otwarty.** Siedem diad wypadających po scaleniu (§3) to dokładnie pary o konfliktach
-nachodzących się w czasie — najsilniej zgrupowane w całym zbiorze (USA–Vietnam: trzy
-konflikty w dziesięć lat → jeden epizod → zero odstępów pełnych). Grupowanie konfliktów jest
-hipotezą alternatywną wobec rytmu regularnego, więc próg epizodowy usuwa selektywnie
-świadectwa przeciwko hipotezie H1 rodziny 9. Reguła **nie jest zmieniana** z tego powodu —
-byłaby to zmiana kryterium po zobaczeniu, kto wypadł — ale odtąd wariant **S-B jest
-raportowany na równi z wynikiem głównym**, z tym zdaniem obok, w Etapie C.
+**Kierunek obciążenia progu epizodowego (D-013) jest NIEUSTALONY — sprostowanie do
+poprzedniej wersji tego paragrafu (D-017).** Siedem diad wypadających po scaleniu (§3) to
+rzeczywiście pary o konfliktach najsilniej nachodzących się na siebie w zbiorze (USA–Vietnam:
+trzy konflikty w dziesięć lat → jeden epizod → zero odstępów pełnych) — ten argument
+strukturalny jest poprawny. Błędny był wniosek liczbowy: sześć odstępów pełnych, które
+wariant S-B dokłada do zbioru głównego, wynosi **2, 19, 19, 21, 21 i 29 lat** — pięć z nich
+leży blisko średniej zbioru głównego (16,6) i powyżej jego mediany (11), więc ich włączenie
+**obniża** CV (0,983 → 0,926 w §11) — zbiór wygląda **bardziej** regularny, nie mniej.
+USA–Vietnam, para faktycznie najsilniej zgrupowana, nie wnosi żadnego odstępu pełnego w
+żadnym wariancie, więc nie jest tym, co S-B dokłada. Próg nie usuwa w rozpoznany sposób
+świadectw przeciwko hipotezie H1 — usuwa parę bez odstępów w ogóle i dokłada pary o
+odstępach zbliżonych do średniej. Wymóg raportowania **S-B na równi z wynikiem głównym w
+Etapie C pozostaje w mocy**, ale z innym uzasadnieniem: nie dlatego, że S-B ujawnia ukryte
+świadectwa przeciwne hipotezie, lecz dlatego, że próg widocznie przesuwa CV i wyboru między
+wariantami nie wolno dokonywać po zobaczeniu wyniku. Pełne sprostowanie: `CPS_DECISION_LOG.md`
+D-017.
 
 ## 13. STOP (Krok 1b, `TASK_6A_ADDENDUM.md` §6)
 
