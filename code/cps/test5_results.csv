@@ -1,0 +1,13 @@
+# {"script": "test5_periodscan.py v1.0 (Etap A — do przeglądu)", "seed": 20260815, "B": 2000, "null": "AR(3)", "scan": "[8,60] krok 0,5 (105 pkt)", "run_order": ["A_COW_W:1816-2007:surowa(W1,W2)", "A_COW_P:1816-2007:surowa(W1,W2)", "A_COW_W:1914-2007:surowa(W1,W2)", "A_COW_P:1914-2007:surowa(W1,W2)", "B_UCDP:1946-2024:surowa(W1,W2)", "A_COW_W:1816-2007:MA11(W1)"], "note_P1P2": "P1(W1) i P2(W2) na wspólnych realizacjach surogatów A_COW_W — skorelowane, nie dwa niezależne potwierdzenia", "sha256_data": "145aed0053af0d79"}
+id,seria,okno,filtr,statystyka,n,Wmax,Targmax,null_max_p95,p,decyzja
+P1,A_COW_W,1816-2007,surowa,W1,192,0.522571,8.0,0.544631,0.0725,"ORZEKA — p<0,05 NIESPEŁNIONE (warunkowo od P2 i rozkładu Targmax)"
+P2,A_COW_W,1816-2007,surowa,W2,192,43.615,59.5,66.384538,0.6152,"POTWIERDZA — p<0,10 NIESPEŁNIONE"
+S1,A_COW_P,1816-2007,surowa,W1,192,0.276556,28.0,0.561041,0.934,opisowy — nie orzeka
+S1,A_COW_P,1816-2007,surowa,W2,192,58.441136,53.0,62.105209,0.076,opisowy — nie orzeka
+S2,A_COW_W,1914-2007,surowa,W1,94,0.456122,8.0,0.727989,0.6027,opisowy — nie orzeka
+S2,A_COW_W,1914-2007,surowa,W2,94,29.80428,35.5,51.720185,0.975,opisowy — nie orzeka
+S3,A_COW_P,1914-2007,surowa,W1,94,0.3008,12.5,0.66848,0.9035,opisowy — nie orzeka
+S3,A_COW_P,1914-2007,surowa,W2,94,36.304786,51.0,50.879885,0.6522,opisowy — nie orzeka
+S4,B_UCDP,1946-2024,surowa,W1,79,0.28394,49.0,0.549293,0.6657,opisowy — nie orzeka
+S4,B_UCDP,1946-2024,surowa,W2,79,56.030465,52.0,62.12587,0.2069,opisowy — nie orzeka
+S5,A_COW_W,1816-2007,MA11,W1,192,0.258098,51.0,0.518245,0.6742,opisowy — nie orzeka
