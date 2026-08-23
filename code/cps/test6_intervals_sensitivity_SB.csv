@@ -1,11 +1,14 @@
-# {"builder": "test6_build_intervals.py v3.0 (D-013 epizody + D-014 ekspozycja)", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "sha256_czlonkostwo": "280e10b408c0aefb", "diad_>=3_surowych_wierszy": 25, "diady_odrzucone_po_progu_na_epizodach": [{"diada": "United States of America–Vietnam", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 1}, {"diada": "France–Bulgaria", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "Germany–USSR", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "Italy–Bulgaria", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "USSR–Finland", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "USSR–China", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "Cambodia–Vietnam", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}], "wariant": "GŁÓWNY — próg na epizodach × ekspozycja (D-013+D-014)", "diad": 18, "odstepy_pelne": 45, "odstepy_cenzurowane": 18}
+# {"builder": "test6_build_intervals.py v3.0 (D-013 epizody + D-014 ekspozycja)", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "sha256_czlonkostwo": "280e10b408c0aefb", "diad_>=3_surowych_wierszy": 25, "diady_odrzucone_po_progu_na_epizodach": [{"diada": "United States of America–Vietnam", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 1}, {"diada": "France–Bulgaria", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "Germany–USSR", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "Italy–Bulgaria", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "USSR–Finland", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "USSR–China", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}, {"diada": "Cambodia–Vietnam", "n_konfliktow_surowych": 3, "n_epizodow_po_scaleniu": 2}], "wariant": "S-B — próg na wierszach surowych × ekspozycja (wrażliwość D-013, poza §8)", "diad": 25, "odstepy_pelne": 51, "odstepy_cenzurowane": 25}
 diada,ccode_a,ccode_b,rok_konca_poprz,rok_poczatku_nast,dlugosc_odstepu,dlugosc_kalendarzowa,cenzurowany,epoka_1914,epoka_1945,flag
+United States of America–Vietnam,2,816,1975,2007,32,32,1,po,po,ok
 Guatemala–El Salvador,90,92,1876,1885,9,9,0,przed,przed,ok
 Guatemala–El Salvador,90,92,1885,1906,21,21,0,przed,przed,ok
 Guatemala–El Salvador,90,92,1906,2007,101,101,1,przed,przed,ok
 France–Germany,220,255,1871,1914,43,43,0,przed,przed,ok
 France–Germany,220,255,1918,1939,21,21,0,po,przed,ok
 France–Germany,220,255,1945,2007,18,62,1,po,po,ok
+France–Bulgaria,220,355,1918,1939,21,21,0,po,przed,ok
+France–Bulgaria,220,355,1945,2007,62,62,1,po,po,ok
 France–China,220,710,1885,1900,15,15,0,przed,przed,ok
 France–China,220,710,1900,1939,39,39,0,przed,przed,ok
 France–China,220,710,1945,1950,5,5,0,po,po,ok
@@ -16,10 +19,14 @@ Spain–Morocco,230,600,1958,2007,49,49,1,po,po,ok
 Germany–Yugoslavia,255,345,1918,1939,21,21,0,po,przed,ok
 Germany–Yugoslavia,255,345,1945,1999,10,54,0,po,po,ok
 Germany–Yugoslavia,255,345,1999,2007,8,8,1,po,po,ok
+Germany–USSR,255,365,1920,1939,19,19,0,po,przed,ok
+Germany–USSR,255,365,1945,2007,18,62,1,po,po,ok
 Austria-Hungary–Italy,300,325,1849,1859,10,10,0,przed,przed,ok
 Austria-Hungary–Italy,300,325,1859,1866,7,7,0,przed,przed,ok
 Austria-Hungary–Italy,300,325,1866,1914,48,48,0,przed,przed,ok
 Austria-Hungary–Italy,300,325,1918,2007,0,89,1,po,przed,ok
+Italy–Bulgaria,325,355,1918,1939,21,21,0,po,przed,ok
+Italy–Bulgaria,325,355,1945,2007,62,62,1,po,po,ok
 Yugoslavia–Bulgaria,345,355,1913,1914,1,1,0,przed,przed,ok
 Yugoslavia–Bulgaria,345,355,1918,1939,21,21,0,po,przed,ok
 Yugoslavia–Bulgaria,345,355,1945,2007,62,62,1,po,po,ok
@@ -36,10 +43,14 @@ Greece–Turkey,350,640,1922,2007,83,85,1,po,przed,ok
 Bulgaria–Romania,355,360,1913,1914,1,1,0,przed,przed,ok
 Bulgaria–Romania,355,360,1918,1939,21,21,0,po,przed,ok
 Bulgaria–Romania,355,360,1945,2007,62,62,1,po,po,ok
+USSR–Finland,365,375,1920,1939,19,19,0,po,przed,ok
+USSR–Finland,365,375,1945,2007,62,62,1,po,po,ok
 USSR–Turkey,365,640,1829,1853,24,24,0,przed,przed,ok
 USSR–Turkey,365,640,1856,1877,21,21,0,przed,przed,ok
 USSR–Turkey,365,640,1878,1914,36,36,0,przed,przed,ok
 USSR–Turkey,365,640,1918,2007,89,89,1,po,przed,ok
+USSR–China,365,710,1900,1929,29,29,0,przed,przed,ok
+USSR–China,365,710,1929,2007,78,78,1,po,przed,ok
 USSR–Japan,365,740,1905,1938,33,33,0,przed,przed,ok
 USSR–Japan,365,740,1938,1939,1,1,0,po,przed,ok
 USSR–Japan,365,740,1945,2007,56,62,1,po,po,ok
@@ -63,3 +74,5 @@ India–Pakistan,750,770,1949,1965,16,16,0,po,po,ok
 India–Pakistan,750,770,1965,1971,6,6,0,po,po,ok
 India–Pakistan,750,770,1971,1999,28,28,0,po,po,ok
 India–Pakistan,750,770,1999,2007,8,8,1,po,po,ok
+Cambodia–Vietnam,811,816,1975,1977,2,2,0,po,po,ok
+Cambodia–Vietnam,811,816,1979,2007,28,28,1,po,po,ok

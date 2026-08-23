@@ -1,4 +1,4 @@
-# {"builder": "test6_build_intervals.py v2.0 (D-013: scalanie w epizody)", "opis": "tabela scaleń: jeden wiersz na epizod, D-013 / TASK_6A_RESOLUTION §4.1"}
+# {"builder": "test6_build_intervals.py v3.0 (D-013 epizody + D-014 ekspozycja)", "opis": "tabela scaleń (D-013)"}
 diada,ccode_a,ccode_b,epizod_nr,start,koniec,n_skladowych,scalony,skladowe_konflikty
 United States of America–Vietnam,2,816,1,1965,1975,3,True,"Vietnam War, Phase 2 (1965-1975); Second Laotian, Phase 2 (1968-1973); Communist Coalition (1970-1971)"
 Guatemala–El Salvador,90,92,1,1876,1876,1,False,First Central American (1876-1876)

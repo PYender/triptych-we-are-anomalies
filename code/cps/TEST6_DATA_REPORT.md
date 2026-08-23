@@ -2,11 +2,11 @@
 
 **Protokół:** `TEST6_PROTOCOL.md` v1.0 (D-012) · **Rozstrzygnięcia:** `TASK_6A_RESOLUTION.md` / **D-013**
 (scalanie w epizody), `TASK_6A_ADDENDUM.md` / **D-014** (ekspozycja) · **Zadanie:** `TASK_6.md` Etap A
-**Źródło wojen:** `Inter-StateWarData_v4.0.csv` (sha256 `2535e30b…`)
-**Status:** 🛑 **ZABLOKOWANE przed Krokiem 1b** — brak pliku `system2016.csv` w repo, patrz §10.
-Krok 1 (D-013, sekcje 1–9 poniżej) **przyjęty i niezmieniony**; opisuje ostatni działający build
-(builder v2.0, odstępy kalendarzowe). Builder v3.0 (D-014, ekspozycja) jest napisany i czeka
-na przegląd kodu, ale **NIEURUCHOMIONY** — CSV-y na tej gałęzi to wciąż wyjście v2.0.
+**Źródło wojen:** `Inter-StateWarData_v4.0.csv` (sha256 `2535e30b…`) · **Źródło członkostwa:**
+`system2016.csv` (sha256 `280e10b4…`, potwierdzone bit-do-bitu z sumą podaną przez autora)
+**Status:** **STOP przed Etapem B (Krok 1b, `TASK_6A_ADDENDUM.md` §6)** — builder v3.0 uruchomiony,
+zbiór przeliczony na ekspozycję (D-014), zero naruszeń asercji. Krok 1 (D-013, §1–9) i Krok 1b
+(D-014, §10–12) **wykonane**. Parametr Weibulla nadal nie liczony, kod testu nie pisany.
 
 ---
 
@@ -86,7 +86,8 @@ wyłącznie to, które z nich przechodzą **drugi**, epizodowy próg D-013.
 
 Wariant wrażliwości scala te same epizody, ale **nie usuwa** żadnej z 25 diad nawet jeśli
 spadła poniżej progu epizodowego — pokazuje, czy rozstrzygnięcie progu (§3) samo w sobie
-przesądza wynik. Plik: `test6_intervals_sensitivity.csv`.
+przesądza wynik. *(Ten wariant to dziś `test6_intervals_sensitivity_SB.csv` — patrz §11–12;
+nazwa i zakres nie zmieniły się przy D-014, zmienił się tylko sposób liczenia czasu.)*
 
 ## 5. CV pulowy po scaleniu — zestawienie z §0.2 i wersją sprzed D-013
 
@@ -133,40 +134,79 @@ lista diad odrzuconych jawne. Ten krok jest **zaakceptowany** (`TASK_6A_ADDENDUM
 niezależnie zweryfikowany co do cyfry (epizody, diady, odstępy, CV). **Aktualnym punktem
 zatrzymania jest §10 poniżej**, nie ten paragraf.
 
-## 10. STOP — Krok 1b zablokowany: brak `system2016.csv` (D-014)
+## 10. D-014 zastosowane — odstęp jako lata ekspozycji
 
-**D-014** rozstrzyga, że odstęp liczony jest jako **liczba lat ekspozycji** — lat, w których
-oba kody ccode diady są członkami systemu państw COW wg `system2016.csv` (COW State System
-Membership v2016) — a nie jako różnica dat kalendarzowych. Dziewięć z 63 obserwacji jest
-dotkniętych (wszystkie z ogona rozkładu, m.in. Austria-Hungary–Italy: 89 lat kalendarzowych →
-**0** lat ekspozycji, bo ccode 300 opuszcza system w 1918; France–Germany: 62 → 18, bo ccode
-255 nieobecny 1945–1990). Pełne uzasadnienie i tabela w `CPS_DECISION_LOG.md` D-014.
+`system2016.csv` dostarczony przez autora, potwierdzony bit-do-bitu (sha256 `280e10b4…`,
+15 950 wierszy, kolumny `stateabb,ccode,year,version`, zakres 1816–2016, 217 kodów) —
+zgodnie z sumą kontrolną podaną przed wgraniem. `find_input` trafia jednoznacznie w ten plik
+(w repo nie ma pliku `states2016.csv` ani innego, z którym normalizacja nazwy mogłaby się
+pomylić). Builder v3.0 uruchomiony bez naruszeń asercji: żaden odstęp **pełny** nie wyszedł
+z ekspozycją zero.
 
-**Blokada.** Pliku `system2016.csv` **nie ma w repozytorium** (sprawdzone: `data/cow/`, cała
-reszta `data/`). Próba pobrania go z dystrybucji COW (correlatesofwar.org) kończy się błędem
-sieciowym na poziomie proxy tego środowiska (`CONNECT tunnel failed, response 403`) — to ten
-sam rodzaj blokady egress, na którą trafiliśmy przy katalogach zewnętrznych w Teście 2B. Nie
-próbuję obejść tej blokady ani zgadywać zawartości pliku.
+**Kontrola poprawności implementacji, wykonana przed przyjęciem liczb do raportu:** dla 54
+z 63 obserwacji zbioru pierwszorzędnego ekspozycja musi być dokładnie równa wartości
+kalendarzowej (obserwacje, których żadna z przerw członkostwa nie dotyka). Wynik: **54/63
+dokładnie zgodnych** — potwierdzone. Pozostałe 9 to dokładnie te z tabeli D-014:
 
-**Kod jest gotowy, nieuruchomiony.** `test6_build_intervals.py` v3.0 implementuje D-014
-(funkcje `load_membership`, `exposure`) zgodnie z `TASK_6A_ADDENDUM.md` §3: wczytuje
-`ccode`,`year` z `system2016.csv`, liczy ekspozycję jako lata w przedziale (t0, t1] obecne dla
-obu stron, buduje **trzy warianty naraz** (główny: próg epizodowy × ekspozycja; S-A: próg
-epizodowy × kalendarz; S-B: próg surowy × ekspozycja — zgodnie z §4 addendum, bez krzyżowania
-w cztery komórki). Asercja zatrzymuje bieg, jeśli jakikolwiek odstęp **pełny** wyjdzie z
-ekspozycją zero (§3.3); odstęp **cenzurowany** o ekspozycji zero jest dopuszczalny. Sprawdzone
-składniowo (`py_compile`), **nie uruchomione** — brak danych wejściowych. CSV-y na tej gałęzi
-(`test6_intervals.csv`, `test6_episodes.csv`, `test6_intervals_sensitivity.csv`) są wciąż
-wyjściem **v2.0** (kalendarzowym) i zostaną zastąpione wyjściem v3.0 (plus nowe pliki
-`test6_intervals_sensitivity_SA.csv`, `_SB.csv`) po dostarczeniu pliku i uruchomieniu builda.
+| diada | typ | kalendarzowo | ekspozycja | przyczyna |
+|---|---|---|---|---|
+| Austria-Hungary–Italy | cenzurowany | 89 | **0** | ccode 300 opuszcza system w 1918 |
+| France–Germany | cenzurowany | 62 | **18** | ccode 255 nieobecny 1945–1990 |
+| Germany–Yugoslavia | pełny 1945→1999 | 54 | **10** | ccode 255 nieobecny 1945–1990 |
+| Spain–Morocco | pełny 1910→1957 | 47 | **4** | ccode 600 nieobecny 1912–1956 |
+| China–Japan | cenzurowany | 62 | 56 | ccode 740 nieobecny 1945–1952 |
+| USSR–Japan | cenzurowany | 62 | 56 | ccode 740 nieobecny 1945–1952 |
+| Greece–Turkey | cenzurowany | 85 | 83 | ccode 350 nieobecny 1941–1944 |
+| Yugoslavia–Turkey | pełny 1918→1999 | 81 | 79 | ccode 345 nieobecny 1941–1944 |
+| Syria–Israel | pełny 1949→1967 | 18 | 16 | ccode 652 nieobecny 1958–1961 |
 
-**Potrzebne od autora:** plik `system2016.csv` (COW State System Membership v2016; kolumny co
-najmniej `ccode`, `year`) — w dowolnym miejscu pod `code/cps/data/` (np. `data/cow/`),
-`find_input` znajdzie go niezależnie od dokładnej ścieżki. Po dostarczeniu: uruchamiam builder
-v3.0, aktualizuję ten raport wg `TASK_6A_ADDENDUM.md` §5, i **dopiero wtedy** zgłaszam Krok 1b
-do przeglądu przed Etapem B.
+**Sumy przed i po:** odstępy pełne 839 → **748** lat; cenzurowane 956 → **809** lat (zgodne
+z D-014 co do roku). Austria-Hungary–Italy jest jedynym odstępem cenzurowanym o ekspozycji
+zero w zbiorze pierwszorzędnym — dopuszczalne z definicji (D-014 §3: wnosi log S(0) = 0 do
+wiarygodności; diada zostaje w zbiorze przez pozostałe odstępy pełne).
+
+## 11. CV pulowy — trzy warianty (D-014 §4) obok §0.2
+
+| wariant | próg | czas | n pełnych | CV |
+|---|---|---|---|---|
+| §0.2 protokołu (dokumentacyjny, bez modelu zerowego/cenzurowania) | — | — | — | 0,59–0,95 |
+| **główny — orzeka** | epizodowy (D-013) | **ekspozycja (D-014)** | 45 | **0,983** |
+| S-A (wrażliwość na D-014) | epizodowy | kalendarz | 45 | 0,955 |
+| S-B (wrażliwość na D-013) | surowy (25 diad) | ekspozycja | 51 | 0,926 |
+
+Ekspozycja podnosi CV względem kalendarza (0,955→0,983) — usuwanie lat „pokoju" bez
+możliwości konfliktu z ogona rozkładu wydłuża relatywnie krótkie odstępy mniej niż długie,
+więc rozrzut względny rośnie. Różnica między wariantami jest mała (0,926–0,983); żaden nie
+odtwarza dokładnie §0.2, co jest oczekiwane (§0.2 nie stosował ani scalania, ani ekspozycji)
+i nie jest tu traktowane jako błąd ani potwierdzenie.
+
+## 12. Dwa ograniczenia nazwane wprost (D-014, konsekwencje uboczne)
+
+**Konsolidacja Europy po 1945 jest w tym zbiorze niemierzalna dla par niemieckich.** Po
+korekcie France–Germany ma 18 lat ekspozycji od 1945, nie 62 — COW nie zna zjednoczonych
+Niemiec 1945–1990 (RFN 260 i NRD 265 to inne kody, nieużyte przez ten builder, bo diady
+budowane są na `Inter-StateWarData_v4.0.csv`, gdzie występuje wyłącznie ccode 255). Podział
+epokowy 1945 (§6, niezmieniony przez ekspozycję: 31 przed / 14 po) **nie może** być czytany
+jako świadectwo o powojennej konsolidacji — to ograniczenie danych, nie wynik.
+
+**Kierunek obciążenia progu epizodowego (D-013) jest teraz znany, nie tylko zadeklarowany
+jako otwarty.** Siedem diad wypadających po scaleniu (§3) to dokładnie pary o konfliktach
+nachodzących się w czasie — najsilniej zgrupowane w całym zbiorze (USA–Vietnam: trzy
+konflikty w dziesięć lat → jeden epizod → zero odstępów pełnych). Grupowanie konfliktów jest
+hipotezą alternatywną wobec rytmu regularnego, więc próg epizodowy usuwa selektywnie
+świadectwa przeciwko hipotezie H1 rodziny 9. Reguła **nie jest zmieniana** z tego powodu —
+byłaby to zmiana kryterium po zobaczeniu, kto wypadł — ale odtąd wariant **S-B jest
+raportowany na równi z wynikiem głównym**, z tym zdaniem obok, w Etapie C.
+
+## 13. STOP (Krok 1b, `TASK_6A_ADDENDUM.md` §6)
+
+Trzy warianty zbudowane i przeliczone (`test6_intervals.csv` główny, `test6_intervals_sensitivity_SA.csv`,
+`test6_intervals_sensitivity_SB.csv`), tabela scaleń (`test6_episodes.csv`) bez zmian od D-013.
+Kontrola poprawności (54/63) potwierdzona przed przyjęciem liczb. **Nie liczę Weibulla, nie
+piszę kodu testu.** Zgłaszam do przeglądu — dopiero po akceptacji przechodzę do Etapu B.
 
 **Uwaga do Kroku 3, zapisana już teraz** (`TASK_6A_ADDENDUM.md` §6): przedział ufności dla
 parametru kształtu Weibulla musi być bootstrapowany **na poziomie diady, nie odstępu** —
 odstępy tej samej diady (np. Egypt–Israel, 4 wnoszone odstępy) nie są niezależnymi
-obserwacjami; bootstrap po odstępach zaniżyłby przedział ok. dwukrotnie.
+obserwacjami; bootstrap po odstępach zaniżyłby przedział ok. dwukrotnie. Raport Etapu C podaje
+przedział, nie samą wartość punktową i p, i raportuje główny wynik obok S-A i S-B (§12).
