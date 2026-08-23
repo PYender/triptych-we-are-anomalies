@@ -580,3 +580,40 @@ między wariantami nie wolno dokonywać po zobaczeniu wyniku (zakaz nr 5, protok
 Błąd wykryty w przeglądzie przed otwarciem rodziny 9b (D-016), nie przez Code. Sprostowanie
 dotyczy wyłącznie interpretacji liczb już policzonych w Kroku 1b — nie wymaga przebudowy
 zbioru ani nowego biegu.
+
+---
+
+## D-015 · 2026-08-23 · Etap B Testu 6: model orzekający, założenia zegara i dyskretyzacji
+
+**Kontekst.** `TASK_6B_BRIEF.md` otwiera Etap B (kod estymacji Weibulla, bez uruchamiania na
+danych rzeczywistych) i wprowadza dwa rozstrzygnięcia numerowane jako D-015, poza już
+przyjętymi D-012–D-014. Wpis rejestruje je w formie, w jakiej zostały podane w briefie.
+
+### D-015 A — założenia estymacji, do nazwania w kodzie i w raporcie
+
+**1. Zegar zatrzymany, nie wyzerowany.** Odstęp o przerwanej ekspozycji (lata, w których
+jedna ze stron diady nie jest członkiem systemu COW, D-014) liczy się jako jeden czas
+oczekiwania równy **sumie** lat ekspozycji — proces podejmuje odliczanie tam, gdzie je
+przerwał, nie od zera. Przy modelu Weibulla to nie jest założenie puste, bo hazard zależy
+od czasu, jaki już upłynął od poprzedniego zdarzenia. Brief podaje, że dotyczy to pięciu
+obserwacji; nie rederywuję tu samodzielnie, które to konkretnie pięć spośród dziewięciu
+obserwacji dotkniętych przez D-014 — patrz zastrzeżenie niżej.
+
+**2. Dyskretyzacja.** Odstępy są zapisane w pełnych latach, a model jest ciągły (Weibull).
+Dla najkrótszych odstępów (minimum 1 rok) różnica między czasem dyskretnym a ciągłym nie
+jest zaniedbywalna. Przyjmuje się to jako **zadeklarowane założenie**, nie jako coś do
+korygowania (np. przez losowe rozmycie wewnątrz roku).
+
+### D-015 B — dwa dopasowania, role nierówne
+
+**P1 (Weibull pulowany, bez kruchości) ORZEKA** dla H9 (protokół §8). **F1 (Weibull z
+kruchością gamma dzieloną w obrębie diady) jest wariantem drugorzędnym**, nie
+równorzędnym — liczony wyłącznie na zbiorze głównym, nie na wariantach wrażliwości S-A/S-B.
+Rozbieżność między P1 i F1, jeśli wystąpi, czytana jest wg reguły zadeklarowanej w D-015
+**przed** biegiem, w czterech przypadkach (brief §6) — **nie po zobaczeniu wyniku**.
+
+**Zastrzeżenie do uzupełnienia.** Tekst czterech przypadków interpretacji rozbieżności
+P1/F1 nie został przekazany Code'owi w treści `TASK_6B_BRIEF.md` — jest tam wyłącznie
+przywołany przez odniesienie. Etap B (pisanie kodu) tego nie wymaga: reguła dotyczy
+czytania wyniku w Etapie C, nie implementacji estymatora. Nie jest tu domyślana ani
+wymyślana — zgłoszona jako brak, do uzupełnienia przed Krokiem 3.

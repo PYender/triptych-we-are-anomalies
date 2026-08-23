@@ -174,11 +174,16 @@ wiarygodności; diada zostaje w zbiorze przez pozostałe odstępy pełne).
 | S-A (wrażliwość na D-014) | epizodowy | kalendarz | 45 | 0,955 |
 | S-B (wrażliwość na D-013) | surowy (25 diad) | ekspozycja | 51 | 0,926 |
 
-Ekspozycja podnosi CV względem kalendarza (0,955→0,983) — usuwanie lat „pokoju" bez
-możliwości konfliktu z ogona rozkładu wydłuża relatywnie krótkie odstępy mniej niż długie,
-więc rozrzut względny rośnie. Różnica między wariantami jest mała (0,926–0,983); żaden nie
-odtwarza dokładnie §0.2, co jest oczekiwane (§0.2 nie stosował ani scalania, ani ekspozycji)
-i nie jest tu traktowane jako błąd ani potwierdzenie.
+Ekspozycja podnosi CV względem kalendarza (0,955→0,983). **Poprawka do wcześniejszej wersji
+tego zdania (`TASK_6B_BRIEF.md` §7):** korekta ekspozycji **niczego nie wydłuża** —
+wyłącznie skraca (zawsze `ekspozycja ≤ kalendarz`). Wzrost CV bierze się stąd, że mianownik
+(średnia) kurczy się szybciej niż licznik (odchylenie): średnia spada z 18,64 do 16,62
+(−10,8%), odchylenie z 17,80 do 16,34 (−8,2%) — zweryfikowane bezpośrednio na danych.
+Odpowiadają za to głównie dwa odstępy, które z wartości bliskich środkowi rozkładu stają się
+jednymi z najkrótszych w zbiorze: Germany–Yugoslavia (54→10) i Spain–Morocco (47→4).
+Różnica między wariantami jest mała (0,926–0,983); żaden nie odtwarza dokładnie §0.2, co jest
+oczekiwane (§0.2 nie stosował ani scalania, ani ekspozycji) i nie jest tu traktowane jako
+błąd ani potwierdzenie.
 
 ## 12. Dwa ograniczenia nazwane wprost (D-014, konsekwencje uboczne)
 
