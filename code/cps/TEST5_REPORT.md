@@ -62,12 +62,23 @@ Dla P1 (W1), rozkład okresu, przy którym surogaty osiągają maksimum:
 | 45–60 lat | 0,2% |
 
 Mediana `Targmax` surogatów = 8,0 lat; 59,3% przy samej dolnej granicy. Rozkład jest
-skrajnie niejednorodny: AR(3) ma najwięcej mocy przy krótkich okresach, więc statystyka
-maksymalna po skanie niemal zawsze „trafia" w dolny koniec. **Konsekwencja
-interpretacyjna:** fakt, że maksimum danych też wypada przy T = 8, nie niesie informacji
-o okresowości — to artefakt kształtu widma AR, nie własność danych. Ten sam mechanizm jest
-powodem, dla którego korekta na statystykę maksymalną jest konieczna (problem Daviesa):
-bez niej maksimum z szerokiego skanu wyglądałoby na istotne.
+skrajnie niejednorodny. **Sprostowanie (przegląd niezależny, 2026-08-23):** poprzednia
+wersja tego akapitu tłumaczyła skupienie tym, że „AR(3) ma najwięcej mocy przy krótkich
+okresach" — to jest **odwrotność** rzeczywistego kształtu widma. AR(3) dopasowane do tej
+serii ma φ₁ ≈ 0,67 (silnie dodatnie); to szum czerwony, którego moc **rośnie** z okresem
+(zweryfikowane numerycznie: średnia PSD surogatów rośnie monotonicznie od T=8 do T=60).
+**Prawdziwa przyczyna jest geometryczna, nie widmowa:** W1(T) to udział mocy w paśmie
+o STAŁEJ szerokości okresowej T±4 lat wobec mianownika stałego (4–100 lat); szerokość tego
+pasma **w częstotliwości** maleje jak ~1/T² wraz z T — przy T=8 pasmo ma szerokość
+częstotliwościową ~0,167/rok, przy T=35 ~0,0066/rok, czyli **25-krotnie węziej**. Nawet
+przy widmie rosnącym z okresem ten efekt geometryczny dominuje: zweryfikowano, że średnie
+W1(T) surogatów **maleje** monotonicznie z T (0,343 przy T=8 → 0,038 przy T=60), mimo że
+surowa moc PSD rośnie w tym samym zakresie. **Konsekwencja interpretacyjna (bez zmian):**
+fakt, że maksimum danych też wypada przy T = 8, nie niesie informacji o okresowości — to
+artefakt konstrukcji statystyki W1 (szerokość pasma zależna od T), nie własność danych ani
+kształtu widma AR. Ten sam mechanizm jest powodem, dla którego korekta na statystykę
+maksymalną jest konieczna (problem Daviesa): bez niej maksimum z szerokiego skanu
+wyglądałoby na istotne.
 
 ## 4. Reguła decyzyjna §7 — wszystkie trzy warunki
 
@@ -118,6 +129,12 @@ wykorzystaliśmy (D-011), i nie była hipotezą prerejestrowaną.
 
 - **Test nie dotyczy cyklu o dryfującej fazie** (D-009) — skan zakłada stały okres w oknie;
   wariant z dryfem wymaga innych narzędzi i osobnego protokołu.
+- **W1(T) nie jest porównywalne między okresami bez zastrzeżenia z §3:** szerokość pasma
+  T±4 w częstotliwości maleje jak ~1/T², więc W1 ma wbudowaną tendencję do wyższych wartości
+  przy krótkim T niezależnie od kształtu widma. Statystyka maksymalna i rozkład Targmax
+  surogatów (§3) są na to odporne z konstrukcji — porównanie surogat-do-surogat jest uczciwe —
+  ale odczyt W1(T) danych „na oko" (np. z Panelu 1) bez odniesienia do pasma 95. percentyla
+  surogatów przy tym samym T byłby mylący.
 - **Żaden okres nie jest tu „potwierdzony ani obalony" indywidualnie** — test orzeka
   o istnieniu *jakiejkolwiek* okresowości, nie o 18, 35 ani żadnej konkretnej liczbie.
 - Gdyby wynik był pozytywny, wskazany okres byłby **kandydatem**, nie hipotezą potwierdzoną,
