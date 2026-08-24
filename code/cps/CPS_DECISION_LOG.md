@@ -770,3 +770,38 @@ w granicach prawdopodobnego opóźnienia = mierzymy datowanie wydawnicze, nie re
 **Zakres.** Niezależne od Testu 6 i Testu 7 — dotyczy rozdziału III.3.2 i każdego zdania
 przypisującego COLOR rolę wyprzedzającą albo nadążającą. Nie blokuje żadnego z bieżących
 testów rodziny 9/9b, które nie używają COLOR.
+
+---
+
+## D-019 · 2026-08-24 · Obecność na `main` nie oznacza akceptacji: PR #15 (Test 6) zmergowany bez przeglądu kodu
+
+**Kontekst.** Przy scalaniu PR #14 (infrastruktura współdzielona, D-016–D-018) do `main`
+zmergowany został równolegle **PR #15**, obejmujący całą zawartość gałęzi
+`claude/cps-test-6` — w tym `test6_weibull.py`, `test6_weibull.md` i wszystkie wyniki
+Etapu B (Krok 2). Nie był to świadomy akt akceptacji kodu: przegląd Etapu B, wymagany przez
+`TASK_6B_BRIEF.md` §8 („Krok 2... STOP — przegląd kodu") przed Krokiem 3, **nie odbył się**.
+
+**Rozstrzygnięcie.** Obecność kodu Testu 6 na `main` od tego momentu **nie jest** tożsama
+z zatwierdzeniem Etapu B. Krok 3 (bieg P1/F1/S-A/S-B na `test6_intervals*.csv`) pozostaje
+**zablokowany** do czasu odrębnego, jawnego przeglądu — dokładnie tego samego, którego
+wymagałby brief, gdyby merge nastąpił po nim, a nie przed. Merge PR #15 **nie jest cofany**:
+nic nie zostało jeszcze policzone na danych rzeczywistych, więc revert kosztowałby więcej
+(rozdwojenie historii, ponowne rozstrzyganie tego samego kodu na innej gałęzi) niż daje.
+
+**Co ma zostać przedstawione do przeglądu przed odblokowaniem Kroku 3:**
+
+1. `test6_weibull.py` + bliźniaczy `test6_weibull.md` — kod czterech dopasowań (P1, F1, S-A,
+   S-B), przedziałów ufności (profil wiarygodności, bootstrap diadowy).
+2. Wynik testu granicy θ→0: log-wiarygodność z kruchością (θ=1e-6) zgodna z pulowaną co do
+   ~6 miejsc po przecinku, przy tych samych `k`, `λ`.
+3. Wynik testu odzysku parametrów na danych syntetycznych o strukturze zbioru rzeczywistego
+   (18 grup, 45 zdarzeń pełnych, 18 obserwacji cenzurowanych), dla co najmniej trzech
+   zestawów `(k,θ)`, w tym `k=1` i `θ=0`.
+
+Oba testy poprawności zostały już wykonane i są udokumentowane w `test6_weibull.md` §5 —
+nie wymagają ponownego liczenia, wymagają **przeglądu przez autora**, zanim Krok 3 ruszy.
+
+**Uzasadnienie.** Symulacja odzysku parametrów pokazuje szerokość przedziału ufności
+niezależnie od tego, co powiedzą dane rzeczywiste — bez jej przeglądu wynik nierozstrzygający
+z Kroku 3 byłby nieodróżnialny od wyniku źle policzonego. Zatwierdzenie kodu musi poprzedzać
+jego uruchomienie na danych, niezależnie od tego, na której gałęzi kod fizycznie leży.
