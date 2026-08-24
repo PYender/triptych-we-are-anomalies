@@ -15,8 +15,11 @@ członkostwie (D-014): liczy się rok, w którym oba państwa są w system2016.c
 KTÓRYKOLWIEK okres rywalizacji tej diady.
 
 Epizody (§4, D-013): scalanie przechodnie nachodzących/stykających się konfliktów, funkcje
-reużyte z test6_build_intervals.py (ta sama definicja). Brane wyłącznie epizody wpadające w
-okno ryzyka; epizody częściowo w oknie są ZGŁASZANE (tabela), nie obcinane po cichu.
+reużyte z test6_build_intervals.py (ta sama definicja). Kwalifikacja zdarzenia wg D-021:
+epizod jest zdarzeniem wtedy i tylko wtedy, gdy jego POCZĄTEK wypada w oknie ryzyka —
+koniec epizodu nie ma znaczenia. Epizod trwający już w chwili otwarcia okna przesuwa okno
+na swój koniec (nie jest zdarzeniem); epizod zaczynający się w oknie ale trwający poza jego
+domknięciem liczy się jako zdarzenie i zamyka okno (brak wiersza cenzurowanego po nim).
 
 NIE liczy żadnej statystyki czasów oczekiwania (§6 brief) — buduje wyłącznie zbiór.
 """
@@ -104,36 +107,45 @@ def exposure_multi(mem, a, b, t0, t1, periods):
     return sum(1 for y in range(t0 + 1, t1 + 1) if y in ma and y in mb and rivalry_year_ok(y, periods))
 
 
-# ============================ epizody w oknie (§4, §3.3 brief) ============================
-def episode_window_status(ep, periods):
-    """'inside' (start i koniec w tym samym okresie), 'outside' (poza wszystkimi
-    okresami), 'partial' (przecina granicę okresu/okna — do zgłoszenia, nie do obcięcia)."""
-    for p in periods:
-        if p["t0"] <= ep["start"] and ep["end"] <= p["t1"]:
-            return "inside", p
-    starts_in = any(p["t0"] <= ep["start"] <= p["t1"] for p in periods)
-    ends_in = any(p["t0"] <= ep["end"] <= p["t1"] for p in periods)
-    if starts_in or ends_in:
-        return "partial", None
-    return "outside", None
+# ============================ epizody w oknie (D-021) ============================
+def classify_events(periods, episodes):
+    """D-021: epizod jest zdarzeniem <=> jego POCZĄTEK wypada w oknie ryzyka (który koniec
+    ma epizod nie ma znaczenia dla kwalifikacji).
+
+    Skutek A: epizod zaczynający się w oknie liczy się jako zdarzenie, nawet jeśli trwa
+    poza domknięciem okna — okno domyka się na tym zdarzeniu (dalej brak wiersza
+    cenzurowanego, patrz `diad_rows`).
+
+    Skutek B: epizod trwający już w chwili otwarcia PIERWSZEGO okresu nie jest zdarzeniem
+    (jego początku nie obserwowaliśmy) — okno przesuwa się na KONIEC tego epizodu.
+
+    Zwraca (periods_po_ewentualnym_przesunięciu, zdarzenia_kwalifikujące_posortowane, czy_przesunięto)."""
+    periods = [dict(p) for p in periods]           # kopia — nie mutujemy wejścia
+    p0 = periods[0]
+    ongoing_at_open = [ep for ep in episodes if ep["start"] < p0["t0"] <= ep["end"]]
+    shifted = False
+    if ongoing_at_open:
+        new_open = max(ep["end"] for ep in ongoing_at_open)
+        if new_open > p0["t0"]:
+            p0["t0"] = new_open
+            shifted = True
+        if p0["t1"] <= p0["t0"]:                    # cały pierwszy okres pochłonięty
+            periods = periods[1:]
+
+    qualifying = [ep for ep in episodes
+                 if any(p["t0"] <= ep["start"] <= p["t1"] for p in periods)]
+    qualifying.sort(key=lambda e: e["start"])
+    return periods, qualifying, shifted
 
 
-# ============================ struktura obserwacji (§5) ============================
+# ============================ struktura obserwacji (§5, D-021) ============================
 def diad_rows(dname, a, b, periods, episodes, mem):
-    """Zwraca (interval_rows, partial_flags). t0 (otwarcie->pierwszy epizod) zapisany z
-    flagą `t0_flag=1`, poza modelem głównym (§5 protokołu). Diada bez epizodów w oknie:
-    jedna obserwacja w pełni cenzurowana o długości całego okna (sumy okresów)."""
-    rows, partials = [], []
-    inside = []
-    for ep in episodes:
-        status, p = episode_window_status(ep, periods)
-        if status == "inside":
-            inside.append(ep)
-        elif status == "partial":
-            partials.append({"diada": dname, "start": ep["start"], "end": ep["end"],
-                             "nazwa": ep["name"]})
-        # 'outside': poza oknem, poza analizą — nie jest to przypadek do zgłoszenia
-    inside.sort(key=lambda e: e["start"])
+    """Zwraca (interval_rows, przesunieto_okno). t0 (otwarcie->pierwsze zdarzenie) zapisany
+    z flagą `t0_flag=1`, poza modelem głównym (§5 protokołu). Diada bez zdarzeń w oknie:
+    jedna obserwacja w pełni cenzurowana o długości całego okna."""
+    periods, inside, shifted = classify_events(periods, episodes)
+    if not periods:                                  # okno całkowicie pochłonięte (Skutek B)
+        return [], shifted, periods
 
     win_start = periods[0]["t0"]
     win_end = periods[-1]["t1"]
@@ -141,12 +153,13 @@ def diad_rows(dname, a, b, periods, episodes, mem):
 
     if not inside:
         gap = exposure_multi(mem, a, b, win_start, win_end, periods)
-        rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "cenzurowany_bez_epizodow",
-                     "rok_start": win_start, "rok_koniec": win_end, "ekspozycja": gap,
-                     "cenzurowany": 1, "t0_flag": 0, "ucieta": ucieta_any})
-        return rows, partials
+        rows = [{"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "cenzurowany_bez_epizodow",
+                "rok_start": win_start, "rok_koniec": win_end, "ekspozycja": gap,
+                "cenzurowany": 1, "t0_flag": 0, "ucieta": ucieta_any}]
+        return rows, shifted, periods
 
-    # t0: od otwarcia okna do pierwszego epizodu — zapisany, POZA modelem głównym
+    rows = []
+    # t0: od otwarcia okna do pierwszego zdarzenia — zapisany, POZA modelem głównym
     e0 = exposure_multi(mem, a, b, win_start, inside[0]["start"], periods)
     rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "t0",
                  "rok_start": win_start, "rok_koniec": inside[0]["start"], "ekspozycja": e0,
@@ -161,12 +174,15 @@ def diad_rows(dname, a, b, periods, episodes, mem):
                      "rok_start": e_prev, "rok_koniec": s_next, "ekspozycja": gap,
                      "cenzurowany": 0, "t0_flag": 0, "ucieta": ucieta_any})
 
-    e_last = inside[-1]["end"]
-    gap = exposure_multi(mem, a, b, e_last, win_end, periods)
-    rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "cenzurowany",
-                 "rok_start": e_last, "rok_koniec": win_end, "ekspozycja": gap,
-                 "cenzurowany": 1, "t0_flag": 0, "ucieta": ucieta_any})
-    return rows, partials
+    # D-021 Skutek A: jeśli ostatnie zdarzenie trwa poza domknięciem okna, okno domyka się
+    # na tym zdarzeniu — brak odstępu cenzurowanego (nie wiadomo, kiedy wojna się skończy).
+    last = inside[-1]
+    if last["end"] < win_end:
+        gap = exposure_multi(mem, a, b, last["end"], win_end, periods)
+        rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "cenzurowany",
+                     "rok_start": last["end"], "rok_koniec": win_end, "ekspozycja": gap,
+                     "cenzurowany": 1, "t0_flag": 0, "ucieta": ucieta_any})
+    return rows, shifted, periods
 
 
 # ============================ główny bieg ============================
@@ -196,40 +212,41 @@ def main():
     wars, minus7 = t6.war_spans(wdf)
     diad_all = t6.build_diads(wars)   # WSZYSTKIE diady, bez progu (zakaz nr 2)
 
-    win_rows, int_rows, partial_rows = [], [], []
+    win_rows, int_rows, shifted_diads = [], [], []
     for (a, b), periods in sorted(windows.items()):
         dname = f"{nm(a)}–{nm(b)}"
-        for p in periods:
-            win_rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, **p})
         confs = diad_all.get((a, b), [])
         episodes = [{"start": ep["start"], "end": ep["end"],
                     "name": "; ".join(m[3] for m in ep["members"])}
                    for ep in t6.merge_episodes(confs)]
-        rows, partials = diad_rows(dname, a, b, periods, episodes, mem)
+        rows, shifted, periods_adj = diad_rows(dname, a, b, periods, episodes, mem)
         int_rows += rows
-        partial_rows += partials
+        for p in periods_adj:                          # okno WYJŚCIOWE po D-021 (jeśli przesunięte)
+            win_rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, **p})
+        if shifted:
+            shifted_diads.append(dname)
 
     win_tab = pd.DataFrame(win_rows)
     int_tab = pd.DataFrame(int_rows)
-    partial_tab = pd.DataFrame(partial_rows)
 
-    meta = {"builder": "test7_build_windows.py v1.0", "zrodlo_rywalizacje": tss_src.name,
+    meta = {"builder": "test7_build_windows.py v1.1 (D-021: zdarzenie = start w oknie)",
+            "zrodlo_rywalizacje": tss_src.name,
             "sha256_tss_rda": hashlib.sha256(tss_src.read_bytes()).hexdigest()[:16],
             "zrodlo_wojny": war_src.name, "sha256_wojny": hashlib.sha256(war_src.read_bytes()).hexdigest()[:16],
             "zrodlo_czlonkostwo": mem_src.name, "sha256_czlonkostwo": hashlib.sha256(mem_src.read_bytes()).hexdigest()[:16],
             "spatial_wiersze": int((tss.spatial == 1).sum()), "spatial_diad": len(diad_periods),
             "diad_z_niepustym_oknem": len(windows), "diady_odrzucone_puste_okno": len(dropped_empty),
-            "epizody_czesciowo_w_oknie": len(partial_rows)}
+            "diady_z_przesunietym_oknem_D021": shifted_diads}
 
     with open(od / "test7_windows.csv", "w", encoding="utf-8") as fh:
         fh.write("# " + json.dumps(meta, ensure_ascii=False) + "\n"); win_tab.to_csv(fh, index=False)
     with open(od / "test7_intervals.csv", "w", encoding="utf-8") as fh:
         fh.write("# " + json.dumps(meta, ensure_ascii=False) + "\n"); int_tab.to_csv(fh, index=False)
-    partial_tab.to_csv(od / "test7_partial_episodes.csv", index=False)
 
     print(json.dumps(meta, ensure_ascii=False, indent=2))
     print(f"diady odrzucone (puste okno): {dropped_empty}")
-    print(f"zapisano test7_windows.csv, test7_intervals.csv, test7_partial_episodes.csv w {od}")
+    print(f"diady z przesunietym oknem (D-021): {shifted_diads}")
+    print(f"zapisano test7_windows.csv, test7_intervals.csv w {od}")
 
 
 if __name__ == "__main__":
