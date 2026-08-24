@@ -770,3 +770,47 @@ w granicach prawdopodobnego opóźnienia = mierzymy datowanie wydawnicze, nie re
 **Zakres.** Niezależne od Testu 6 i Testu 7 — dotyczy rozdziału III.3.2 i każdego zdania
 przypisującego COLOR rolę wyprzedzającą albo nadążającą. Nie blokuje żadnego z bieżących
 testów rodziny 9/9b, które nie używają COLOR.
+
+---
+
+## D-020 · 2026-08-24 · Sprostowanie liczby kontrolnej w D-016: 120 diad z niepustym oknem, nie 129
+
+**Kontekst.** D-016 i `TEST7_PROTOCOL.md` §3 podają jako liczbę kontrolną „diady z niepustym
+oknem ryzyka w latach 1816–2007: **129**" (12 ze 141 diad odrzuconych). Etap A Testu 7
+(`test7_build_windows.py`), stosując wzór §3 **dosłownie** — łącznie z warunkiem
+`wejście_a_do_systemu`/`wyjście_a` z `system2016.csv` — dał **120** diad z niepustym oknem
+(21 odrzuconych). Code zatrzymał się i zgłosił rozbieżność zamiast dopasowywać wynik do
+liczby z protokołu.
+
+### Rozstrzygnięcie
+
+**Wzór §3 protokołu pozostaje bez zmian — jest poprawny.** Liczba kontrolna „129" w D-016
+i `TEST7_PROTOCOL.md` §3 była policzona **z pominięciem warunku członkostwa**
+(`system2016.csv`) — czyli innym wzorem niż ten, który protokół faktycznie deklaruje.
+Liczba była błędna, nie wzór. **Obowiązuje 120 diad z niepustym oknem, 21 odrzuconych.**
+
+### Rozbicie 21 odrzuconych diad (ustalone w Etapie A, do raportu)
+
+| grupa | n | przyczyna |
+|---|---|---|
+| A | 9 | okres rywalizacji leży **całkowicie przed 1816** — koniec rywalizacji wypada przed początkiem zbioru COW, niezależnie od członkostwa |
+| B | 3 | okres rywalizacji leży **całkowicie po 2007** — zaczyna się po końcu zakresu `Inter-StateWarData_v4.0.csv` |
+| C | 9 | **brak wspólnych lat członkostwa w oknie** — w przedziale [1816,2007] ∩ [okres rywalizacji] żaden rok nie ma obu stron jednocześnie w `system2016.csv` |
+
+Grupy A i B (12 diad) odpowiadają dokładnie pierwotnej liczbie „12" z D-016 — to jest
+poprawny rdzeń tamtego ustalenia. Grupa C (9 diad) została pominięta w obliczeniu, które
+dało 129.
+
+**Przykład grupy C, wart odnotowania.** Niemcy–Austria (rywalizacja 1740–1870) odpada, bo
+COW koduje Austro-Węgry jako ccode 300 do 1918, a Austrię jako ccode 305 dopiero od 1919 —
+w całym przedziale [1816,2007] ∩ [1740,1870] = [1816,1870] nie ma roku, w którym ccode 305
+istnieje w `system2016.csv`. **To jest ograniczenie konwencji kodowania COW, nie twierdzenie
+historyczne** o nieistnieniu Austrii jako podmiotu w tym okresie (zgodnie z zasadą przyjętą
+już w D-012 dla ciągłości państw: kody realizują konwencję zbioru, nie orzekają o tożsamości
+politycznej).
+
+### Kolejność i ujawnienie
+
+Rozstrzygnięcie zapadło po zatrzymaniu się Code'a na rozbieżności liczby kontrolnej, przed
+policzeniem jakiejkolwiek statystyki czasów oczekiwania — zgodnie z §6 `TASK_7A_BRIEF.md`.
+Etap A kontynuowany na zbiorze 120 diad.
