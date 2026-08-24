@@ -617,3 +617,156 @@ P1/F1 nie został przekazany Code'owi w treści `TASK_6B_BRIEF.md` — jest tam 
 przywołany przez odniesienie. Etap B (pisanie kodu) tego nie wymaga: reguła dotyczy
 czytania wyniku w Etapie C, nie implementacji estymatora. Nie jest tu domyślana ani
 wymyślana — zgłoszona jako brak, do uzupełnienia przed Krokiem 3.
+
+---
+
+## D-016 · 2026-08-23 · Populacja rodziny 9b: rywalizacje przestrzenne zamiast progu liczby wojen
+
+*(Dopisane po D-017 z powodu kolejności, w jakiej wpisy dotarły do Code'a — numer
+zachowany jak nadany w źródle, zgodnie z precedensem D-007, który też wszedł do rejestru
+po numerach wyższych od siebie. D-017 poprawia D-014 i nie wynika logicznie z D-016 —
+to dwa niezależne wpisy z tego samego dnia.)*
+
+**Kontekst.** Test 6 (rodzina 9) wchodzi do zbioru przez próg „≥ 3 wspólne konflikty". Próg
+ten był zadeklarowany od D-012 wraz z jego znanym ograniczeniem: wybiera pary walczące często
+i obciąża wynik w stronę pozornej regularności. Ma jednak wadę poważniejszą, wpisaną
+w ograniczenia od początku — **selekcjonuje po tej samej wielkości, którą mierzy**. Pary
+wybieramy według liczby konfliktów, a badamy odstępy między konfliktami.
+
+Uwagi autora z 2026-08-23 wskazały trzy niezależne problemy z obecną definicją diady:
+brak wymogu wspólnej stawki, mieszanie mocarstw z resztą, oraz status wojen światowych jako
+zdarzenia synchronizującego, które tworzy pary pozorne. Wszystkie trzy dotyczą **doboru
+populacji**, nie modelu.
+
+### Rozstrzygnięcie
+
+**Nowy test (rodzina 9b) dobiera diady przez przynależność do rywalizacji strategicznych
+o składniku przestrzennym, bez jakiegokolwiek progu liczby wojen.**
+
+Źródło: Thompson, Sakuwa i Suhas (2021), *Strategic Rivalries*, 1494–2020, w postaci
+maszynowej rozprowadzanej z pakietem `peacesciencer` (obiekt `tss_rivalries`, 264 rywalizacje).
+Kryterium: znacznik `spatial = 1`.
+
+**Test 6 pozostaje bez zmian** i zostaje dokończony na swojej pierwotnej populacji. Rodzina 9b
+jest osobnym testem o osobnym protokole, nie poprawką.
+
+### Uzasadnienie
+
+**1. Kryterium jest niezależne od mierzonej wielkości.** Kodowanie Thompsona powstaje
+z odczytu relacji dyplomatycznych — z tego, czy strony wzajemnie traktowały się jako
+zagrożenie — a nie z liczenia sporów. Zrywa to koło, w którym tkwi Test 6. Z tego samego
+powodu **wyklucza się użycie rywalizacji trwałych Diehla i Goertza**, które definiuje się
+przez gęstość sporów w oknie czasowym; jako filtr byłyby dla tego pytania tautologią.
+
+**2. Znacznik przestrzenny operacjonalizuje „wspólną strefę konfliktu" bez definicji własnej.**
+Kontrola: USA–ZSRR figuruje jako rywalizacja, ale ze składnikiem przestrzennym równym zero
+(pozycyjna, ideologiczna, interwencyjna) — znacznik oddziela spór o wspólny obszar od
+projekcji siły na odległość, czyli robi dokładnie to, o co chodziło.
+
+**3. Kryterium jest binarne, nie kategoryzujące.** Typ przedmiotu sporu nie wchodzi do
+selekcji. Dziewięć wojen o minerały nie jest osobną populacją, tylko podzbiorem; dzielenie
+po typach zasobu zniszczyłoby próbę tak samo jak stratyfikacja po mocarstwach.
+
+### Skutek liczbowy — populacja i okno ryzyka
+
+| wielkość | wartość |
+|---|---|
+| rywalizacje przestrzenne (wiersze) | 152 |
+| **unikalnych diad** | **141** |
+| diady z niepustym oknem ryzyka w latach 1816–2007 | **129** |
+| sumaryczne lata ryzyka | 6 232 |
+| mediana długości okna | 31 lat (kwartyle 13,5 / 61; maks. 176) |
+| rywalizacje rozpoczęte przed 1816 | 18 |
+| rywalizacje trwające po 2007 | 36 |
+
+Dla porównania, populacja przez próg liczby wojen: 342 diady kiedykolwiek walczące,
+z tego 60 z ≥ 2 wojnami i 23 z ≥ 3 (obecny Test 6).
+
+**Diady przecinające oba kryteria:** spośród 141 rywalizacji przestrzennych 71 miało
+co najmniej jedną wojnę międzypaństwową COW, a **30 co najmniej dwie** (łącznie 90 wojen).
+
+### Co ta zmiana daje
+
+**Obserwacje cenzurowane, których dotąd nie widzieliśmy.** Siedemdziesiąt rywalizacji
+przestrzennych nie doszło do wojny ani razu. W układzie z progiem są niewidoczne; tutaj są
+pełnoprawnymi obserwacjami cenzurowanymi — parami, które miały wspólną stawkę i mimo to
+nie walczyły. Jest to najmocniejsza informacja o czasie oczekiwania, jaką można mieć, i jej
+pominięcie było źródłem obciążenia w Teście 6.
+
+**Więcej grup dla modelu kruchości.** Trzydzieści diad z co najmniej dwiema wojnami wobec
+osiemnastu w Teście 6, a przy uwzględnieniu odstępów od początku rywalizacji — do 129.
+Identyfikowalność parametru kruchości zależy od liczby grup, nie tylko obserwacji.
+
+**Okno ryzyka wyznaczone przez rywalizację, nie przez zakres zbioru.** W Teście 6 zegar
+cenzurowania biegnie do 2007 niezależnie od tego, czy para wciąż ma o co walczyć. Tutaj okno
+domyka się z chwilą wygaśnięcia rywalizacji.
+
+### Kontrole zgodności wykonane przed zamrożeniem
+
+| sprawdzenie | wynik |
+|---|---|
+| USA–Wietnam | **nie figuruje** w zbiorze rywalizacji — zgodnie z zastrzeżeniem autora |
+| USA–ZSRR | rywalizacja, ale `spatial = 0` — znacznik działa zgodnie z zamiarem |
+| Niemcy–Polska, Francja–Anglia | **obie są rywalizacjami przestrzennymi** — ich brak w Teście 6 wynika z okna czasowego COW, nie z pojęcia |
+| pary powstałe z koalicji II wojny (Francja–Bułgaria, Włochy–Bułgaria, ZSRR–Finlandia) | **nie są rywalizacjami** — filtr usuwa artefakty synchronizacji samodzielnie |
+| 18 diad zbioru głównego Testu 6 | 17 przechodzi filtr rywalizacji, 16 ma składnik przestrzenny |
+
+### Ujawnienie
+
+Wszystkie liczby powyżej dotyczą **składu populacji**, nie hipotezy. Przed zamrożeniem tego
+rozstrzygnięcia **nie policzono żadnej statystyki czasów oczekiwania** na zbiorze
+przefiltrowanym — ani współczynnika zmienności, ani parametru kształtu, ani niczego, co
+wchodzi do reguły decyzyjnej. Ta granica jest tu istotna: po jej przekroczeniu nie dałoby się
+już uczciwie wybierać między wariantami definicji filtru.
+
+Znane były natomiast wyniki Testu 6 do poziomu współczynników zmienności (0,983 / 0,955 /
+0,926) oraz dekompozycja wariancji między diadami.
+
+### Zastrzeżenia zapisane z góry
+
+**Kodowanie Thompsona jest osądem z historii dyplomatycznej, nie pomiarem.** Daty początku
+i końca rywalizacji mają niepewność, której zbiór nie kwantyfikuje. Wariant kontrolny na
+wcześniejszej wersji (Thompson i Dreyer 2012, 197 rywalizacji) ma pokazać wrażliwość na to
+kodowanie.
+
+**Lewostronne ucięcie.** Osiemnaście rywalizacji przestrzennych zaczyna się przed 1816 rokiem,
+czyli przed początkiem zbioru COW. Dla nich okno ryzyka otwiera się w 1816, a pierwszy
+obserwowany odstęp nie jest odstępem od początku rywalizacji. Musi to być obsłużone jako
+ucięcie, nie zignorowane.
+
+**Niezależność diad pozostaje naruszona.** Ustalenie z Testu 6 — 27% epizodów kończy się
+w 1918 albo 1945 — dotyczy tak samo tej populacji. Wojny światowe narzucają wspólny zegar
+parom skądinąd niezależnym. Problem nierozwiązany, do nazwania w raporcie.
+
+---
+
+## D-018 · 2026-08-23 · Status zmiennej COLOR: obciążenie datowaniem publikacji
+
+**Kontekst.** Dotychczasowy zapis oznaczał kierunek wojny→COLOR (istotny, p<0,01, opóźnienia
+1–6) jako niecytowalny z jednego powodu — częściowe liczenie na MA(11) centrowanej, która
+przecieka informacją z przyszłości. Pełna treść ustalenia: `ERRATA_COLOR_datowanie.md`.
+
+**Ustalenie.** Jest drugi, poważniejszy powód, którego nie da się usunąć filtrem. Szereg
+COLOR (korpus Google Books) datuje **publikację**, nie **wypowiedzenie** retoryki — mowy,
+depesze i wspomnienia są najpierw wygłaszane, potem drukowane, z opóźnieniem które jest
+(1) jednostronne — publikacja nigdy nie wyprzedza wypowiedzenia, (2) nieznane co do
+wielkości w tych danych, (3) niestacjonarne — tempo druku i zasięg nakładów zmieniały się
+radykalnie między 1816 a 2007.
+
+**Konsekwencja.** Wynik „wojny wyprzedzają COLOR na opóźnieniach 1–6" jest nieodróżnialny od
+tego, czego należałoby oczekiwać, gdyby retoryka wyprzedzała wojny, a druk opóźniał jej zapis
+o kilka lat. To nie jest świadectwo przeciw hipotezie wyprzedzającej retoryki — to brak
+świadectwa w którąkolwiek stronę. Dotyczy wszystkich wyników z COLOR jako zmienną czasową
+(Granger w obu kierunkach, korelacja skrośna, kointegracja), nie tylko jednego testu.
+
+**Rozstrzygnięcie.** Zmienna COLOR pozostaje użyteczna jako **wskaźnik poziomu**, nie jako
+**wskaźnik momentu**. Test wyprzedzenia retoryki (roboczo Test 8) **nie ma sensu przed
+korektą datowania** — dałby wynik metodologicznie poprawny i pusty. Droga wyjścia (oszacowanie
+rozkładu opóźnienia wydawniczego na próbie z obiema datami, test na paśmie prawdopodobnych
+opóźnień zamiast jednej liczbie) opisana w `ERRATA_COLOR_datowanie.md` §6; kryterium
+rozstrzygające zadeklarowane tam z góry (§6): odwrócenie kierunku przy przesunięciu o 3 lata
+w granicach prawdopodobnego opóźnienia = mierzymy datowanie wydawnicze, nie relację czasową.
+
+**Zakres.** Niezależne od Testu 6 i Testu 7 — dotyczy rozdziału III.3.2 i każdego zdania
+przypisującego COLOR rolę wyprzedzającą albo nadążającą. Nie blokuje żadnego z bieżących
+testów rodziny 9/9b, które nie używają COLOR.
