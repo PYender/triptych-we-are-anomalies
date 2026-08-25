@@ -1,8 +1,18 @@
-# TEST 6 — RAPORT (Etap C: bieg na danych rzeczywistych, rodzina 9)
+# TEST 6 — ANALIZA UZUPEŁNIAJĄCA (nie orzeka o H6.1) — metoda niezgodna z §6–§8 protokołu
 
-**Realizuje:** `TASK_6B_BRIEF.md` §7–8 (Krok 3) · **Kod:** `test6_run.py` na `test6_weibull.py`
-(pięć usterek naprawionych + D-022) · **Bieg:** 2026-08-24, ziarno `20260823`, B=2000
-**Status:** WYNIK — pierwszy policzony rezultat testu w całym projekcie CPS.
+> **UWAGA (D-023).** Ten dokument opisuje bieg wykonany metodą **niezgodną** z
+> `TEST6_PROTOCOL.md` §6–§8 — profil wiarygodności i bootstrap diadowy zamiast
+> pre-rejestrowanego modelu zerowego N1/N2 (symulacja, wartość p). Podstawienie metody
+> nastąpiło, bo `TASK_6B_BRIEF.md` powstał bez tekstu protokołu w kontekście; nie ma w
+> rejestrze wpisu, który by je autoryzował dla §5–§8 (D-013/D-014/D-015 zmieniają inne
+> paragrafy). **Ten dokument NIE JEST wynikiem orzekającym o H6.1.** Krok 3 zostaje
+> powtórzony zgodnie z §6–§8 (D-023); estymacja punktowa i przedziały poniżej zostają jako
+> analiza diagnostyczna/uzupełniająca, do porównania z wynikiem zgodnym z protokołem, gdy
+> ten powstanie.
+
+**Realizuje (błędnie, patrz wyżej):** `TASK_6B_BRIEF.md` §7–8 (Krok 3) · **Kod:**
+`test6_run.py` na `test6_weibull.py` (pięć usterek naprawionych + D-022) · **Bieg:**
+2026-08-24, ziarno `20260823`, B=2000
 
 ---
 
@@ -105,9 +115,13 @@ o heterogeniczność (§3).
 z Kroku 1b/1c (D-013, D-014, D-020 nie dotyczy Testu 6). Kod estymatora niezmieniony od
 `test6_weibull.py` zatwierdzonego w drugim przeglądzie (`PRZEGLAD2_test6_weibull.md`).
 
-## 9. Status
+## 9. Status (poprawiony przez D-023)
 
-Wynik dla kształtu k jest **rozstrzygnięty** (§2): k<1, CI wyklucza 1, zgodny kierunkowo
-w P1/S-A/S-B. Wynik dla heterogeniczności (θ, F1 wobec P1) jest **nierozstrzygnięty** (§3,
-D-022). Czekam na potwierdzenie sformułowania werdyktu wobec `TEST6_PROTOCOL.md` §8 (§2
-powyżej) przed przeniesieniem do rozdziału.
+**Ten dokument nie orzeka o H6.1.** Metoda (profil wiarygodności + bootstrap) jest
+niezgodna z §6–§8 protokołu (D-023) — Krok 3 zostaje powtórzony zgodnie z pre-rejestrowanym
+modelem zerowym N1/N2. Liczby powyżej (k<1, CI wyklucza 1 w P1/S-A/S-B; θ na granicy,
+nierozstrzygające co do heterogeniczności) zostają jako **analiza diagnostyczna** — punkt
+odniesienia do porównania z wynikiem zgodnym z protokołem, nie jako werdykt. Zgodnie
+z D-023, gdy powstanie wynik zgodny z §6–§8, bieg ten trzeba będzie wykonać ze świadomością
+znajomości tego diagnostycznego wyniku — co samo w sobie ma zostać odnotowane w tamtym
+raporcie, nie przemilczane.

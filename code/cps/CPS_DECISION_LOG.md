@@ -863,3 +863,73 @@ Warunek dotyczył testu, nie kodu — Krok 3 Testu 6 nie wymaga nowego przegląd
 wykonania tej symulacji i przejścia dalej (ustalone przez autora). Wynik trafia do raportu
 Etapu C jako deklaracja sprzed biegu, nie jako wyjaśnienie po fakcie — zgodnie z zasadą
 stosowaną konsekwentnie w obu testach rodziny 9/9b.
+
+---
+
+## D-023 · 2026-08-24 · Krok 3 Testu 6 podstawił inny silnik statystyczny niż §6–§8 protokołu — powtórzyć zgodnie z pre-rejestracją
+
+**Kontekst.** `TEST6_PROTOCOL.md` v1.0 (zamrożony 22 sierpnia) pre-rejestruje w §6–§8
+konkretny model zerowy — **N1** (proces Poissona per diada, ta sama struktura cenzurowania,
+B=2000, ziarno `20260822`) i **N2** (permutacja odstępów między diadami) — z wartością p
+liczoną wzorem `p = (1 + #{|k_sur−1| ≥ |k_obs−1|})/(B+1)`, oraz regułę decyzyjną w §8
+(P1(N1) p<0,05 **i** P2(N2) p<0,10 **i** S2 bez cenzurowania nie jest jedynym istotnym
+wariantem). Lista wariantów §7 to P1, P2, S1–S8.
+
+`TASK_6B_BRIEF.md`, na podstawie którego Code napisał `test6_weibull.py` i wykonał Krok 3,
+powstał **bez `TEST6_PROTOCOL.md` w kontekście** i podstawił inny silnik — MLE Weibulla
+z profilem wiarygodności i bootstrapem diadowym — nie odnotowując, że to jest podstawienie
+metody, nie tylko nazw wariantów (P1/F1/S-A/S-B zamiast P1/P2/S1–S8).
+
+**Sprawdzone w rejestrze:** D-013 zmienia §3 protokołu (próg na epizodach), D-014 zmienia
+§4 (ekspozycja zamiast kalendarza), D-015 dokłada model kruchości jako wariant drugorzędny.
+**Dla §5–§8 (statystyka, model zerowy, reguła decyzyjna) nie ma żadnego wpisu.** Protokół
+w tej części obowiązuje w brzmieniu z 22 sierpnia.
+
+### Rozstrzygnięcie
+
+**Krok 3 powtarzamy zgodnie z §6–§8 protokołu.** Nie zmieniamy protokołu pod już
+policzony wynik. `TEST6_REPORT.md` (k̂=0,778, profil i bootstrap poniżej 1) **nie orzeka
+o H6.1** — zostaje jako analiza uzupełniająca/diagnostyka, nie jako wynik testu.
+
+**Argument merytoryczny, niezależny od formalnego.** Drugi przegląd `test6_weibull.py`
+wykazał, że przy 45 zdarzeniach estymator ma ok. 3% obciążenia k̂ w górę przy prawdziwym
+k=1, a przedział z profilu wiarygodności opiera się na przybliżeniu asymptotycznym
+niegwarantowanym przy tej liczebności. Model zerowy N1 pochłania to obciążenie
+automatycznie, bo surogaty przechodzą przez ten sam estymator, więc metoda protokołu jest
+tu lepsza od tej, którą podstawiono — nie tylko formalnie pierwotna.
+
+### Kolejność, z dwoma zatrzymaniami
+
+**Krok A (decyzja, nie implementacja — STOP przed biegiem).** Odwzorowanie wariantów S1–S8
+z §7 na warstwę danych po D-013/D-014: dla każdego jedna z trzech kwalifikacji —
+wykonywany bez zmian / wykonywany w zmodyfikowanej postaci (jakiej, dlaczego) /
+bezprzedmiotowy po D-013/D-014 (co konkretnie unieważniło). Szczególna uwaga na S1 (próg
+liczony na konfliktach, nie epizodach) i S3 (definicja odstępu sprzed scalania). S5, S6,
+S7, S8 nigdy nie zostały wykonane — odnotować to wprost.
+
+**Krok B.** Implementacja N1 i N2 wg §6, z naprawionym `test6_weibull.py` (pięć poprawek
+z pierwszego przeglądu pozostają w mocy) do liczenia k̂ wewnątrz obu modeli zerowych.
+Bliźniaczy `.md`. STOP na przegląd, bez uruchamiania na danych rzeczywistych.
+
+**Krok C.** Bieg, sprawdzenie reguły §8 w trzech warunkach naraz, raport.
+
+### Wymogi dla raportu Kroku C (obowiązkowe)
+
+1. `TEST6_REPORT.md` (analiza niezgodna z protokołem) dostaje nagłówek wprost mówiący,
+   że nie orzeka o H6.1 — nie jest usuwany, estymacja punktowa i bootstrap zostają jako
+   diagnostyka.
+2. **Ujawnienie wymagane przez zakaz nr 10 w obie strony.** Bieg zgodny z protokołem
+   wykonywany jest ze znajomością wyniku niezgodnego (k̂=0,778, oba przedziały poniżej 1).
+   Test pre-rejestrowany wykonany ze znajomością wyniku nie ma pełnej mocy pre-rejestracji —
+   ma to stać w raporcie Kroku C wprost, nie być przemilczane. Zakaz nr 10 zabrania zarówno
+   zmiany protokołu po zobaczeniu wyniku, jak i udawania, że wyniku się nie widziało.
+3. **Porównanie obu metod na tych samych danych jest samodzielnym wynikiem.** Jeżeli p z N1
+   i przedział z profilu prowadzą do różnych wniosków, to jest informacja o zachowaniu
+   estymatora przy tej wielkości próby, nie tylko o Teście 6 — ma zostać nazwane wprost.
+
+### Zakres
+
+Nie dotyczy Testu 7 — `TEST7_PROTOCOL.md` i `TASK_7B_BRIEF.md` świadomie opisują
+wnioskowanie przez przedziały ufności od początku, są spójne same ze sobą i nowsze. Test 7
+pozostaje wstrzymany do osobnego potwierdzenia tej spójności przez autora, niezależnie od
+niniejszego wpisu.
