@@ -971,3 +971,88 @@ ostatnia wojna. Zapisane w `TEST7_DATA_REPORT.md` (Etap A), nie odłożone do Et
 którym Etap B musi się liczyć od początku (możliwy wpływ na sposób traktowania obserwacji
 `cenzurowany` kontra `pelny`/`t0`-only w modelu — nie rozstrzygane tutaj, tylko
 udokumentowane).
+
+## D-029 · 2026-08-25 · Przegląd `TASK_7B_BRIEF.md` wobec `TEST7_PROTOCOL.md` — cztery luki, jedna poważna
+
+**Kontekst.** Wykonany na żądanie z D-023 §8 (warunek przed odblokowaniem Etapu B Testu 7):
+sprawdzenie, czy `TASK_7B_BRIEF.md` podmienia cokolwiek, czego `TEST7_PROTOCOL.md` nie
+ustala — dokładnie ten typ błędu, który dotknął Test 6. **Werdykt: podmiany nie ma.**
+Statystyka, model i cztery warianty zgadzają się z §7 protokołu co do joty. Znaleziono
+cztery luki, jedną poważną, trzy formalne/redakcyjne.
+
+### 1. LUKA POWAŻNA — brief pomijał połowę reguły decyzyjnej §8
+
+Brief pisał przy P1 wyłącznie „ORZEKA dla H9b.1", gubiąc drugi człon reguły §8: wymóg, żeby
+ten sam kierunek utrzymał się w S1 i S3. Wykonawca czytający sam brief uznałby, że wystarczy
+CI z P1. **Ta sama klasa usterki co D-023 — tylko przez pominięcie, nie przez podstawienie**
+— dokładnie to, dla czego powstała reguła z D-024 (brief cytuje paragraf protokołu, nie
+streszcza go).
+
+**Naprawa:** §8 protokołu wklejony do `TASK_7B_BRIEF.md` w całości, jako cytat, przed tabelą
+dopasowań (brief §2).
+
+### 2. LUKA MERYTORYCZNA — Krok C Testu 6 pokazał, że CI i model zerowy mogą wskazać różne strony progu
+
+Reguła §8 Testu 7 opiera H9b.1 wyłącznie na CI. Krok C Testu 6 (D-026/D-027) dał na tych
+samych danych: CI z profilu (0,603–0,979) i CI bootstrapowy (0,647–0,965) — oba wykluczają 1
+— ale wartość p z modelu zerowego N1 wyszła **0,068**. Gdyby regułą Testu 6 był sam CI, H6.1
+zostałaby uznana za wspartą; regułą był model zerowy (§8 Testu 6) i nie została.
+
+Przyczyna: model zerowy skalibrowany na rzeczywistą różnorodność temp między diadami centruje
+się na k̂≈0,91, nie na 1,0 (mechanizm F1/D-015, ten sam co w Teście 6) — CI porównuje z 1
+wprost, więc jest **systematycznie bardziej liberalny** w kierunku k<1. W Teście 7 diad jest
+120 zamiast 18, więc różnorodność temp będzie większa, a rozjazd prawdopodobnie szerszy.
+
+**Rozstrzygnięcie: reguły §8 Testu 7 NIE zmieniamy.** Jest zamrożona; zmiana po doświadczeniu
+z Testu 6 byłaby zmianą po zobaczeniu wyniku, choćby wyniku cudzego testu — to samo
+zobowiązanie co przy D-026 dla Testu 6. **Dokładamy natomiast obowiązkowy pomiar POZA regułą:**
+Etap B Testu 7 ma dodatkowo policzyć model zerowy typu N1 na strukturze Testu 7 i podać
+wartość p obok obu przedziałów. Nie orzeka — służy wyłącznie do pokazania, o ile obie miary
+się rozjeżdżają na tym zbiorze. Deklarowane TERAZ, przed jakimkolwiek biegiem Testu 7, z
+powodem zapisanym: doświadczenie z Testu 6, nie podejrzenie co do wyniku Testu 7.
+
+### 3. LUKA FORMALNA — odłożenie H9b.2 nie miało wpisu w rejestrze
+
+Brief odkładał P2 i zmienne z §6 protokołu „do czasu dostarczenia COW NMC" jedynie zdaniem
+w treści briefu, mimo że §7 protokołu ustanawia P2 jako orzekające dla H9b.2 — pominięcie
+takiego zakresu wymaga wpisu w rejestrze, nie zdania w briefie.
+
+**Wpis:** H9b.2 NIE jest testowana w tym etapie Testu 7. Powód: brak `COW NMC` (`NMC_v6.0`)
+— potencjał gospodarczy wymagany przez §6 protokołu jako zmienna objaśniająca (CINC, suma
+i stosunek stron) nie został dostarczony. Powód jest niezależny od jakiegokolwiek wyniku —
+zbiór nigdy nie był dostępny do wglądu, nie jest to decyzja podjęta po zobaczeniu czegokolwiek.
+**Warunek odblokowania:** dostarczenie `NMC_v6.0` z sumą kontrolną (§12 protokołu). ICOW
+(istotność stawki) pozostaje opcjonalne i odłożone z tego samego powodu.
+
+### 4. LUKA DROBNA — tabela §7 protokołu ma nieaktualną liczbę diad
+
+Tabela `TEST7_PROTOCOL.md` §7 podaje przy P1 „129 diad". D-020 sprostowało tę liczbę na
+**120** dla §3, ale tabeli §7 nigdy nie poprawiono — protokół jest zamrożony (zmiana §1–§9
+po rozpoczęciu obliczeń wymaga nowego wpisu i unieważnia bieg), więc tekst protokołu
+**pozostaje niezmieniony**, a rozbieżność jest odnotowana tutaj jako erratum redakcyjne, bez
+wpływu na treść: wszystkie faktyczne biegi (Etap A, `TASK_7B_BRIEF.md`) używają poprawnej
+liczby 120, zgodnie z D-020.
+
+### 5. Zapis dodatkowy, wynikający z D-022
+
+§8 protokołu Testu 7 mówi o CI dla `k` w modelu z kruchością i nie wspomina o parametrze
+kruchości. D-022 (Test 6) ustaliło, że θ̂ zapada się do granicy numerycznej w znacznej części
+biegów, a wtedy model z kruchością staje się tożsamy z pulowanym. Reguła §8 stosuje się wtedy
+mechanicznie i formalnie poprawnie, ale zdanie „orzeka model z kruchością" przestaje być
+prawdziwe. **Raport Etapu C Testu 7 ma podawać odsetek replik bootstrapowych z θ̂ na granicy
+obok każdego przedziału** i, jeżeli jest wysoki, stwierdzać wprost, że rozstrzygnięcie
+zapadło de facto na modelu pulowanym.
+
+### Rozstrzygnięcie
+
+Punkty 1, 3, 4 to poprawki redakcyjne/wpisy do rejestru (wykonane w `TASK_7B_BRIEF.md` i
+powyżej). Punkt 2 dokłada jedno obowiązkowe obliczenie diagnostyczne, poza regułą §8. Po ich
+wykonaniu **Etap B Testu 7 jest odblokowany**, w kolejności z brief §8: przeliczenie
+D-021/D-025 (wykonane), kod plus bliźniaczy `.md`, symulacja odzysku na strukturze Testu 7
+z cenzurowaniem administracyjnym plus model zerowy N1 diagnostyczny, **STOP** na przegląd,
+dopiero potem bieg na danych rzeczywistych.
+
+`TEST7_PROTOCOL.md` i `TASK_7B_BRIEF.md` (po naprawach) commitowane do repo w tym wpisie —
+oba dokumenty były dotąd przekazywane wyłącznie jako tekst w rozmowie, nigdy nie zapisane
+jako pliki, co przyczyniło się pośrednio do ryzyka błędu typu D-023 (praca na streszczeniu
+zamiast na źródle).
