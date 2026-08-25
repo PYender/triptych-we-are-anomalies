@@ -1105,3 +1105,73 @@ Dotyczy wyłącznie N2 (permutacja międzydiadyczna) w kontekście statystyki k�
 Nie dotyczy N1 (poprawny). Nie unieważnia Kroku B jako całości — P1(N1) pozostaje
 prawidłową, obliczalną ścieżką do wyniku dla H6.1, tylko bez towarzyszącego jej P2 jako
 drugiego, niezależnego potwierdzenia przewidzianego przez §8.
+
+### §7 — Sprostowanie (Claude, po weryfikacji Code'a) i reguła ogólna
+
+**Sprostowanie.** Twierdzenie „P2 wynosi dokładnie 1,000" jest prawdziwe wyłącznie w
+arytmetyce dokładnej: statystyka jest niezmiennicza względem permutacji, więc w arytmetyce
+dokładnej wszystkie surogaty remisują z obserwacją, a wzór §6 z nierównością nieostrą daje
+P2 równe jeden. Wniosek o tym, co zwróci KOD, jest twierdzeniem o implementacji, nie o
+algebrze — w arytmetyce zmiennoprzecinkowej permutacja zmienia kolejność sumowania tych
+samych wartości w `np.sum(ll)`, co przez nieasocjatywność przesuwa optimum Nelder-Mead o
+rząd 10⁻⁸ i rozstrzyga remis losowo. Sprawdzian pięciu permutacji na danych syntetycznych,
+który dał różnicę dokładnie zero, był przypadkiem: przy małej liczbie wierszy i wartościach
+całkowitych sumy wyszły bitowo identyczne, więc ścieżka optymalizatora się nie rozjechała.
+Przy B=2000 na pełnym zbiorze realnym rozjeżdża się i daje **p=0,253** (ziarno protokołu
+`20260822`) / **0,266** (inne ziarno) — deterministyczne przy ustalonym ziarnie, ale
+pozbawione treści. **Raportujemy zjawisko (degenerację), nie żadną z tych liczb.**
+
+**Reguła ogólna.** Każdy model zerowy oparty na symulacji, w którym surogat może remisować
+z obserwacją, wymaga jawnego wykrywania remisów. Nierówność nieostra z §6 jest poprawna i
+konserwatywna, ale tylko wtedy, gdy remis zostanie rozpoznany jako remis. **Do każdego
+kolejnego testu tej rodziny wchodzi kontrola: odsetek surogatów z `|k_sur − k_obs| < 10⁻⁶`
+(`tie_fraction`, `TIE_TOL=1e-6`). Wartość istotnie większa od zera (próg `TIE_FRAC_STOP=0,01`)
+oznacza degenerację i zatrzymuje bieg** (`AssertionError`, nie ciche zwrócenie p bez treści).
+Wbudowane w `run_n1`/`run_n2` (test6_null.py), zweryfikowane własnym testem
+(`test_tie_detector_discriminates`) na przypadku znanym-zdegenerowanym i
+znanym-niezdegenerowanym, oraz w stałej suicie (`run_null_correctness_suite`), obok
+`n1_window_exceedance`.
+
+**Przekroczenie okna N1 (75,4%) — dokładniejsze sformułowanie.** Nie efekt uboczny, tylko
+strukturalna własność N1 w dosłownym brzmieniu §6. `λ̂ = n/(Σt+c)`, więc oczekiwana długość
+pojedynczego losowanego odstępu wynosi `(Σt+c)/n`, a suma n odstępów daje w oczekiwaniu
+`Σt+c` (=T, realna ekspozycja). Po dołożeniu niezmienionego `c` surogatowa diada ma
+oczekiwany czas całkowity `Σt+2c` (=`T+c`) wobec obserwowanego `T` — **nadmiar równa się
+DOKŁADNIE `c`, jest systematyczny, nie losowy.** Stąd ~3/4 replik przekracza okno.
+**Konsekwencja dla czytania wyniku, asymetryczna:** rozkład zerowy N1 ma zawyżoną wariancję,
+więc P1 jest konserwatywne — niska wartość P1 jest wiarygodna Z NADWYŻKĄ (trudniej o nią
+przez przypadek, skoro null jest już rozdęty), natomiast wysoka wartość P1 jest **częściowo
+przypisywalna samej konstrukcji modelu zerowego, nie danym**. Ta asymetria jest ważniejsza
+niż sam odsetek i ma trafić do raportu Kroku C wprost. Nie naprawiane — z tego samego powodu
+co N2: opisujemy zjawisko protokołu, nie łatamy go po zobaczeniu problemu.
+
+**Zamknięcie przeglądu Kroku B (Claude).** Po dopisaniu tego paragrafu i powyższym
+doprecyzowaniu, przegląd kodu Kroku B jest zamknięty bez dalszych zastrzeżeń.
+
+## D-027 · 2026-08-25 · Autoryzacja Kroku C
+
+**Kontekst.** Po D-026 (wada §8 wykryta i rozstrzygnięta przed jakimkolwiek biegiem na danych
+rzeczywistych) Claude rekomendował udzielenie autoryzacji: kod przejrzany dwukrotnie, wady
+protokołu opisane przed biegiem, warunki raportowania zapisane. Autoryzacja nie leży w
+kompetencji ani Code'a, ani Claude — obaj to odnotowali wprost.
+
+**Rozstrzygnięcie (autor).** Krok C autoryzowany. `test6_null.py --run-real` odblokowane.
+Bieg wykonywany ze znajomością wyniku analizy niezgodnej (`TEST6_REPORT.md`, D-023) i ze
+znajomością wady §8 (D-026) — obie okoliczności ujawnione w raporcie Kroku C wprost, zgodnie
+z zakazem nr 10 w obie strony (nie zmieniać metodologii po wyniku, ale też nie udawać, że
+się go nie widziało).
+
+## D-028 · 2026-08-25 · Tryb przeglądu decyzji warstwy danych — zawężenie przyjęte
+
+**Kontekst.** Po D-025 (Test 7) Claude zauważył, że decyzje zmieniające zbiór danych
+(usuwanie obserwacji, przesuwanie okien, zmiana reguły kwalifikacji zdarzeń) mają tę
+własność, że ich skutek nie widać w liczbach, dopóki nie jest za późno — D-025 wyszło dobrze
+merytorycznie, ale dopiero przy weryfikacji arytmetyki ujawniło się, że przy okazji 22 diady
+straciły ogon cenzurowany (dodatek do D-025).
+
+**Rozstrzygnięcie (autor).** Przyjęte, z zawężeniem: decyzje o warstwie danych pozostają w
+gestii autora bez zmian, ale odtąd Code przy każdej takiej decyzji dołącza liczbę wierszy
+przed i po (rozbicie na typy obserwacji), a Claude sprawdza arytmetykę przed decyzją autora,
+nie po niej. Dokłada to jedną turę, ale wyłapuje dokładnie ten rodzaj rozjazdu między
+uzasadnieniem merytorycznym a niezamierzonym skutkiem ubocznym. Decyzje interpretacyjne
+(nie zmieniające zbioru) zostają w dotychczasowym trybie.

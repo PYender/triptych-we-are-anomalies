@@ -23,8 +23,12 @@ obserwowanych i na każdym surogacie.
 B=2000, ziarno 20260822 (§6 — inny niż RNG_SEED=20260823 używany w test6_weibull.py dla
 testów poprawności; ten skrypt ma WŁASNE, protokołem narzucone ziarno).
 
-STOP na przegląd (D-024) — NIE URUCHAMIANE na test6_intervals.csv w tym kroku; main()
-blokuje `--run-real` tak samo jak test6_weibull.py blokowało Krok 3 przed D-022.
+D-026: N2 zdegenerowany względem k̂ pulowanego, poza regułą decyzyjną §8 (diagnostyka).
+D-026 §7: kontrola remisów (`tie_fraction`) wbudowana w run_n1/run_n2, zatrzymuje bieg,
+jeśli surogaty remisują z obserwacją ponad próg — zabezpieczenie przed pomyleniem szumu
+numerycznego z wynikiem (dokładnie to, co przeoczono przy pierwszym zgłoszeniu P2=1,000).
+
+Krok C AUTORYZOWANY (2026-08-25, po D-026) — `--run-real` odblokowane.
 """
 from __future__ import annotations
 import argparse, hashlib, json
@@ -37,6 +41,24 @@ import test6_weibull as w
 
 SEED_PROTOCOL = 20260822        # §6 — ziarno przypisane WYŁĄCZNIE modelom zerowym N1/N2
 B_NULL = 2000
+
+# D-026 §7 (reguła ogólna po korekcie Claude): każdy model zerowy oparty na symulacji, w
+# którym surogat może remisować z obserwacją, wymaga jawnego wykrywania remisów — inaczej
+# nierówność nieostra z §6 jest poprawna tylko w arytmetyce dokładnej; w zmiennoprzecinkowej
+# remis rozstrzyga się na szumie i daje pozornie sensowną, w rzeczywistości bezwartościową
+# liczbę (patrz N2, p=0,253/0,266). TIE_TOL=1e-6 — tolerancja rozpoznania remisu;
+# TIE_FRAC_STOP — próg odsetka remisów, powyżej którego bieg ma się zatrzymać (nie tylko
+# ostrzec) jako degenerację, a nie liczyć p dalej.
+TIE_TOL = 1e-6
+TIE_FRAC_STOP = 0.01
+
+
+def tie_fraction(k_sur: np.ndarray, kobs: float, tol: float = TIE_TOL) -> float:
+    """Odsetek surogatów remisujących z obserwacją (|k_sur-k_obs|<tol) — D-026 §7. Pod
+    prawdziwie ciągłym, niezdegenerowanym rozkładem zerowym oczekiwana wartość to praktycznie
+    zero (prawdopodobieństwo trafienia w przedział szerokości 2*tol jest znikome); wartość
+    istotnie większa od zera jest sygnałem degeneracji typu N2, nie zbiegiem okoliczności."""
+    return float(np.mean(np.abs(k_sur - kobs) < tol))
 
 
 def load_grouped(path: str):
@@ -93,10 +115,16 @@ def run_n1(path: str, B: int = B_NULL, seed: int = SEED_PROTOCOL):
     for b in range(B):
         t_sim, event_sim = simulate_n1_once(grouped, rng)
         k_sur[b] = w.fit_pooled(t_sim, event_sim)["k"]
+    frac_tie = tie_fraction(k_sur, kobs)
+    if frac_tie > TIE_FRAC_STOP:
+        raise AssertionError(
+            f"D-026 §7: {frac_tie:.1%} surogatów N1 remisuje z obserwacją "
+            f"(|k_sur-k_obs|<{TIE_TOL}) — próg {TIE_FRAC_STOP:.0%} przekroczony, oznaka "
+            "degeneracji analogicznej do N2. Zatrzymuję bieg zamiast zwracać p bez treści.")
     p = (1 + int(np.sum(np.abs(k_sur - 1.0) >= np.abs(kobs - 1.0)))) / (B + 1)
     return dict(model="N1", k_obs=kobs, p=p, B=B, seed=seed,
                k_sur_mean=float(k_sur.mean()), k_sur_median=float(np.median(k_sur)),
-               k_sur_sd=float(k_sur.std(ddof=1)))
+               k_sur_sd=float(k_sur.std(ddof=1)), frac_tie=frac_tie)
 
 
 # ============================ N2 — permutacyjny (między diadami) ============================
@@ -147,10 +175,11 @@ def run_n2(path: str, B: int = B_NULL, seed: int = SEED_PROTOCOL):
     for b in range(B):
         t_sim, event_sim = simulate_n2_once(grouped, rng)
         k_sur[b] = w.fit_pooled(t_sim, event_sim)["k"]
+    frac_tie = tie_fraction(k_sur, kobs)          # oczekiwane WYSOKIE (degeneracja znana, D-026)
     p = (1 + int(np.sum(np.abs(k_sur - 1.0) >= np.abs(kobs - 1.0)))) / (B + 1)
     return dict(model="N2", k_obs=kobs, p=p, B=B, seed=seed,
                k_sur_mean=float(k_sur.mean()), k_sur_median=float(np.median(k_sur)),
-               k_sur_sd=float(k_sur.std(ddof=1)),
+               k_sur_sd=float(k_sur.std(ddof=1)), frac_tie=frac_tie,
                poza_regula_decyzyjna_S8=True,
                uwaga_D026="zdegenerowany wzgledem k-hat pulowanego (k_sur_sd rzedu 1e-8 = "
                           "szum optymalizatora, nie sygnal); 'p' policzone doslownie ze wzoru "
@@ -161,11 +190,17 @@ def run_n2(path: str, B: int = B_NULL, seed: int = SEED_PROTOCOL):
 
 # ============================ D-026: diagnostyki zlecone przed biegiem P1 ============================
 def n1_window_exceedance(grouped, B: int = B_NULL, seed: int = SEED_PROTOCOL):
-    """Frakcja replik N1, w których Σt_sim + c przekracza realną długość okna diady (Σt_full_real
-    + c). Nie marginalne z konstrukcji: λ̂ = n/T (T = realna ekspozycja całkowita, włącznie z c),
-    więc E[Σt_sim] = T, a surogat dokłada niezmienione c -> E[Σt_sim+c] = T+c > T systematycznie
-    dla każdej diady z c>0. Dodatkowe źródło wariancji rozkładu zerowego N1 (surogaty generują
-    historie dłuższe niż diada mogła realnie mieć) -> czyni test N1 konserwatywnym."""
+    """Frakcja replik N1, w których Σt_sim + c przekracza realną długość okna diady (T =
+    Σt_full_real + c). Nadmiar jest DOKŁADNY, nie tylko „systematyczny" (D-026 §7, Claude):
+    λ̂ = n/T, więc oczekiwana długość pojedynczego losowanego odstępu = T/n, a suma n odstępów
+    ma w oczekiwaniu E[Σt_sim] = n·(T/n) = T. Po dołożeniu NIEZMIENIONEGO c surogat ma
+    oczekiwany czas całkowity E[Σt_sim+c] = T+c, wobec obserwowanego T — nadmiar w oczekiwaniu
+    równa się DOKŁADNIE c, nie w przybliżeniu. Stąd struktura n1_window_exceedance ~75% w
+    całym zbiorze: to własność konstrukcji N1 w dosłownym brzmieniu §6, nie efekt uboczny
+    parametrów. Konsekwencja dla odczytu wyniku (asymetryczna, nie tylko „konserwatywny"):
+    niska wartość P1 jest wiarygodna z nadwyżką (rozkład zerowy jest już rozdęty, więc trudniej
+    o nią przez przypadek), wysoka wartość P1 jest częściowo przypisywalna KONSTRUKCJI modelu
+    zerowego, nie danym. Nie naprawiane (D-026 §7: opisujemy, nie łatamy protokół po fakcie)."""
     rng = np.random.default_rng(seed)
     per_diad, total_exceed, total_reps = [], 0, 0
     for d, t_full, c in grouped:
@@ -182,16 +217,46 @@ def n1_window_exceedance(grouped, B: int = B_NULL, seed: int = SEED_PROTOCOL):
     return dict(overall_frac_exceed=total_exceed / total_reps, per_diad=per_diad, B=B, seed=seed)
 
 
+def test_tie_detector_discriminates(n_reps=300, seed=13):
+    """D-026 §7: sprawdza, że `tie_fraction`/próg TIE_FRAC_STOP faktycznie rozróżniają
+    zdegenerowany przypadek (N2, znany) od niezdegenerowanego (surogat losowany niezależnie
+    od obserwacji, np. czysty szum) — nie tylko istnieją w kodzie, ale robią to, co mają."""
+    rng = np.random.default_rng(seed)
+    kobs = 0.85
+    k_sur_degenerate = np.full(n_reps, kobs) + rng.normal(0, 1e-8, n_reps)   # jak N2
+    k_sur_healthy = rng.normal(1.0, 0.15, n_reps)                            # jak N1 zdrowy
+    frac_degenerate = tie_fraction(k_sur_degenerate, kobs)
+    frac_healthy = tie_fraction(k_sur_healthy, kobs)
+    return dict(frac_degenerate=frac_degenerate, frac_healthy=frac_healthy,
+               degenerate_flagged=frac_degenerate > TIE_FRAC_STOP,
+               healthy_not_flagged=frac_healthy <= TIE_FRAC_STOP)
+
+
+def run_null_correctness_suite(intervals_csv: str = "test6_intervals.csv"):
+    """Suita mechaniczna Kroku B/C — do uruchomienia przed KAŻDYM biegiem P1/P2 na danych
+    rzeczywistych, obok `test6_weibull.run_correctness_suite`. Nie liczy p decyzyjnego."""
+    grouped = load_grouped(intervals_csv)
+    out = {}
+    out["n1_window_exceedance"] = n1_window_exceedance(grouped, B=500, seed=1)
+    out["tie_detector_discriminates"] = test_tie_detector_discriminates()
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--main", default="test6_intervals.csv")
     ap.add_argument("--run-real", action="store_true",
-                    help="ZABLOKOWANE do przeglądu Kroku B (D-024) — patrz CPS_DECISION_LOG.md")
+                    help="Krok C (D-026): autoryzowany przez autora, patrz CPS_DECISION_LOG.md")
     a = ap.parse_args()
     if a.run_real:
-        raise SystemExit("Krok B: uruchamianie B=2000 na test6_intervals.csv jest zablokowane "
-                         "do przeglądu (D-024). Usuń --run-real dopiero po akceptacji.")
-    print("Krok B: kod gotowy do przeglądu. Użyj --run-real po akceptacji, żeby policzyć P1(N1)/P2(N2).")
+        suite = run_null_correctness_suite(a.main)
+        print(json.dumps(suite, ensure_ascii=False, indent=2, default=str))
+        p1 = run_n1(a.main)
+        print(json.dumps(p1, ensure_ascii=False, indent=2))
+        p2 = run_n2(a.main)
+        print(json.dumps(p2, ensure_ascii=False, indent=2))
+        return
+    print("Krok B: kod gotowy. Użyj --run-real, żeby policzyć P1(N1)/P2(N2) na danych rzeczywistych.")
 
 
 if __name__ == "__main__":

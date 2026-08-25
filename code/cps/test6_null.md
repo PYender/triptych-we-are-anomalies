@@ -1,9 +1,8 @@
 # TEST 6 — Krok B: modele zerowe N1/N2 (D-023/D-024/D-026)
 
 **Realizuje:** `TEST6_PROTOCOL.md` §6 (dosłownie, cytowany paragraf poniżej) · **Kod:**
-`test6_null.py` · **Status:** przegląd wykonany, wada §8 wykryta i rozstrzygnięta (D-026,
-przed jakimkolwiek biegiem na danych rzeczywistych) — **NIEURUCHOMIONY** (`--run-real`
-zablokowane, czeka na jawną autoryzację Kroku C).
+`test6_null.py` · **Status:** przegląd Kroku B ZAMKNIĘTY bez zastrzeżeń (D-026 + §7,
+2026-08-25), **Krok C AUTORYZOWANY (D-027)** — `--run-real` odblokowane.
 
 ---
 
@@ -118,15 +117,21 @@ testów poprawności jest wewnętrzną sprawą implementacji.
 
 ## 5. Czego ten kod NIE robi
 
-Nie liczy `k_obs` żadnego wariantu poza odczytem struktury do sprawdzeń mechanicznych
-(sumy, liczebności — nie sam wynik testu). Nie uruchamia B=2000 na `test6_intervals.csv`.
-`main()` blokuje `--run-real` z `SystemExit`, analogicznie do blokady w `test6_weibull.py`
-sprzed D-022.
-
 Nie implementuje jeszcze S1/S3/S4/S7/S8 (wymagają osobnych zbiorów danych — D-024 §S1/S7/S8
 rozstrzyga *zasady*, budowa tych zbiorów to osobny krok). `run_n1`/`run_n2` przyjmują
 dowolną ścieżkę do pliku o formacie `test6_intervals*.csv` (kolumny `diada`,
 `dlugosc_odstepu`, `cenzurowany`), więc są gotowe do użycia na tych zbiorach, gdy powstaną.
+
+## 5b. Zabezpieczenie przed remisem (D-026 §7)
+
+`tie_fraction(k_sur, k_obs, tol=1e-6)` liczy odsetek surogatów remisujących z obserwacją.
+Wbudowane w `run_n1` i `run_n2`: jeśli odsetek przekracza `TIE_FRAC_STOP=0,01`, funkcja
+podnosi `AssertionError` zamiast zwrócić `p` bez treści. Dla N1 (zdrowy) odsetek wynosi 0 —
+sprawdzone; dla N2 (znany degenerat) wynosi 1,0 — wykrywane poprawnie, ale `run_n2` NIE
+podnosi wyjątku (parametr diagnostyczny, świadomie poza §8, degeneracja jest jego celem
+demonstracyjnym, nie błędem do zatrzymania). `test_tie_detector_discriminates` sprawdza samo
+zabezpieczenie na przypadku syntetycznym zdegenerowanym i niezdegenerowanym — nie tylko że
+kod istnieje, ale że faktycznie rozróżnia.
 
 ## 6. Sprawdzenia mechaniczne wykonane (nie jest to bieg B=2000 na realnym k_obs)
 
@@ -140,16 +145,16 @@ dowolną ścieżkę do pliku o formacie `test6_intervals*.csv` (kolumny `diada`,
 - N1 przekroczenie realnego okna (`n1_window_exceedance`, D-026): 75,4% surogatowych replik
   przekracza realną ekspozycję diady, opisane w §1.
 
-## 7. STOP
+## 7. Status
 
-Kod gotowy do przeglądu — **przegląd wykonany, wykrył wadę protokołu (D-026), nie
-implementacji.** Rozstrzygnięcie D-026: P1(N1) liczony i raportowany normalnie; P2(N2)
-raportowany jako 1,000 z wyjaśnieniem tożsamości, poza regułą §8; reguła §8 raportowana jako
-niespełnialna w obecnym brzmieniu; H6.1 pozostaje nierozstrzygnięta w ramach zamrożonego
-protokołu. Dwie weryfikacje zlecone przed biegiem P1 (rozbicie obciążenia N1, przekroczenie
-okna) wykonane, opisane w §1.
+Przegląd Kroku B **ZAMKNIĘTY bez zastrzeżeń** (D-026 + §7, obie strony zweryfikowały
+niezależnie). Rozstrzygnięcie: P1(N1) liczony i raportowany normalnie; P2(N2) raportowany
+jako zdegenerowany/pozbawiony treści (nie jako liczba — ani 1,000, ani to, co kod faktycznie
+zwraca); reguła §8 raportowana jako niespełnialna w sposób informacyjny w obecnym brzmieniu;
+H6.1 pozostaje nierozstrzygnięta w ramach zamrożonego protokołu. Dwie weryfikacje zlecone
+przed biegiem P1 (rozbicie obciążenia N1, przekroczenie okna z dokładnym wyprowadzeniem
+nadmiaru=c) wykonane, opisane w §1. Zabezpieczenie przed remisem (§5b) wbudowane i
+zweryfikowane własnym testem.
 
-**Nadal NIEURUCHOMIONY na `test6_intervals.csv`** — D-026 odblokowuje dalszą pracę nad
-diagnostyką i dokumentacją, nie sam bieg B=2000 na danych rzeczywistych. Krok C (rzeczywisty
-bieg P1, raport z ujawnieniem wymaganym przez D-023 §5 i D-026, porównaniem z
-`TEST6_REPORT.md`) czeka na jawną autoryzację przed `--run-real`.
+**Krok C AUTORYZOWANY (D-027).** `--run-real` odblokowane — patrz `TEST6_KROK_C_REPORT.md`
+dla wyniku rzeczywistego biegu P1/P2 na `test6_intervals.csv`.
