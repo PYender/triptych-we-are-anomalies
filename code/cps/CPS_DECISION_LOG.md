@@ -933,3 +933,76 @@ Nie dotyczy Testu 7 — `TEST7_PROTOCOL.md` i `TASK_7B_BRIEF.md` świadomie opis
 wnioskowanie przez przedziały ufności od początku, są spójne same ze sobą i nowsze. Test 7
 pozostaje wstrzymany do osobnego potwierdzenia tej spójności przez autora, niezależnie od
 niniejszego wpisu.
+
+---
+
+## D-024 · 2026-08-24 · Zatwierdzenie odwzorowania S1–S8 (D-023, Krok A), z trzema korektami
+
+**Kontekst.** `TASK_6C_S1S8_MAPPING.md` przedstawił odwzorowanie ośmiu wariantów wrażliwości
+na warstwę danych po D-013/D-014. Pięć przyjęto bez zmian: S2, S3 (co do zmiany jednostki —
+start epizodu zamiast surowego konfliktu, z zachowanym zastrzeżeniem o nieporównywalności),
+S5, S6, oraz uzasadnienie progu w S1. Trzy wymagały korekty.
+
+### S1 — dopisana konsekwencja liczbowa
+
+Rozkład epizodów na diadę: 10 diad ma 3, 7 ma 4, 1 ma 5. Próg ≥4 epizodów zostawia **8 diad,
+25 zdarzeń** — niecałą połowę zbioru głównego (18/45). Odchylenie k̂ rośnie z ok. 0,12 do
+ok. 0,16 (rząd wielkości z symulacji odzysku, nie z biegu na S1 — S1 samo nie zostało jeszcze
+policzone). **Ma to stać w raporcie PRZED wynikiem S1**: bez tego zastrzeżenia zgodność
+S1 z P1 zostałaby po fakcie odczytana jako potwierdzenie, podczas gdy przy tej różnicy
+precyzji nie jest ani potwierdzeniem, ani zaprzeczeniem — przedziały tej szerokości mogą się
+zgadzać przez brak mocy, nie przez zgodność merytoryczną.
+
+### S7 — rekomendacja implementatora ODWRÓCONA
+
+Code zaproponował scalanie na poziomie państwa tylko z tym samym przeciwnikiem/koalicją.
+**Rozstrzygnięcie: scalamy WSZYSTKIE nakładające się lub stykające się wojny tego samego
+państwa, niezależnie od przeciwnika.** Uzasadnienie: zegar mierzy regenerację **podmiotu**,
+którego zegar liczymy — państwo kończące wojnę z jednym przeciwnikiem i prowadzące nadal
+wojnę z innym **nie regeneruje się**, niezależnie od tego, czy przeciwnik jest ten sam.
+Reguła Code'a policzyłaby jako czas oczekiwania okres, w którym państwo faktycznie walczy —
+błąd tej samej klasy, jaki D-013 naprawiło na poziomie diady. Kryterium z D-013 przenosi się
+przez **tożsamość podmiotu**, nie przez tożsamość przeciwnika. Zgłoszenie tego jako decyzji
+do podjęcia (zamiast rozstrzygnięcia po cichu) było prawidłowym trybem.
+
+### S8 — kwalifikacja zmieniona: WYMAGA decyzji, nie jest czysto techniczne
+
+Konflikty Extra-State toczą się przeciw podmiotom bez kodu w `system2016.csv` (nie-państwowym
+albo nieuznanym). D-014 wymaga obecności **obu** kodów w danym roku dla policzenia ekspozycji;
+zastosowane dosłownie do S8 wyzerowałoby ekspozycję całego wariantu, czyli usunęło go
+efektywnie, nie rozszerzyło. **Rozstrzygnięcie:** ekspozycja dla par Extra-State liczona
+**wyłącznie po stronie państwowej** (obecność w `system2016.csv` tylko dla strony, która ma
+kod); okno domyka się na 2007 albo na wyjście strony państwowej z systemu, w zależności co
+wcześniejsze. **S8 raportowany jako wariant opisowy**, nie wchodzi do reguły §8 na równi z P1 —
+metodologia ekspozycji jest tu z konieczności inna, więc porównanie ilościowe z P1 byłoby
+mylące.
+
+### S4 — brakujący model zerowy, uzupełniony
+
+Wzór z §6 jest zdefiniowany dla parametru kształtu k, a S4 pyta o współczynnik przy czasie
+trwania poprzedniego epizodu — inna wielkość, ten sam wzór nie stosuje się wprost.
+**Deklaracja:** te same surogaty N1 (proces Poissona per diada), statystyka testowa
+`|β̂_czas_trwania|` zamiast `|k̂−1|`, ten sam wzór p podstawiony pod tę statystykę. **S4 nie
+wchodzi do reguły decyzyjnej §8** — jest odrębnym pytaniem („czy dłuższa wojna wydłuża
+regenerację"), nie wariantem wrażliwości P1.
+
+### Luka nienaprawiona, do raportu
+
+`TEST6_PROTOCOL.md` §1 stawia H6.2 (kontrast epok), ale §8 formułuje regułę decyzyjną
+**wyłącznie dla P1** — protokół nie ma kryterium falsyfikacji dla kontrastu epokowego.
+**Nie dopisuję go teraz** — zrobienie tego po zapoznaniu się z wynikiem biegu niezgodnego
+(D-023) naruszałoby zakaz nr 10 w tę samą stronę, co dopisywanie kryterium do P1 po wyniku.
+**S5 i S6 pozostają opisowe; raport Kroku C ma stwierdzić wprost, że H6.2 nie została w
+Teście 6 rozstrzygnięta** — nie „wsparta" ani „obalona", tylko nieobjęta regułą decyzyjną.
+
+### Krok B odblokowany
+
+Implementacja N1 i N2 wg §6 (ziarno `20260822`, B=2000), `test6_weibull.py` po naprawie
+(pięć usterek + D-022) jako estymator k̂ wewnątrz obu modeli zerowych, plus bliźniaczy `.md`.
+STOP na przegląd, bez uruchamiania na danych rzeczywistych.
+
+### Reguła proceduralna dodana na przyszłość
+
+Dwa błędy w ciągu jednej doby (D-023 i przeoczenia w pierwotnym odwzorowaniu S1–S8) wynikły
+z pracy na streszczeniu dokumentu źródłowego zamiast na jego tekście. **Każdy brief ma odtąd
+cytować paragraf protokołu, który realizuje, zamiast go streszczać.**
