@@ -1,12 +1,14 @@
 # TEST 7 — RAPORT DANYCH (Etap A: okna ryzyka i czasy oczekiwania, rodzina 9b)
 
 **Protokół:** `TEST7_PROTOCOL.md` v1.0 (D-016) · **Sprostowanie liczby kontrolnej:** D-020 ·
-**Zadanie:** `TASK_7A_BRIEF.md` · **Data:** 2026-08-24
+**Przeliczenie Etapu A:** D-021 (reguła zdarzeń), D-025 (wykluczenie 1 odstępu) · **Zadanie:**
+`TASK_7A_BRIEF.md` · **Data budowy:** 2026-08-24 · **Data przeliczenia:** 2026-08-25
 **Źródła:** `tss_rivalries.rda` (sha256 `7d4aabe8…`, commit `fe150a26` peacesciencer,
 2026-07-01 — sprzed D-016, brak ryzyka dryfu zbioru), `Inter-StateWarData_v4.0.csv`
-(sha256 `2535e30b…`), `system2016.csv` (sha256 `280e10b4…`) · **Builder:** `test7_build_windows.py` v1.0
-**Status:** **STOP** — zbiór okien ryzyka i czasów zbudowany i udokumentowany. Żadna
-statystyka czasów oczekiwania nie policzona (§6 brief). Czeka na przegląd przed Etapem B.
+(sha256 `2535e30b…`), `system2016.csv` (sha256 `280e10b4…`) · **Builder:** `test7_build_windows.py` v1.2
+**Status:** **STOP** — zbiór okien ryzyka i czasów przeliczony po D-021/D-025 i
+udokumentowany (§5, §6, §9). Żadna statystyka czasów oczekiwania nie policzona (§6 brief).
+Etap B nadal zablokowany, patrz §8.
 
 ---
 
@@ -115,39 +117,74 @@ przestrzenny"). Dwie diady Testu 6 poza zbiorem rywalizacji: Germany–Yugoslavi
 Guatemala–El Salvador (żadna nie figuruje w `tss_rivalries` w ogóle, nie tylko poza
 `spatial=1`).
 
-## 5. Epizody częściowo w oknie — 4 przypadki, zgłoszone (§3.3 brief)
+## 5. Epizody częściowo w oknie — 4 przypadki — ROZSTRZYGNIĘTE (D-021, D-025)
 
-Epizod uznany za „częściowo w oknie", gdy jego początek lub koniec mieści się w oknie
-diady, ale nie oba naraz — **wykluczony** z sekwencji zdarzeń (nie obcięty po cichu),
-wypisany osobno w `test7_partial_episodes.csv`:
+Pierwotnie zgłoszone jako nierozstrzygnięte (§3.3 brief), poniższe cztery przypadki
+epizodu „częściowo w oknie" zostały rozstrzygnięte regułą **D-021** (zdarzenie liczy się,
+gdy jego **początek** mieści się w oknie ryzyka; okno domyka się na zdarzeniu, jeśli ono
+samo wykracza poza koniec okna — Skutek A; okno już trwające w chwili otwarcia przesuwa
+początek okna na koniec tego epizodu — Skutek B):
 
-| diada | epizod | okno diady | strona przecięta |
+| diada | epizod | mechanizm | skutek |
 |---|---|---|---|
-| France–Italy | II wś (1939–1945) | [1881,1940] | koniec okna (1940) wypada w trakcie wojny |
-| Germany–Poland | II wś (1939–1945) | [1918,1939] | koniec okna dokładnie na starcie wojny |
-| Italy–Ethiopia | II wś (1939–1945) | [1898,1943] | koniec okna (1943) wypada w trakcie wojny |
-| Cambodia–Vietnam | Wojna wietnamska + Communist Coalition (1965–1975) | [1970,1983] | początek okna (1970) wypada w trakcie konfliktu |
+| France–Italy | II wś (1939–1945) | Skutek A | zdarzenie liczone, okno domyka się na 1939 (starcie wojny), bez odstępu cenzurowanego po nim |
+| Germany–Poland | II wś (1939–1945) | Skutek A | zdarzenie liczone, okno domyka się na 1939 |
+| Italy–Ethiopia | II wś (1939–1945) | Skutek A | zdarzenie liczone, okno domyka się na 1939 — **ale odstęp Podbój Etiopii(1936)→II wś(1939) ma ekspozycję 0 i wykluczony osobną decyzją, D-025 (§9 niżej)** |
+| Cambodia–Vietnam | Wojna wietnamska + Communist Coalition (1965–1975) | Skutek B | epizod już trwał przy otwarciu okna → początek okna przesunięty z 1970 na 1975 (koniec epizodu) |
 
-Trzy z czterech to II wś kończąca akurat rywalizację (koniec okresu rywalizacji ≈ koniec
-wojny, konwencja kodowania Thompsona kończy rywalizację wraz z wojną, która ją rozstrzyga).
-**Nie rozstrzygam, jak je policzyć** (wliczyć częściowo, wykluczyć całkowicie, przyciąć do
-granicy okna) — zgłaszam do decyzji przed Etapem B, zgodnie z §3.3 brief.
+Żadna z reguł nie została wymyślona post-hoc pod te cztery przypadki — D-021 jest ogólną
+zasadą zastosowaną jednolicie do wszystkich 120 diad; te cztery są po prostu przypadkami,
+w których miała nietrywialny skutek.
 
-## 6. Struktura zbioru głównego
+## 6. Struktura zbioru głównego — po D-021 i D-025, liczby nowe obok dotychczasowych
 
-| typ wiersza | n | opis |
-|---|---|---|
-| `t0` | 62 | otwarcie okna → pierwszy epizod — **poza modelem głównym** (§5 protokołu) |
-| `pelny` | 43 | odstęp między kolejnymi epizodami |
-| `cenzurowany` | 62 | ostatni epizod → domknięcie okna |
-| `cenzurowany_bez_epizodow` | 58 | diada bez żadnego epizodu w oknie — **cały okres jest jedną obserwacją cenzurowaną** |
-| **razem** | **225** | 120 diad |
+| typ wiersza | dotychczas (przed D-021) | **nowe (po D-021+D-025)** | opis |
+|---|---|---|---|
+| `t0` | 62 | **64** | otwarcie okna → pierwszy epizod — **poza modelem głównym** (§5 protokołu) |
+| `pelny` | 43 | **43** | odstęp między kolejnymi epizodami |
+| `cenzurowany` | 62 | **42** | ostatni epizod → domknięcie okna |
+| `cenzurowany_bez_epizodow` | 58 | **56** | diada bez żadnego epizodu w oknie — **cały okres jest jedną obserwacją cenzurowaną** |
+| **razem** | **225** | **205** | 120 diad (bez zmian — D-021/D-025 nie zmieniają zbioru diad, tylko sekwencję zdarzeń w środku) |
 
-**58 diad bez epizodów** — brief §3.4 podkreślał, że to sedno testu („około siedemdziesięciu
-par... jeżeli wypadną ze zbioru, coś poszło źle"). 58 jest niżej niż orientacyjne ~70 z D-016
-(które liczyło na całej populacji 141, przed odrzuceniem 21 diad z pustym oknem) — proporcja
-się zgadza: 58/120 = 48%, wobec ok. 70/141 = 50% w D-016. Nie zniknęły — są obecne i
-stanowią prawie połowę zbioru.
+Kierunek zmian zgodny z mechanizmem D-021: trzy diady (France–Italy, Germany–Poland,
+Italy–Ethiopia) zyskują zdarzenie via Skutek A, co zamienia ich `cenzurowany`
+(i w niektórych przypadkach `cenzurowany_bez_epizodow`) na `t0` — stąd `t0` rośnie, a
+`cenzurowany`/`cenzurowany_bez_epizodow` maleją; Skutek A jednocześnie **nie dodaje** odstępu
+cenzurowanego po zdarzeniu domykającym okno (bo nie wiadomo, kiedy trwająca wojna się
+skończy), co dodatkowo obniża `cenzurowany`. `pelny` pozostaje 43 przypadkowo — D-021 dodaje
+jeden potencjalny odstęp pełny (Italy–Ethiopia, Podbój Etiopii→II wś), ale ten jeden odstęp ma
+ekspozycję 0 i jest wykluczony przez D-025 (§9 niżej), więc liczba odstępów pełnych
+**wchodzących do modelu** nie zmienia się mimo zmiany w budowie sekwencji zdarzeń.
+
+**56 diad bez epizodów po D-021** (dotychczas 58) — brief §3.4 podkreślał, że to sedno testu
+(„około siedemdziesięciu par... jeżeli wypadną ze zbioru, coś poszło źle"). 56/120 = 47%,
+nadal zgodne rzędem wielkości z ok. 70/141 = 50% w D-016 (liczonym na całej populacji 141,
+przed odrzuceniem 21 diad z pustym oknem). Nie zniknęły — są obecne i stanowią prawie
+połowę zbioru.
+
+## 9. D-025 — wykluczenie jednego odstępu (Italy–Ethiopia)
+
+Odstęp pełny Italy–Ethiopia między epizodem „Podbój Etiopii" (1935–36) a II wś (1939–1945)
+ma **ekspozycję 0** — cały ten okres (1936–1939) przypada na aneksję włoską, gdy Etiopia jako
+podmiot jest **całkowicie nieobecna** w `system2016.csv` (nie istnieje wtedy jako oddzielne
+państwo systemu). To ten sam mechanizm nieciągłości członkostwa co Austria-Hungary/Austria w
+Teście 6 (D-014 §3), tylko bardziej skrajny (całkowita nieobecność, nie tylko przerwa).
+
+**Rozstrzygnięcie (decyzja autora):** ten JEDEN odstęp wykluczony z analizy — nie cała
+diada Italy–Ethiopia (pozostały odstęp `t0`, 1898→1935, zostaje). Uzasadnienie autora wprost:
+*„Skoro jest to wyjątek w sumie podobny chyba do Polski, która walczyła z zaborcami, ale
+formalnie jej nie było, to po prostu go nie analizujmy. Te przypadki do analizy statystycznej
+muszą być reprezentatywne."* — okres, w którym jedna ze stron nie istnieje jako podmiot
+suwerenny, nie jest reprezentatywnym pomiarem czasu oczekiwania między konfliktami
+suwerennych państw.
+
+Implementacja: `test7_build_windows.py` zbiera każdy odstęp o ekspozycji ≤0 do osobnej listy
+`wykluczenia` zamiast zatrzymywać bieg asercją; `main()` **sprawdza jawnie**, że jedyny
+wykluczony przypadek to Italy–Ethiopia — jakikolwiek NOWY, nieautoryzowany przypadek
+ekspozycji≤0 nadal zatrzymuje bieg do decyzji (`AssertionError`), zgodnie z zasadą, że D-025
+autoryzuje wyłącznie ten jeden, sprawdzony przypadek, nie ogólną regułę „pomijaj zero-ekspozycji
+po cichu". Lista wykluczeń zapisana w `test7_excluded_intervals.csv` (1 wiersz), liczba
+w metadanych obu plików wynikowych (`odstepy_wykluczone_D025`).
 
 ## 7. Co pozostaje poza tą turą
 
@@ -157,9 +194,14 @@ model H9b.2 odłożony.
 
 ## 8. STOP
 
-Zbiór zbudowany: `test7_windows.csv` (125 okresów ryzyka dla 120 diad — 5 diad ma dwa
-ważne okresy, w tym China–Japan i Iran–Afghanistan z §3), `test7_intervals.csv` (225 wierszy
-obserwacji), `test7_partial_episodes.csv` (4 przypadki do rozstrzygnięcia). Liczby kontrolne §1 zgodne po sprostowaniu D-020; kontrola §4 (213/225)
-w pełni wyjaśniona; kontrola nazw §5 zgodna z D-016. **Nie liczę żadnej statystyki czasów
-oczekiwania — ani CV, ani mediany, ani parametru kształtu.** Czekam na przegląd i na
-rozstrzygnięcie w sprawie czterech epizodów częściowych (§5 tego raportu) przed Etapem B.
+Zbiór zbudowany: `test7_windows.csv` (120 diad, okna po D-021 — Cambodia–Vietnam z oknem
+przesuniętym 1970→1975), `test7_intervals.csv` (**205** wierszy obserwacji, po D-021+D-025 —
+patrz §6, §9), `test7_excluded_intervals.csv` (1 wiersz, Italy–Ethiopia, D-025). Liczby
+kontrolne §1 zgodne po sprostowaniu D-020; kontrola §4 (213/225, sprzed D-021/D-025) w pełni
+wyjaśniona; kontrola nazw §5 zgodna z D-016. Cztery epizody częściowe pierwotnie zgłoszone
+w §5 (starej wersji) są teraz rozstrzygnięte regułą D-021, z jednym dodatkowym wykluczeniem
+D-025 (§9). **Nie liczę żadnej statystyki czasów oczekiwania — ani CV, ani mediany, ani
+parametru kształtu.** Etap B (dopasowanie estymatora) pozostaje zablokowany niezależnie od
+tego przeliczenia — czeka na (a) przegląd `TASK_7B_BRIEF.md` przez autora pod kątem tego
+samego typu podmiany metodologii, jaka wykryto w Teście 6 (D-023), oraz (b) zamknięty,
+zgodny z protokołem bieg Kroku C Testu 6, dowodzący wspólnego estymatora na realnych danych.

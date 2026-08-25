@@ -1,11 +1,10 @@
-# {"builder": "test7_build_windows.py v1.0", "zrodlo_rywalizacje": "tss_rivalries.rda", "sha256_tss_rda": "7d4aabe829ed3f3d", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "sha256_czlonkostwo": "280e10b408c0aefb", "spatial_wiersze": 152, "spatial_diad": 141, "diad_z_niepustym_oknem": 120, "diady_odrzucone_puste_okno": 21, "epizody_czesciowo_w_oknie": 4}
+# {"builder": "test7_build_windows.py v1.2 (D-021: zdarzenie = start w oknie; D-025: wykluczenie ekspozycji<=0)", "zrodlo_rywalizacje": "tss_rivalries.rda", "sha256_tss_rda": "7d4aabe829ed3f3d", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "sha256_czlonkostwo": "280e10b408c0aefb", "spatial_wiersze": 152, "spatial_diad": 141, "diad_z_niepustym_oknem": 120, "diady_odrzucone_puste_okno": 21, "diady_z_przesunietym_oknem_D021": ["Cambodia–Vietnam"], "odstepy_wykluczone_D025": 1}
 diada,ccode_a,ccode_b,typ,rok_start,rok_koniec,ekspozycja,cenzurowany,t0_flag,ucieta
 United States of America–Mexico,2,70,t0,1831,1846,15,0,1,0
 United States of America–Mexico,2,70,cenzurowany,1847,1848,1,1,0,0
 United States of America–United Kingdom,2,200,cenzurowany_bez_epizodow,1816,1904,88,1,0,0
 United States of America–Spain,2,230,cenzurowany_bez_epizodow,1816,1819,3,1,0,0
 United States of America–Japan,2,740,t0,1898,1939,41,0,1,0
-United States of America–Japan,2,740,cenzurowany,1945,1945,0,1,0,0
 HAI–DOM,41,42,cenzurowany_bez_epizodow,1894,1993,81,1,0,0
 Mexico–Guatemala,70,90,cenzurowany_bez_epizodow,1868,1882,14,1,0,0
 BLZ–Guatemala,80,90,cenzurowany_bez_epizodow,1981,1993,12,1,0,0
@@ -28,7 +27,6 @@ Peru–Bolivia,135,145,cenzurowany_bez_epizodow,1848,1932,84,1,0,0
 Peru–Chile,135,155,t0,1839,1879,40,0,1,0
 Peru–Chile,135,155,cenzurowany,1883,1929,46,1,0,0
 Brazil–Paraguay,140,150,t0,1860,1864,4,0,1,0
-Brazil–Paraguay,140,150,cenzurowany,1870,1870,0,1,0,0
 Brazil–Argentina,140,160,t0,1841,1851,10,0,1,0
 Brazil–Argentina,140,160,cenzurowany,1852,1985,133,1,0,0
 Bolivia–Paraguay,145,150,t0,1887,1932,45,0,1,0
@@ -36,19 +34,15 @@ Bolivia–Paraguay,145,150,cenzurowany,1935,1938,3,1,0,0
 Bolivia–Chile,145,155,t0,1848,1879,31,0,1,0
 Bolivia–Chile,145,155,cenzurowany,1883,2007,124,1,0,0
 Paraguay–Argentina,150,160,t0,1862,1864,2,0,1,0
-Paraguay–Argentina,150,160,cenzurowany,1870,1870,0,1,0,0
 Chile–Argentina,155,160,cenzurowany_bez_epizodow,1843,1991,148,1,0,0
 Argentina–United Kingdom,160,200,t0,1965,1982,17,0,1,0
 Argentina–United Kingdom,160,200,cenzurowany,1982,2007,25,1,0,0
 United Kingdom–France,200,220,cenzurowany_bez_epizodow,1816,1904,88,1,0,1
 United Kingdom–Germany,200,255,t0,1896,1914,18,0,1,0
-United Kingdom–Germany,200,255,cenzurowany,1918,1918,0,1,0,0
 United Kingdom–USSR,200,365,t0,1816,1853,37,0,1,1
 United Kingdom–USSR,200,365,cenzurowany,1856,1956,100,1,0,1
 United Kingdom–China,200,710,t0,1860,1900,40,0,1,0
-United Kingdom–China,200,710,cenzurowany,1900,1900,0,1,0,0
 United Kingdom–Japan,200,740,t0,1932,1939,7,0,1,0
-United Kingdom–Japan,200,740,cenzurowany,1945,1945,0,1,0,0
 Netherlands–INS,210,850,cenzurowany_bez_epizodow,1951,1962,11,1,0,0
 France–Germany,220,255,t0,1816,1870,54,0,1,1
 France–Germany,220,255,pelny,1871,1914,43,0,0,1
@@ -56,20 +50,16 @@ France–Germany,220,255,pelny,1918,1939,21,0,0,1
 France–Germany,220,255,cenzurowany,1945,1955,0,1,0,1
 France–Austria-Hungary,220,300,t0,1816,1859,43,0,1,1
 France–Austria-Hungary,220,300,pelny,1859,1914,55,0,0,1
-France–Austria-Hungary,220,300,cenzurowany,1918,1918,0,1,0,1
-France–Italy,220,325,cenzurowany_bez_epizodow,1881,1940,59,1,0,0
+France–Italy,220,325,t0,1881,1939,58,0,1,0
 France–China,220,710,t0,1860,1884,24,0,1,0
 France–China,220,710,pelny,1885,1900,15,0,0,0
-France–China,220,710,cenzurowany,1900,1900,0,1,0,0
 France–Thailand,220,800,t0,1940,1940,0,0,1,0
-France–Thailand,220,800,cenzurowany,1941,1941,0,1,0,0
 Spain–Morocco,230,600,t0,1956,1957,1,0,1,0
 Spain–Morocco,230,600,cenzurowany,1958,1991,33,1,0,0
-Germany–Poland,255,290,cenzurowany_bez_epizodow,1918,1939,21,1,0,0
+Germany–Poland,255,290,t0,1918,1939,21,0,1,0
 Germany–Czechoslovakia,255,315,cenzurowany_bez_epizodow,1933,1938,5,1,0,0
 Germany–USSR,255,365,t0,1890,1914,24,0,1,0
 Germany–USSR,255,365,pelny,1920,1939,19,0,0,0
-Germany–USSR,255,365,cenzurowany,1945,1945,0,1,0,0
 Germany–China,255,710,cenzurowany_bez_epizodow,1897,1900,3,1,0,0
 GFR–GDR,260,265,cenzurowany_bez_epizodow,1955,1973,18,1,0,0
 Poland–Czechoslovakia,290,315,cenzurowany_bez_epizodow,1920,1938,18,1,0,0
@@ -81,21 +71,16 @@ Austria-Hungary–Italy,300,325,t0,1847,1848,1,0,1,0
 Austria-Hungary–Italy,300,325,pelny,1849,1859,10,0,0,0
 Austria-Hungary–Italy,300,325,pelny,1859,1866,7,0,0,0
 Austria-Hungary–Italy,300,325,pelny,1866,1914,48,0,0,0
-Austria-Hungary–Italy,300,325,cenzurowany,1918,1918,0,1,0,0
 Austria-Hungary–Yugoslavia,300,345,t0,1903,1914,11,0,1,0
-Austria-Hungary–Yugoslavia,300,345,cenzurowany,1918,1918,0,1,0,0
 Austria-Hungary–USSR,300,365,t0,1816,1914,98,0,1,1
-Austria-Hungary–USSR,300,365,cenzurowany,1918,1918,0,1,0,1
 Hungary–Czechoslovakia,310,315,cenzurowany_bez_epizodow,1920,1938,18,1,0,0
 Hungary–Yugoslavia,310,345,t0,1918,1939,21,0,1,0
-Hungary–Yugoslavia,310,345,cenzurowany,1945,1945,0,1,0,0
 Hungary–Romania,310,360,t0,1918,1919,1,0,1,0
 Hungary–Romania,310,360,pelny,1919,1939,20,0,0,0
 Hungary–Romania,310,360,cenzurowany,1945,1948,3,1,0,0
 Italy–Yugoslavia,325,345,t0,1918,1939,21,0,1,0
 Italy–Yugoslavia,325,345,cenzurowany,1945,1954,9,1,0,0
 Italy–Ethiopia,325,530,t0,1898,1935,37,0,1,0
-Italy–Ethiopia,325,530,cenzurowany,1936,1943,3,1,0,0
 Italy–Turkey,325,640,t0,1884,1911,27,0,1,0
 Italy–Turkey,325,640,pelny,1912,1914,2,0,0,0
 Italy–Turkey,325,640,cenzurowany,1918,1943,25,1,0,0
@@ -111,7 +96,6 @@ Yugoslavia–Bulgaria,345,355,pelny,1918,1939,21,0,0,0
 Yugoslavia–Bulgaria,345,355,cenzurowany,1945,1955,10,1,0,0
 Yugoslavia–Turkey,345,640,t0,1878,1912,34,0,1,0
 Yugoslavia–Turkey,345,640,pelny,1913,1914,1,0,0,0
-Yugoslavia–Turkey,345,640,cenzurowany,1918,1918,0,1,0,0
 Greece–Bulgaria,350,355,t0,1908,1913,5,0,1,0
 Greece–Bulgaria,350,355,pelny,1913,1914,1,0,0,0
 Greece–Bulgaria,350,355,pelny,1918,1939,21,0,0,0
@@ -124,21 +108,18 @@ Greece–Turkey,350,640,cenzurowany,1922,2007,61,1,0,0
 Bulgaria–Romania,355,360,t0,1908,1913,5,0,1,0
 Bulgaria–Romania,355,360,pelny,1913,1914,1,0,0,0
 Bulgaria–Romania,355,360,pelny,1918,1939,21,0,0,0
-Bulgaria–Romania,355,360,cenzurowany,1945,1945,0,1,0,0
 Bulgaria–Turkey,355,640,t0,1908,1912,4,0,1,0
 Bulgaria–Turkey,355,640,cenzurowany,1913,1950,37,1,0,0
 USSR–Turkey,365,640,t0,1816,1828,12,0,1,1
 USSR–Turkey,365,640,pelny,1829,1853,24,0,0,1
 USSR–Turkey,365,640,pelny,1856,1877,21,0,0,1
 USSR–Turkey,365,640,pelny,1878,1914,36,0,0,1
-USSR–Turkey,365,640,cenzurowany,1918,1918,0,1,0,1
 USSR–China,365,710,t0,1860,1900,40,0,1,0
 USSR–China,365,710,pelny,1900,1929,29,0,0,0
 USSR–China,365,710,cenzurowany,1929,1989,52,1,0,0
 USSR–Japan,365,740,t0,1894,1904,10,0,1,0
 USSR–Japan,365,740,pelny,1905,1938,33,0,0,0
 USSR–Japan,365,740,pelny,1938,1939,1,0,0,0
-USSR–Japan,365,740,cenzurowany,1945,1945,0,1,0,0
 Armenia–Azerbaijan,371,373,t0,1991,1993,2,0,1,0
 Armenia–Azerbaijan,371,373,cenzurowany,1994,2007,13,1,0,0
 MLI–BFO,432,439,cenzurowany_bez_epizodow,1960,1986,26,1,0,0
@@ -153,7 +134,6 @@ Chad–Libya,483,620,t0,1966,1986,20,0,1,0
 Chad–Libya,483,620,cenzurowany,1987,1994,7,1,0,0
 Democratic Republic of the Congo–RWA,490,517,cenzurowany_bez_epizodow,1996,2007,11,1,0,0
 Uganda–Tanzania,500,510,t0,1971,1978,7,0,1,0
-Uganda–Tanzania,500,510,cenzurowany,1979,1979,0,1,0,0
 KEN–Somalia,501,520,cenzurowany_bez_epizodow,1963,1981,18,1,0,0
 KEN–SUD,501,625,cenzurowany_bez_epizodow,1989,1994,5,1,0,0
 Somalia–Ethiopia,520,530,t0,1960,1977,17,0,1,0
@@ -218,7 +198,7 @@ India–Pakistan,750,770,pelny,1971,1999,28,0,0,0
 India–Pakistan,750,770,cenzurowany,1999,2007,8,1,0,0
 Thailand–Cambodia,800,811,cenzurowany_bez_epizodow,2006,2007,1,1,0,0
 Thailand–Laos,800,812,cenzurowany_bez_epizodow,1980,1988,8,1,0,0
-Cambodia–Vietnam,811,816,t0,1970,1977,7,0,1,0
+Cambodia–Vietnam,811,816,t0,1975,1977,2,0,1,0
 Cambodia–Vietnam,811,816,cenzurowany,1979,1983,4,1,0,0
 Cambodia–South Vietnam,811,817,cenzurowany_bez_epizodow,1956,1975,19,1,0,0
 Laos–Vietnam,812,816,t0,1954,1968,14,0,1,0

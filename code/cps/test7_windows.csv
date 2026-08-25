@@ -1,4 +1,4 @@
-# {"builder": "test7_build_windows.py v1.0", "zrodlo_rywalizacje": "tss_rivalries.rda", "sha256_tss_rda": "7d4aabe829ed3f3d", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "sha256_czlonkostwo": "280e10b408c0aefb", "spatial_wiersze": 152, "spatial_diad": 141, "diad_z_niepustym_oknem": 120, "diady_odrzucone_puste_okno": 21, "epizody_czesciowo_w_oknie": 4}
+# {"builder": "test7_build_windows.py v1.2 (D-021: zdarzenie = start w oknie; D-025: wykluczenie ekspozycji<=0)", "zrodlo_rywalizacje": "tss_rivalries.rda", "sha256_tss_rda": "7d4aabe829ed3f3d", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "sha256_czlonkostwo": "280e10b408c0aefb", "spatial_wiersze": 152, "spatial_diad": 141, "diad_z_niepustym_oknem": 120, "diady_odrzucone_puste_okno": 21, "diady_z_przesunietym_oknem_D021": ["Cambodia–Vietnam"], "odstepy_wykluczone_D025": 1}
 diada,ccode_a,ccode_b,rs,re,t0,t1,ucieta
 United States of America–Mexico,2,70,1821,1848,1831,1848,0
 United States of America–United Kingdom,2,200,1816,1904,1816,1904,0
@@ -120,7 +120,7 @@ China–Vietnam,710,816,1973,1991,1973,1991,0
 India–Pakistan,750,770,1947,2020,1947,2007,0
 Thailand–Cambodia,800,811,2006,2020,2006,2007,0
 Thailand–Laos,800,812,1980,1988,1980,1988,0
-Cambodia–Vietnam,811,816,1970,1983,1970,1983,0
+Cambodia–Vietnam,811,816,1970,1983,1975,1983,0
 Cambodia–South Vietnam,811,817,1956,1975,1956,1975,0
 Laos–Vietnam,812,816,1954,1975,1954,1975,0
 MAL–SIN,820,830,1965,2020,1965,2007,0

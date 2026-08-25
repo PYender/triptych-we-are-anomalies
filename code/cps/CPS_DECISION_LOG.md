@@ -814,3 +814,117 @@ politycznej).
 Rozstrzygnięcie zapadło po zatrzymaniu się Code'a na rozbieżności liczby kontrolnej, przed
 policzeniem jakiejkolwiek statystyki czasów oczekiwania — zgodnie z §6 `TASK_7A_BRIEF.md`.
 Etap A kontynuowany na zbiorze 120 diad.
+
+---
+
+## D-021 · 2026-08-24 · Epizody częściowo w oknie ryzyka (Test 7, rodzina 9b)
+
+**Kontekst.** `TEST7_DATA_REPORT.md` §5 zgłosił cztery epizody, których przedział trwania
+przecina granicę okna ryzyka diady: początek albo koniec mieści się w oknie, ale nie oba
+naraz. Builder wykluczył je z sekwencji zdarzeń i wypisał osobno, zamiast obcinać po cichu.
+Zgłoszenie do decyzji było prawidłowe.
+
+| diada | epizod | okno diady | strona przecięta |
+|---|---|---|---|
+| France–Italy | II wś 1939–1945 | [1881, 1940] | koniec okna w trakcie wojny |
+| Germany–Poland | II wś 1939–1945 | [1918, 1939] | koniec okna na starcie wojny |
+| Italy–Ethiopia | II wś 1939–1945 | [1898, 1943] | koniec okna w trakcie wojny |
+| Cambodia–Vietnam | Wietnam + Communist Coalition 1965–1975 | [1970, 1983] | początek okna w trakcie konfliktu |
+
+### Rozstrzygnięcie — jedna reguła, dwa skutki
+
+**Epizod jest zdarzeniem wtedy i tylko wtedy, gdy jego POCZĄTEK wypada wewnątrz okna
+ryzyka.** Data końca epizodu nie ma dla kwalifikacji znaczenia.
+
+Skutek A — **epizod rozpoczynający się w oknie liczy się jako zdarzenie**, nawet jeśli trwa
+poza domknięciem okna. Okno domyka się na tym zdarzeniu; nie powstaje z niego odstęp
+cenzurowany. Dotyczy France–Italy, Germany–Poland i Italy–Ethiopia.
+
+Skutek B — **epizod trwający już w chwili otwarcia okna nie jest zdarzeniem**, bo jego
+początku nie obserwowaliśmy. Okno otwiera się dopiero z **końcem** tego epizodu, a lata
+trwania konfliktu nie wchodzą do ekspozycji. Dotyczy Cambodia–Vietnam: okno przesuwa się
+z 1970 na 1975.
+
+### Uzasadnienie
+
+§1 protokołu definiuje mierzoną wielkość jako czas **do wybuchu** konfliktu, a §5 liczy
+odstępy od końca jednego epizodu do **początku** następnego. Zdarzeniem jest zatem początek,
+a nie zakończenie. Reguła stosuje tę definicję konsekwentnie do brzegów okna, zamiast
+wprowadzać dla nich osobne kryterium.
+
+**Dlaczego nie wykluczenie wszystkich czterech.** Trzy z nich to realne wybuchy wojny, które
+nastąpiły w czasie żywej rywalizacji. Zamiana ich na obserwacje cenzurowane sztucznie
+wydłużyłaby czasy oczekiwania, czyli obciążyłaby wynik **w stronę hipotezy**. To jest
+kierunek, którego nie wolno przyjąć przez zaniechanie.
+
+**Dlaczego nie przycinanie epizodu do granicy okna.** Przycięcie zmieniałoby datę zdarzenia,
+a data wybuchu jest wielkością obserwowaną, nie modelowaną.
+
+### Zastrzeżenie o pochodzeniu reguły
+
+Trzy z czterech przypadków to II wojna światowa kończąca okres rywalizacji, ponieważ
+konwencja kodowania Thompsona zamyka rywalizację wraz z wojną, która ją rozstrzyga. Reguła
+przyznaje więc zdarzenie parze **Niemcy–Polska**, wymienionej wcześniej przez autora jako
+przedmiot zainteresowania.
+
+Odnotowuję to wprost: reguła wynika z §1 i §5 protokołu, nie została dobrana pod ten
+przypadek, a przy jednym epizodzie para Niemcy–Polska i tak nie wnosi żadnego odstępu
+pełnego — wnosi wyłącznie odstęp `t0`, który w modelu głównym nie uczestniczy (§5 protokołu).
+Wpływ tej reguły na wynik pierwszorzędny jest zatem zerowy dla tej pary.
+
+### Skutek liczbowy do przeliczenia w Etapie A
+
+Po zastosowaniu reguły builder ma przeliczyć i zaraportować zmianę: liczbę zdarzeń
+(dotąd 43 odstępy pełne oraz 62 `t0`), liczbę obserwacji cenzurowanych oraz nowe okno
+Cambodia–Vietnam. Zmiana dotyczy czterech diad i nie rusza pozostałych stu szesnastu.
+
+### Ograniczenie, do zapisania w raporcie
+
+Reguła nie usuwa problemu, na który wskazuje sam fakt istnienia tych czterech przypadków:
+**konwencja kodowania rywalizacji wiąże koniec rywalizacji z wojną, która ją rozstrzyga**,
+więc dla części par zdarzenie i domknięcie okna są z definicji równoczesne. Nie jest to
+niezależna obserwacja czasu oczekiwania w tym samym sensie co pozostałe. Dotyczy trzech
+diad ze stu dwudziestu i ma zostać nazwane w Etapie C jako ograniczenie, nie skorygowane.
+
+---
+
+## D-025 · 2026-08-24 · Wykluczenie odstępu Italy–Ethiopia (ekspozycja zero, konsekwencja D-021)
+
+**Kontekst.** Zastosowanie D-021 sprawiło, że II wś liczy się jako zdarzenie dla diady
+Italy–Ethiopia (start 1939 w oknie [1898,1943], Skutek A). Powstał przez to odstęp między
+poprzednim epizodem („Conquest of Ethiopia", 1935–1936) a II wś (1939): 1936→1939. W tym
+przedziale Etiopia jest **całkowicie nieobecna w `system2016.csv`** (aneksja włoska
+1937–1940 — Etiopia formalnie nie istnieje jako podmiot systemu międzypaństwowego aż do
+wyzwolenia w 1941, już w trakcie II wś). Ekspozycja tego odstępu wynosi **0**, co narusza
+wymóg dodatniej długości odstępu pełnego (asercja z D-013/D-014 zatrzymała bieg, zgodnie
+z przeznaczeniem — zgłoszone, nie załatane po cichu).
+
+### Rozstrzygnięcie
+
+**Odstęp Italy–Ethiopia (1936→1939) wykluczony z analizy głównej**, z jawną flagą
+i uzasadnieniem — nie z całej diady, tylko z tego jednego odstępu. Diada pozostaje
+w zbiorze przez swoje pozostałe obserwacje (epizody, okno), ale nie wnosi tego konkretnego
+czasu oczekiwania.
+
+**Uzasadnienie autora.** Przypadek jest analogiczny do sytuacji, w której państwo walczy
+(np. z zaborcą) nie istniejąc formalnie jako podmiot — pierwsza wojna dosłownie wymazała
+drugą stronę z systemu międzypaństwowego na czas okupacji. Próbki do analizy statystycznej
+muszą być reprezentatywne dla mierzonej wielkości (czas oczekiwania między wojnami
+suwerennych podmiotów); odstęp, w którym jedna ze stron przez cały czas nie istnieje jako
+podmiot, nie jest tym, co mierzymy, niezależnie od tego, jak został wygenerowany.
+
+**Dlaczego nie scalanie w jeden epizod (droga odrzucona).** Scaliłoby to konflikty na
+podstawie stanu politycznego (okupacja), nie nakładania się dat, jak definiuje D-013 —
+zmiana kryterium scalania, nie zastosowanie istniejącego.
+
+**Dlaczego nie usunięcie całej diady (droga odrzucona).** Diada wnosi też inne, poprawne
+informacje (epizody, ekspozycję poza tym jednym odstępem); usunięcie całości byłoby
+nadmiarowe wobec problemu, który dotyczy jednego konkretnego przejścia między dwoma
+konkretnymi epizodami.
+
+### Zakres
+
+Jeden odstęp, jedna diada ze stu dwudziestu. Mechanizm implementacyjny: asercja `gap>0`
+zamieniona na zgłoszenie + wykluczenie z listy zdarzeń, z zapisem w osobnej tabeli
+wykluczeń (diada, lata, przyczyna, ekspozycja) — analogicznie do tabeli epizodów
+częściowych z D-021, nic nie znika bez śladu.

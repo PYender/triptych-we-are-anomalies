@@ -1,0 +1,3 @@
+# {"builder": "test7_build_windows.py v1.2 (D-021: zdarzenie = start w oknie; D-025: wykluczenie ekspozycji<=0)", "zrodlo_rywalizacje": "tss_rivalries.rda", "sha256_tss_rda": "7d4aabe829ed3f3d", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "sha256_czlonkostwo": "280e10b408c0aefb", "spatial_wiersze": 152, "spatial_diad": 141, "diad_z_niepustym_oknem": 120, "diady_odrzucone_puste_okno": 21, "diady_z_przesunietym_oknem_D021": ["Cambodia–Vietnam"], "odstepy_wykluczone_D025": 1}
+diada,rok_konca_poprz,rok_poczatku_nast,ekspozycja,powod
+Italy–Ethiopia,1936,1939,0,"ekspozycja<=0 (D-025) — wykluczony z analizy, nie zatrzymuje biegu"

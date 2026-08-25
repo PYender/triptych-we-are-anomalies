@@ -138,25 +138,32 @@ def classify_events(periods, episodes):
     return periods, qualifying, shifted
 
 
-# ============================ struktura obserwacji (§5, D-021) ============================
+# ============================ struktura obserwacji (§5, D-021, D-025) ============================
 def diad_rows(dname, a, b, periods, episodes, mem):
-    """Zwraca (interval_rows, przesunieto_okno). t0 (otwarcie->pierwsze zdarzenie) zapisany
-    z flagą `t0_flag=1`, poza modelem głównym (§5 protokołu). Diada bez zdarzeń w oknie:
-    jedna obserwacja w pełni cenzurowana o długości całego okna."""
+    """Zwraca (interval_rows, przesunieto_okno, wykluczenia). t0 (otwarcie->pierwsze
+    zdarzenie) zapisany z flagą `t0_flag=1`, poza modelem głównym (§5 protokołu). Diada bez
+    zdarzeń w oknie: jedna obserwacja w pełni cenzurowana o długości całego okna.
+
+    D-025: odstęp pełny o ekspozycji<=0 nie zatrzymuje biegu — jest to sprawdzone i
+    autoryzowane wykluczenie tego JEDNEGO odstępu (nie całej diady), z zapisem w
+    `wykluczenia` (diada, lata, ekspozycja). Poza tym jednym, autoryzowanym przypadkiem
+    (Italy-Ethiopia) każde nowe wystąpienie ma nadal zatrzymywać bieg do decyzji — stąd
+    lista wykluczeń jest jawnie sprawdzana w `main()`, nie milcząco akceptowana."""
     periods, inside, shifted = classify_events(periods, episodes)
     if not periods:                                  # okno całkowicie pochłonięte (Skutek B)
-        return [], shifted, periods
+        return [], shifted, periods, []
 
     win_start = periods[0]["t0"]
     win_end = periods[-1]["t1"]
     ucieta_any = int(any(p["ucieta"] for p in periods))
+    excluded = []
 
     if not inside:
         gap = exposure_multi(mem, a, b, win_start, win_end, periods)
         rows = [{"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "cenzurowany_bez_epizodow",
                 "rok_start": win_start, "rok_koniec": win_end, "ekspozycja": gap,
                 "cenzurowany": 1, "t0_flag": 0, "ucieta": ucieta_any}]
-        return rows, shifted, periods
+        return rows, shifted, periods, excluded
 
     rows = []
     # t0: od otwarcia okna do pierwszego zdarzenia — zapisany, POZA modelem głównym
@@ -168,8 +175,11 @@ def diad_rows(dname, a, b, periods, episodes, mem):
     for i in range(len(inside) - 1):
         e_prev, s_next = inside[i]["end"], inside[i + 1]["start"]
         gap = exposure_multi(mem, a, b, e_prev, s_next, periods)
-        assert gap > 0, (f"D-013 §2 / brief §3.4: odstęp pełny o ekspozycji<=0 w {dname} "
-                         f"({e_prev}->{s_next}). Zgłosić, nie łatać.")
+        if gap <= 0:
+            excluded.append({"diada": dname, "rok_konca_poprz": e_prev, "rok_poczatku_nast": s_next,
+                             "ekspozycja": gap,
+                             "powod": "ekspozycja<=0 (D-025) — wykluczony z analizy, nie zatrzymuje biegu"})
+            continue
         rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "pelny",
                      "rok_start": e_prev, "rok_koniec": s_next, "ekspozycja": gap,
                      "cenzurowany": 0, "t0_flag": 0, "ucieta": ucieta_any})
@@ -182,7 +192,7 @@ def diad_rows(dname, a, b, periods, episodes, mem):
         rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, "typ": "cenzurowany",
                      "rok_start": last["end"], "rok_koniec": win_end, "ekspozycja": gap,
                      "cenzurowany": 1, "t0_flag": 0, "ucieta": ucieta_any})
-    return rows, shifted, periods
+    return rows, shifted, periods, excluded
 
 
 # ============================ główny bieg ============================
@@ -212,41 +222,57 @@ def main():
     wars, minus7 = t6.war_spans(wdf)
     diad_all = t6.build_diads(wars)   # WSZYSTKIE diady, bez progu (zakaz nr 2)
 
-    win_rows, int_rows, shifted_diads = [], [], []
+    win_rows, int_rows, shifted_diads, excluded_rows = [], [], [], []
     for (a, b), periods in sorted(windows.items()):
         dname = f"{nm(a)}–{nm(b)}"
         confs = diad_all.get((a, b), [])
         episodes = [{"start": ep["start"], "end": ep["end"],
                     "name": "; ".join(m[3] for m in ep["members"])}
                    for ep in t6.merge_episodes(confs)]
-        rows, shifted, periods_adj = diad_rows(dname, a, b, periods, episodes, mem)
+        rows, shifted, periods_adj, excluded = diad_rows(dname, a, b, periods, episodes, mem)
         int_rows += rows
+        excluded_rows += excluded
         for p in periods_adj:                          # okno WYJŚCIOWE po D-021 (jeśli przesunięte)
             win_rows.append({"diada": dname, "ccode_a": a, "ccode_b": b, **p})
         if shifted:
             shifted_diads.append(dname)
 
+    # D-025: jedyny autoryzowany wyjątek to Italy–Ethiopia (aneksja włoska 1936-41,
+    # Etiopia całkowicie nieobecna w system2016.csv). Każdy inny wykluczony odstęp
+    # jest nowym, nieautoryzowanym przypadkiem — zgłosić, nie połykać po cichu.
+    AUTORYZOWANE_D025 = {"Italy–Ethiopia", "Ethiopia–Italy"}
+    nieautoryzowane = [e for e in excluded_rows if e["diada"] not in AUTORYZOWANE_D025]
+    if nieautoryzowane:
+        raise AssertionError(
+            "D-025 obejmuje wyłącznie Italy–Ethiopia. Nowy, nieautoryzowany przypadek "
+            f"ekspozycji<=0 wykryty: {nieautoryzowane}. Zgłosić do decyzji, nie wykluczać po cichu.")
+
     win_tab = pd.DataFrame(win_rows)
     int_tab = pd.DataFrame(int_rows)
+    excl_tab = pd.DataFrame(excluded_rows)
 
-    meta = {"builder": "test7_build_windows.py v1.1 (D-021: zdarzenie = start w oknie)",
+    meta = {"builder": "test7_build_windows.py v1.2 (D-021: zdarzenie = start w oknie; D-025: wykluczenie ekspozycji<=0)",
             "zrodlo_rywalizacje": tss_src.name,
             "sha256_tss_rda": hashlib.sha256(tss_src.read_bytes()).hexdigest()[:16],
             "zrodlo_wojny": war_src.name, "sha256_wojny": hashlib.sha256(war_src.read_bytes()).hexdigest()[:16],
             "zrodlo_czlonkostwo": mem_src.name, "sha256_czlonkostwo": hashlib.sha256(mem_src.read_bytes()).hexdigest()[:16],
             "spatial_wiersze": int((tss.spatial == 1).sum()), "spatial_diad": len(diad_periods),
             "diad_z_niepustym_oknem": len(windows), "diady_odrzucone_puste_okno": len(dropped_empty),
-            "diady_z_przesunietym_oknem_D021": shifted_diads}
+            "diady_z_przesunietym_oknem_D021": shifted_diads,
+            "odstepy_wykluczone_D025": len(excluded_rows)}
 
     with open(od / "test7_windows.csv", "w", encoding="utf-8") as fh:
         fh.write("# " + json.dumps(meta, ensure_ascii=False) + "\n"); win_tab.to_csv(fh, index=False)
     with open(od / "test7_intervals.csv", "w", encoding="utf-8") as fh:
         fh.write("# " + json.dumps(meta, ensure_ascii=False) + "\n"); int_tab.to_csv(fh, index=False)
+    with open(od / "test7_excluded_intervals.csv", "w", encoding="utf-8") as fh:
+        fh.write("# " + json.dumps(meta, ensure_ascii=False) + "\n"); excl_tab.to_csv(fh, index=False)
 
     print(json.dumps(meta, ensure_ascii=False, indent=2))
     print(f"diady odrzucone (puste okno): {dropped_empty}")
     print(f"diady z przesunietym oknem (D-021): {shifted_diads}")
-    print(f"zapisano test7_windows.csv, test7_intervals.csv w {od}")
+    print(f"odstepy wykluczone (D-025): {excluded_rows}")
+    print(f"zapisano test7_windows.csv, test7_intervals.csv, test7_excluded_intervals.csv w {od}")
 
 
 if __name__ == "__main__":
