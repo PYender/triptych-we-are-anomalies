@@ -1,0 +1,6 @@
+# {"runner": "test6_run.py v1.0", "krok": 3, "sha256": {"test6_intervals.csv": "d2ecc0b19750abab", "test6_intervals_sensitivity_SA.csv": "a243da6c81ced43c", "test6_intervals_sensitivity_SB.csv": "78deea4f733d9052"}, "seed": 20260823, "b_bootstrap": 2000, "warunek_d022": "wykonany przed biegiem, bez ponownego przegladu kodu (decyzja autora)"}
+id,model,k_hat,lam_hat,loglik,converged_same,theta_hat,theta_at_boundary,profile_lo,profile_hi,profile_lo_bounded,profile_hi_bounded,profile_anchor_lr,profile_anchor_ok,bootstrap_lo,bootstrap_hi,bootstrap_B,bootstrap_frac_theta_boundary
+P1,pooled,0.7780145542031309,34.15952240132897,-202.16083281612973,True,,,0.6028581713904914,0.9790575285597439,True,True,5.684341886080802e-14,True,0.6470984748895752,0.9649334203995346,2000,
+F1,frailty,0.7783841993529432,34.157463989255234,-202.16048455076753,True,1e-10,True,0.6028514574387575,0.9789938648009981,True,True,-0.0010375975150509475,True,0.6471782726975955,0.9646441173288969,2000,0.924
+S-A,pooled,0.767908889330634,39.74206562891383,-208.3829866107215,True,,,0.5931198506267285,0.9695494483297481,True,True,0.0,True,0.642431427238615,0.9545859241754807,2000,
+S-B,pooled,0.7844966231644027,39.99827488485388,-236.01440133238347,True,,,0.6154329227869128,0.9764313100517743,True,True,0.0,True,0.6661260240510273,0.9511773908802907,2000,

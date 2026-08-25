@@ -773,6 +773,41 @@ testów rodziny 9/9b, które nie używają COLOR.
 
 ---
 
+## D-019 · 2026-08-24 · Obecność na `main` nie oznacza akceptacji: PR #15 (Test 6) zmergowany bez przeglądu kodu
+
+**Kontekst.** Przy scalaniu PR #14 (infrastruktura współdzielona, D-016–D-018) do `main`
+zmergowany został równolegle **PR #15**, obejmujący całą zawartość gałęzi
+`claude/cps-test-6` — w tym `test6_weibull.py`, `test6_weibull.md` i wszystkie wyniki
+Etapu B (Krok 2). Nie był to świadomy akt akceptacji kodu: przegląd Etapu B, wymagany przez
+`TASK_6B_BRIEF.md` §8 („Krok 2... STOP — przegląd kodu") przed Krokiem 3, **nie odbył się**.
+
+**Rozstrzygnięcie.** Obecność kodu Testu 6 na `main` od tego momentu **nie jest** tożsama
+z zatwierdzeniem Etapu B. Krok 3 (bieg P1/F1/S-A/S-B na `test6_intervals*.csv`) pozostaje
+**zablokowany** do czasu odrębnego, jawnego przeglądu — dokładnie tego samego, którego
+wymagałby brief, gdyby merge nastąpił po nim, a nie przed. Merge PR #15 **nie jest cofany**:
+nic nie zostało jeszcze policzone na danych rzeczywistych, więc revert kosztowałby więcej
+(rozdwojenie historii, ponowne rozstrzyganie tego samego kodu na innej gałęzi) niż daje.
+
+**Co ma zostać przedstawione do przeglądu przed odblokowaniem Kroku 3:**
+
+1. `test6_weibull.py` + bliźniaczy `test6_weibull.md` — kod czterech dopasowań (P1, F1, S-A,
+   S-B), przedziałów ufności (profil wiarygodności, bootstrap diadowy).
+2. Wynik testu granicy θ→0: log-wiarygodność z kruchością (θ=1e-6) zgodna z pulowaną co do
+   ~6 miejsc po przecinku, przy tych samych `k`, `λ`.
+3. Wynik testu odzysku parametrów na danych syntetycznych o strukturze zbioru rzeczywistego
+   (18 grup, 45 zdarzeń pełnych, 18 obserwacji cenzurowanych), dla co najmniej trzech
+   zestawów `(k,θ)`, w tym `k=1` i `θ=0`.
+
+Oba testy poprawności zostały już wykonane i są udokumentowane w `test6_weibull.md` §5 —
+nie wymagają ponownego liczenia, wymagają **przeglądu przez autora**, zanim Krok 3 ruszy.
+
+**Uzasadnienie.** Symulacja odzysku parametrów pokazuje szerokość przedziału ufności
+niezależnie od tego, co powiedzą dane rzeczywiste — bez jej przeglądu wynik nierozstrzygający
+z Kroku 3 byłby nieodróżnialny od wyniku źle policzonego. Zatwierdzenie kodu musi poprzedzać
+jego uruchomienie na danych, niezależnie od tego, na której gałęzi kod fizycznie leży.
+
+---
+
 ## D-020 · 2026-08-24 · Sprostowanie liczby kontrolnej w D-016: 120 diad z niepustym oknem, nie 129
 
 **Kontekst.** D-016 i `TEST7_PROTOCOL.md` §3 podają jako liczbę kontrolną „diady z niepustym
@@ -888,6 +923,207 @@ diad ze stu dwudziestu i ma zostać nazwane w Etapie C jako ograniczenie, nie sk
 
 ---
 
+## D-022 · 2026-08-24 · θ̂ na granicy nie oznacza braku heterogeniczności — poprawka do czytania D-015
+
+**Kontekst.** Drugi przegląd `test6_weibull.py` (po naprawie pięciu usterek z pierwszego)
+zmierzył własność estymatora kruchości, nie usterkę kodu: parametr θ̂ zapada się do
+granicy numerycznej (podłoga 1e-10) **także wtedy, gdy prawdziwa heterogeniczność
+istnieje**. Na strukturze Testu 6 (18 grup, 45 zdarzeń), k=1,2, 60 powtórzeń: przy
+prawdziwym θ=0,3 granica w 35% biegów (mediana θ̂=0,0003); przy θ=0,6 w 17% (mediana 0,20);
+przy θ=1,0 w 0% biegów, ale mediana wciąż 0,42 — ponad dwukrotne zaniżenie.
+
+Code odtworzył pomiar niezależnie (`test_frailty_boundary_collapse`, ten sam protokół:
+k=1,2, 60 powtórzeń) na obu strukturach:
+
+| θ prawdziwe | Test 6 (18 grup): % granica / mediana θ̂ | Test 7 (120 grup, 58 bez zdarzeń): % granica / mediana θ̂ |
+|---|---|---|
+| 0,0 | 60,0% / 1e-10 | 26,7% / 6,0e-8 |
+| 0,3 | 33,3% / 0,0050 | 18,3% / 0,0428 |
+| 0,6 | 11,7% / 0,231 | 6,7% / 0,268 |
+| 1,0 | 1,7% / 0,454 | 0,0% / 0,643 |
+
+Zgodne co do rzędu wielkości z pomiarem przeglądu (różnice — inny strumień losowań).
+Test 7 (więcej grup, mimo że 58 bez zdarzeń) identyfikuje θ nieco lepiej niż Test 6 na
+każdym poziomie — odnotowane, nie tłumaczone dalej.
+
+### Rozstrzygnięcie
+
+**θ̂ na granicy numerycznej nie jest dowodem braku heterogeniczności — jest niemożnością
+jej wykrycia przy tej wielkości próby.** Reguła czytania rozbieżności/zgodności P1 i F1
+zadeklarowana w D-015 B wymaga poprawki: zgodność P1 z F1 (oba modele dają ten sam wynik)
+jest informacją o braku heterogeniczności **tylko wtedy, gdy θ̂ nie leży na granicy**.
+Jeżeli θ̂ jest na granicy, F1 staje się algebraicznie tożsamy z P1 i ich zgodność jest
+trywialna — nie wolno jej czytać jako „przypadek pierwszy" reguły D-015 („brak świadectwa
+rytmu"), niezależnie od tego, czy heterogeniczność naprawdę istnieje.
+
+**Wynik przy θ̂ na granicy raportowany jest jako nierozstrzygający co do heterogeniczności**,
+osobno od wyniku dla parametru kształtu k — nie jako potwierdzenie modelu pulowanego.
+
+### Zmiany w kodzie (weszły do suity na stałe)
+
+1. `test_frailty_boundary_collapse` — powyższa symulacja, uruchamiana na obu strukturach
+   (Test 6 i Test 7) jako stały element `run_correctness_suite`.
+2. `bootstrap_ci_k_frailty` zwraca teraz `frac_theta_boundary` obok przedziału — jeśli
+   przekracza kilkadziesiąt procent replik, przedział bootstrapowy dla kruchości nie jest
+   interpretowalny i ma być tak opisany w raporcie, nie podany jako liczba bez zastrzeżenia.
+3. `group_sizes_from` poprawiony, by grupować po WSZYSTKICH wierszach (nie tylko pełnych) —
+   inaczej 58 diad Testu 7 bez żadnego zdarzenia znikało po cichu ze struktury syntetycznej.
+4. `negloglik_frailty` zwektoryzowany (`np.bincount` zamiast pętli Python po grupach) —
+   wymagane wydajnościowo przez tę symulację na strukturze 120-grupowej Testu 7;
+   zweryfikowane jako identyczne co do zaokrąglenia ze starą wersją przed zamianą.
+
+### Kolejność i zakres
+
+Warunek dotyczył testu, nie kodu — Krok 3 Testu 6 nie wymaga nowego przeglądu, tylko
+wykonania tej symulacji i przejścia dalej (ustalone przez autora). Wynik trafia do raportu
+Etapu C jako deklaracja sprzed biegu, nie jako wyjaśnienie po fakcie — zgodnie z zasadą
+stosowaną konsekwentnie w obu testach rodziny 9/9b.
+
+---
+
+## D-023 · 2026-08-24 · Krok 3 Testu 6 podstawił inny silnik statystyczny niż §6–§8 protokołu — powtórzyć zgodnie z pre-rejestracją
+
+**Kontekst.** `TEST6_PROTOCOL.md` v1.0 (zamrożony 22 sierpnia) pre-rejestruje w §6–§8
+konkretny model zerowy — **N1** (proces Poissona per diada, ta sama struktura cenzurowania,
+B=2000, ziarno `20260822`) i **N2** (permutacja odstępów między diadami) — z wartością p
+liczoną wzorem `p = (1 + #{|k_sur−1| ≥ |k_obs−1|})/(B+1)`, oraz regułę decyzyjną w §8
+(P1(N1) p<0,05 **i** P2(N2) p<0,10 **i** S2 bez cenzurowania nie jest jedynym istotnym
+wariantem). Lista wariantów §7 to P1, P2, S1–S8.
+
+`TASK_6B_BRIEF.md`, na podstawie którego Code napisał `test6_weibull.py` i wykonał Krok 3,
+powstał **bez `TEST6_PROTOCOL.md` w kontekście** i podstawił inny silnik — MLE Weibulla
+z profilem wiarygodności i bootstrapem diadowym — nie odnotowując, że to jest podstawienie
+metody, nie tylko nazw wariantów (P1/F1/S-A/S-B zamiast P1/P2/S1–S8).
+
+**Sprawdzone w rejestrze:** D-013 zmienia §3 protokołu (próg na epizodach), D-014 zmienia
+§4 (ekspozycja zamiast kalendarza), D-015 dokłada model kruchości jako wariant drugorzędny.
+**Dla §5–§8 (statystyka, model zerowy, reguła decyzyjna) nie ma żadnego wpisu.** Protokół
+w tej części obowiązuje w brzmieniu z 22 sierpnia.
+
+### Rozstrzygnięcie
+
+**Krok 3 powtarzamy zgodnie z §6–§8 protokołu.** Nie zmieniamy protokołu pod już
+policzony wynik. `TEST6_REPORT.md` (k̂=0,778, profil i bootstrap poniżej 1) **nie orzeka
+o H6.1** — zostaje jako analiza uzupełniająca/diagnostyka, nie jako wynik testu.
+
+**Argument merytoryczny, niezależny od formalnego.** Drugi przegląd `test6_weibull.py`
+wykazał, że przy 45 zdarzeniach estymator ma ok. 3% obciążenia k̂ w górę przy prawdziwym
+k=1, a przedział z profilu wiarygodności opiera się na przybliżeniu asymptotycznym
+niegwarantowanym przy tej liczebności. Model zerowy N1 pochłania to obciążenie
+automatycznie, bo surogaty przechodzą przez ten sam estymator, więc metoda protokołu jest
+tu lepsza od tej, którą podstawiono — nie tylko formalnie pierwotna.
+
+### Kolejność, z dwoma zatrzymaniami
+
+**Krok A (decyzja, nie implementacja — STOP przed biegiem).** Odwzorowanie wariantów S1–S8
+z §7 na warstwę danych po D-013/D-014: dla każdego jedna z trzech kwalifikacji —
+wykonywany bez zmian / wykonywany w zmodyfikowanej postaci (jakiej, dlaczego) /
+bezprzedmiotowy po D-013/D-014 (co konkretnie unieważniło). Szczególna uwaga na S1 (próg
+liczony na konfliktach, nie epizodach) i S3 (definicja odstępu sprzed scalania). S5, S6,
+S7, S8 nigdy nie zostały wykonane — odnotować to wprost.
+
+**Krok B.** Implementacja N1 i N2 wg §6, z naprawionym `test6_weibull.py` (pięć poprawek
+z pierwszego przeglądu pozostają w mocy) do liczenia k̂ wewnątrz obu modeli zerowych.
+Bliźniaczy `.md`. STOP na przegląd, bez uruchamiania na danych rzeczywistych.
+
+**Krok C.** Bieg, sprawdzenie reguły §8 w trzech warunkach naraz, raport.
+
+### Wymogi dla raportu Kroku C (obowiązkowe)
+
+1. `TEST6_REPORT.md` (analiza niezgodna z protokołem) dostaje nagłówek wprost mówiący,
+   że nie orzeka o H6.1 — nie jest usuwany, estymacja punktowa i bootstrap zostają jako
+   diagnostyka.
+2. **Ujawnienie wymagane przez zakaz nr 10 w obie strony.** Bieg zgodny z protokołem
+   wykonywany jest ze znajomością wyniku niezgodnego (k̂=0,778, oba przedziały poniżej 1).
+   Test pre-rejestrowany wykonany ze znajomością wyniku nie ma pełnej mocy pre-rejestracji —
+   ma to stać w raporcie Kroku C wprost, nie być przemilczane. Zakaz nr 10 zabrania zarówno
+   zmiany protokołu po zobaczeniu wyniku, jak i udawania, że wyniku się nie widziało.
+3. **Porównanie obu metod na tych samych danych jest samodzielnym wynikiem.** Jeżeli p z N1
+   i przedział z profilu prowadzą do różnych wniosków, to jest informacja o zachowaniu
+   estymatora przy tej wielkości próby, nie tylko o Teście 6 — ma zostać nazwane wprost.
+
+### Zakres
+
+Nie dotyczy Testu 7 — `TEST7_PROTOCOL.md` i `TASK_7B_BRIEF.md` świadomie opisują
+wnioskowanie przez przedziały ufności od początku, są spójne same ze sobą i nowsze. Test 7
+pozostaje wstrzymany do osobnego potwierdzenia tej spójności przez autora, niezależnie od
+niniejszego wpisu.
+
+---
+
+## D-024 · 2026-08-24 · Zatwierdzenie odwzorowania S1–S8 (D-023, Krok A), z trzema korektami
+
+**Kontekst.** `TASK_6C_S1S8_MAPPING.md` przedstawił odwzorowanie ośmiu wariantów wrażliwości
+na warstwę danych po D-013/D-014. Pięć przyjęto bez zmian: S2, S3 (co do zmiany jednostki —
+start epizodu zamiast surowego konfliktu, z zachowanym zastrzeżeniem o nieporównywalności),
+S5, S6, oraz uzasadnienie progu w S1. Trzy wymagały korekty.
+
+### S1 — dopisana konsekwencja liczbowa
+
+Rozkład epizodów na diadę: 10 diad ma 3, 7 ma 4, 1 ma 5. Próg ≥4 epizodów zostawia **8 diad,
+25 zdarzeń** — niecałą połowę zbioru głównego (18/45). Odchylenie k̂ rośnie z ok. 0,12 do
+ok. 0,16 (rząd wielkości z symulacji odzysku, nie z biegu na S1 — S1 samo nie zostało jeszcze
+policzone). **Ma to stać w raporcie PRZED wynikiem S1**: bez tego zastrzeżenia zgodność
+S1 z P1 zostałaby po fakcie odczytana jako potwierdzenie, podczas gdy przy tej różnicy
+precyzji nie jest ani potwierdzeniem, ani zaprzeczeniem — przedziały tej szerokości mogą się
+zgadzać przez brak mocy, nie przez zgodność merytoryczną.
+
+### S7 — rekomendacja implementatora ODWRÓCONA
+
+Code zaproponował scalanie na poziomie państwa tylko z tym samym przeciwnikiem/koalicją.
+**Rozstrzygnięcie: scalamy WSZYSTKIE nakładające się lub stykające się wojny tego samego
+państwa, niezależnie od przeciwnika.** Uzasadnienie: zegar mierzy regenerację **podmiotu**,
+którego zegar liczymy — państwo kończące wojnę z jednym przeciwnikiem i prowadzące nadal
+wojnę z innym **nie regeneruje się**, niezależnie od tego, czy przeciwnik jest ten sam.
+Reguła Code'a policzyłaby jako czas oczekiwania okres, w którym państwo faktycznie walczy —
+błąd tej samej klasy, jaki D-013 naprawiło na poziomie diady. Kryterium z D-013 przenosi się
+przez **tożsamość podmiotu**, nie przez tożsamość przeciwnika. Zgłoszenie tego jako decyzji
+do podjęcia (zamiast rozstrzygnięcia po cichu) było prawidłowym trybem.
+
+### S8 — kwalifikacja zmieniona: WYMAGA decyzji, nie jest czysto techniczne
+
+Konflikty Extra-State toczą się przeciw podmiotom bez kodu w `system2016.csv` (nie-państwowym
+albo nieuznanym). D-014 wymaga obecności **obu** kodów w danym roku dla policzenia ekspozycji;
+zastosowane dosłownie do S8 wyzerowałoby ekspozycję całego wariantu, czyli usunęło go
+efektywnie, nie rozszerzyło. **Rozstrzygnięcie:** ekspozycja dla par Extra-State liczona
+**wyłącznie po stronie państwowej** (obecność w `system2016.csv` tylko dla strony, która ma
+kod); okno domyka się na 2007 albo na wyjście strony państwowej z systemu, w zależności co
+wcześniejsze. **S8 raportowany jako wariant opisowy**, nie wchodzi do reguły §8 na równi z P1 —
+metodologia ekspozycji jest tu z konieczności inna, więc porównanie ilościowe z P1 byłoby
+mylące.
+
+### S4 — brakujący model zerowy, uzupełniony
+
+Wzór z §6 jest zdefiniowany dla parametru kształtu k, a S4 pyta o współczynnik przy czasie
+trwania poprzedniego epizodu — inna wielkość, ten sam wzór nie stosuje się wprost.
+**Deklaracja:** te same surogaty N1 (proces Poissona per diada), statystyka testowa
+`|β̂_czas_trwania|` zamiast `|k̂−1|`, ten sam wzór p podstawiony pod tę statystykę. **S4 nie
+wchodzi do reguły decyzyjnej §8** — jest odrębnym pytaniem („czy dłuższa wojna wydłuża
+regenerację"), nie wariantem wrażliwości P1.
+
+### Luka nienaprawiona, do raportu
+
+`TEST6_PROTOCOL.md` §1 stawia H6.2 (kontrast epok), ale §8 formułuje regułę decyzyjną
+**wyłącznie dla P1** — protokół nie ma kryterium falsyfikacji dla kontrastu epokowego.
+**Nie dopisuję go teraz** — zrobienie tego po zapoznaniu się z wynikiem biegu niezgodnego
+(D-023) naruszałoby zakaz nr 10 w tę samą stronę, co dopisywanie kryterium do P1 po wyniku.
+**S5 i S6 pozostają opisowe; raport Kroku C ma stwierdzić wprost, że H6.2 nie została w
+Teście 6 rozstrzygnięta** — nie „wsparta" ani „obalona", tylko nieobjęta regułą decyzyjną.
+
+### Krok B odblokowany
+
+Implementacja N1 i N2 wg §6 (ziarno `20260822`, B=2000), `test6_weibull.py` po naprawie
+(pięć usterek + D-022) jako estymator k̂ wewnątrz obu modeli zerowych, plus bliźniaczy `.md`.
+STOP na przegląd, bez uruchamiania na danych rzeczywistych.
+
+### Reguła proceduralna dodana na przyszłość
+
+Dwa błędy w ciągu jednej doby (D-023 i przeoczenia w pierwotnym odwzorowaniu S1–S8) wynikły
+z pracy na streszczeniu dokumentu źródłowego zamiast na jego tekście. **Każdy brief ma odtąd
+cytować paragraf protokołu, który realizuje, zamiast go streszczać.**
+
+---
+
 ## D-025 · 2026-08-24 · Wykluczenie odstępu Italy–Ethiopia (ekspozycja zero, konsekwencja D-021)
 
 **Kontekst.** Zastosowanie D-021 sprawiło, że II wś liczy się jako zdarzenie dla diady
@@ -971,6 +1207,176 @@ ostatnia wojna. Zapisane w `TEST7_DATA_REPORT.md` (Etap A), nie odłożone do Et
 którym Etap B musi się liczyć od początku (możliwy wpływ na sposób traktowania obserwacji
 `cenzurowany` kontra `pelny`/`t0`-only w modelu — nie rozstrzygane tutaj, tylko
 udokumentowane).
+
+## D-026 · 2026-08-25 · N2 zdegenerowany względem k̂ pulowanego — wada protokołu, nie implementacji
+
+**Kontekst.** Przegląd Kroku B (`test6_null.py`) wykrył, że model zerowy N2 (permutacja
+odstępów między diadami, §6) jest **algebraicznie zdegenerowany** względem statystyki
+pierwszorzędnej z §5/§7 (k̂ z `fit_pooled`). `negloglik_pooled(params, t, event)` sumuje po
+wszystkich obserwacjach bez odniesienia do etykiety diady — k̂ zależy wyłącznie od
+multizbioru par `(t, event)`. Permutacja N2 przenosi wartości MIĘDZY diadami, ale nie zmienia
+tego multizbioru (te same wartości `t` i `event`, tylko inaczej przypisane do diad) — k̂_sur
+jest więc identyczne z k̂_obs dla KAŻDEJ permutacji, z konstrukcji, niezależnie od danych.
+
+**Zweryfikowane niezależnie (Code), na danych syntetycznych o strukturze Testu 6** (18 grup,
+rozkład wielkości 1×4/7×3/10×2), 5 permutacji zgodnie z mechanizmem `simulate_n2_once`: k̂_sur
+identyczne do k̂_obs do ~8 miejsca po przecinku (różnice rzędu 1e-8, w granicach tolerancji
+optymalizatora Nelder-Mead, nie prawdziwa różnica) — potwierdza zgłoszenie przeglądu.
+
+**Konsekwencja — poprawiona po dodatkowej weryfikacji na danych realnych (Code).**
+Teoretycznie `p = (1 + #{|k_sur−1| ≥ |k_obs−1|}) / (B+1) = (1+B)/(B+1)` powinno wynosić
+tożsamościowo **1,000**, skoro k̂_sur ≡ k̂_obs matematycznie. **W praktyce, uruchamiając
+dosłownie kod i wzór §6 na `test6_intervals.csv` (B=2000), tak nie jest:** `k_sur_sd ≈
+7,7·10⁻⁹` potwierdza degenerację (to szum optymalizatora, nie sygnał), ale wynikowe `p` =
+**0,253** (ziarno protokołu `20260822`) i **0,266** (inne ziarno) — nie 1,000, nie 0,5,
+tylko pozornie sensowna, w praktyce przypadkowa liczba zależna od ziarna (deterministyczna
+przy ustalonym ziarnie — powtórzone uruchomienie daje identyczny wynik — ale bez treści).
+Przyczyna: porównanie `|k_sur−1| >= |k_obs−1|` rozstrzyga o remisie na poziomie szumu
+zmiennoprzecinkowego (permutacja zmienia kolejność sumowania tych samych wartości w
+`np.sum(ll)`, nieasocjatywność arytmetyki przesuwa optimum Nelder-Mead o ~1e-8 w tę lub inną
+stronę) — to JEST ta sama degeneracja, tylko widoczna na innym poziomie precyzji, nie inne
+zjawisko. **Ani „1,000" (teoria), ani „0,253"/"0,266" (to, co kod faktycznie zwraca) nie są
+prawdziwym wynikiem** — raportowanie którejkolwiek z tych liczb jako p-wartości byłoby
+mylące; poprawnie jest opisać zjawisko (degeneracja, brak treści), nie podawać liczbę.
+Reguła decyzyjna §8 wymaga trzech warunków naraz, w tym P2<0,10 — skoro P2 nie niesie
+żadnej treści o danych (ani w teorii, ani w praktycznym wykonaniu kodu), **żaden zbiór
+danych nie może w informacyjny sposób spełnić §8**. Zamrożony protokół (w obecnym brzmieniu
+§6) nie ma osiągalnego wyniku pozytywnego dla H6.1.
+
+**To nie jest wada implementacji.** `test6_null.py` odtwarza §6 dosłownie i poprawnie —
+problem leży w tym, że §6 opisuje model niszczący strukturę wewnątrz diady (sensowny dla
+statystyki wrażliwej na grupowanie, np. θ z modelu kruchości), podczas gdy §5/§7 ustanowiły
+statystyką pierwszorzędną k̂ pulowane, które grupowanie ignoruje z definicji. Paragraf szósty
+zakłada inną statystykę niż ustanawiają paragrafy piąty i siódmy — niespójność wewnętrzna
+protokołu, nie błąd realizacji.
+
+### Rozstrzygnięcie
+
+1. **P1 liczymy i raportujemy normalnie** — N1 tej wady nie ma (permutuje/losuje wewnątrz
+   struktury per-diady, nie między diadami, więc nie jest degenerowany względem k̂ pulowanego).
+2. **P2 raportowany jako zdegenerowany/nieinformacyjny, z wyjaśnieniem mechanizmu** —
+   NIE jako liczba „1,000" (teoria) ani jako liczba, którą faktycznie zwraca kod (~0,25,
+   artefakt szumu numerycznego przy dokładnej remisie) — żadna z tych liczb nie ma treści.
+3. **Reguła §8 raportowana jako niespełnialna w obecnym brzmieniu.** H6.1 pozostaje
+   **nierozstrzygnięta w ramach zamrożonego protokołu** — nie „obalona" ani „wsparta częściowo".
+4. **Nie podstawiamy w miejsce N2 innego modelu zerowego, żeby regułę §8 uratować.** Byłoby to
+   dokładnie to podstawienie metodologii po zobaczeniu problemu, które doprowadziło do D-023 —
+   tym razem świadome, więc gorsze, nie lepsze.
+5. **Wolno (nie: trzeba) policzyć N2 dla modelu kruchości F1**, gdzie permutacja faktycznie
+   niszczy mierzoną strukturę (θ zależy od grupowania wewnątrz diady, więc permutacja między
+   diadami jest tam informacyjna) — wyłącznie jako diagnostyka, jawnie oznaczona jako **poza
+   §8**, nie jako zamiennik P2. Zastrzeżenie: przy zapadaniu się θ do granicy numerycznej
+   (D-022) wynik może wyjść nieinformacyjny i ma być tak opisany, nie przemilczany.
+
+### Dwie weryfikacje przed biegiem P1 (zlecone w przeglądzie, wykonane przez Code)
+
+**A. Rozbicie średniego k̂_sur≈0,92 (N1) na dwa składniki.** Zmierzone niezależnie na danych
+syntetycznych: (a) mieszanka wykładniczych o różnych λ̂ per diada, dopasowana jednym wspólnym
+k, ciągnie k̂ w dół (mechanizm z D-015/F1) oraz (b) sam estymator `fit_pooled` ma przy n=45
+zdarzeniach obciążenie w górę — zmierzone tutaj na strukturze 18 grup (1×4/7×3/10×2) pod
+**jednorodną** prawdą (k=1, jedno wspólne λ dla wszystkich diad, więc składnik (a) jest z
+konstrukcji zerowy): średnie k̂ = 1,024 (mediana 1,015), **obciążenie ≈ +2,4%** — rząd
+wielkości zgodny ze zgłoszonymi ~3% z drugiego przeglądu. Oba składniki działają w
+przeciwne strony (mieszanka w dół, obciążenie małej próby w górę) i oba mają trafić do
+raportu Kroku C osobno, nie jako jedna zbiorcza liczba.
+
+**B. Czy Σt_sim+c surogatu N1 mieści się w realnym oknie obserwacji diady.** Sprawdzone na
+realnej strukturze `test6_intervals.csv` (18 diad, B=2000 na diadę): **75,4% surogatowych
+replik ma Σt_sim+c przekraczające realną długość okna diady** (zakres per-diada: 41%–98%,
+rośnie z udziałem cenzurowania `c/T` w oknie). **To NIE jest zjawisko marginalne.** Przyczyna
+algebraiczna: `λ̂ = n/T` (T = realna ekspozycja całkowita, włącznie z `c`), więc
+`E[Σt_sim] = n·(1/λ̂) = T`, a surogat dokłada do tego jeszcze niezmienione `c` — stąd
+`E[Σt_sim+c] = T+c > T` systematycznie, dla każdej diady z `c>0`. Jest to dodatkowe źródło
+wariancji rozkładu zerowego N1 (surogaty generują historie dłuższe niż diada mogła realnie
+mieć), co czyni test N1 **konserwatywnym** (trudniej odrzucić H0, niż gdyby surogaty były
+ograniczone do realnego okna) — ma być nazwane wprost w raporcie Kroku C, nie tylko
+zasygnalizowane jedną liczbą.
+
+### Ujawnienie do raportu Kroku C (obok D-023 §5)
+
+Wada §8 (degeneracja N2) została wykryta **przy przeglądzie kodu, przed jakimkolwiek biegiem
+na danych rzeczywistych.** Kolejność ta jest sprawdzalna niezależnie od zaufania do
+oświadczenia: degeneracja N2 jest własnością algebraiczną, niezależną od danych (zależy
+wyłącznie od tego, że `negloglik_pooled` nie używa etykiety diady) — jej wykrycie nie mogło
+zostać zainspirowane wynikiem, bo nie wymagało żadnego wyniku do zaobserwowania.
+
+### Zakres
+
+Dotyczy wyłącznie N2 (permutacja międzydiadyczna) w kontekście statystyki k̂ pulowanego.
+Nie dotyczy N1 (poprawny). Nie unieważnia Kroku B jako całości — P1(N1) pozostaje
+prawidłową, obliczalną ścieżką do wyniku dla H6.1, tylko bez towarzyszącego jej P2 jako
+drugiego, niezależnego potwierdzenia przewidzianego przez §8.
+
+### §7 — Sprostowanie (Claude, po weryfikacji Code'a) i reguła ogólna
+
+**Sprostowanie.** Twierdzenie „P2 wynosi dokładnie 1,000" jest prawdziwe wyłącznie w
+arytmetyce dokładnej: statystyka jest niezmiennicza względem permutacji, więc w arytmetyce
+dokładnej wszystkie surogaty remisują z obserwacją, a wzór §6 z nierównością nieostrą daje
+P2 równe jeden. Wniosek o tym, co zwróci KOD, jest twierdzeniem o implementacji, nie o
+algebrze — w arytmetyce zmiennoprzecinkowej permutacja zmienia kolejność sumowania tych
+samych wartości w `np.sum(ll)`, co przez nieasocjatywność przesuwa optimum Nelder-Mead o
+rząd 10⁻⁸ i rozstrzyga remis losowo. Sprawdzian pięciu permutacji na danych syntetycznych,
+który dał różnicę dokładnie zero, był przypadkiem: przy małej liczbie wierszy i wartościach
+całkowitych sumy wyszły bitowo identyczne, więc ścieżka optymalizatora się nie rozjechała.
+Przy B=2000 na pełnym zbiorze realnym rozjeżdża się i daje **p=0,253** (ziarno protokołu
+`20260822`) / **0,266** (inne ziarno) — deterministyczne przy ustalonym ziarnie, ale
+pozbawione treści. **Raportujemy zjawisko (degenerację), nie żadną z tych liczb.**
+
+**Reguła ogólna.** Każdy model zerowy oparty na symulacji, w którym surogat może remisować
+z obserwacją, wymaga jawnego wykrywania remisów. Nierówność nieostra z §6 jest poprawna i
+konserwatywna, ale tylko wtedy, gdy remis zostanie rozpoznany jako remis. **Do każdego
+kolejnego testu tej rodziny wchodzi kontrola: odsetek surogatów z `|k_sur − k_obs| < 10⁻⁶`
+(`tie_fraction`, `TIE_TOL=1e-6`). Wartość istotnie większa od zera (próg `TIE_FRAC_STOP=0,01`)
+oznacza degenerację i zatrzymuje bieg** (`AssertionError`, nie ciche zwrócenie p bez treści).
+Wbudowane w `run_n1`/`run_n2` (test6_null.py), zweryfikowane własnym testem
+(`test_tie_detector_discriminates`) na przypadku znanym-zdegenerowanym i
+znanym-niezdegenerowanym, oraz w stałej suicie (`run_null_correctness_suite`), obok
+`n1_window_exceedance`.
+
+**Przekroczenie okna N1 (75,4%) — dokładniejsze sformułowanie.** Nie efekt uboczny, tylko
+strukturalna własność N1 w dosłownym brzmieniu §6. `λ̂ = n/(Σt+c)`, więc oczekiwana długość
+pojedynczego losowanego odstępu wynosi `(Σt+c)/n`, a suma n odstępów daje w oczekiwaniu
+`Σt+c` (=T, realna ekspozycja). Po dołożeniu niezmienionego `c` surogatowa diada ma
+oczekiwany czas całkowity `Σt+2c` (=`T+c`) wobec obserwowanego `T` — **nadmiar równa się
+DOKŁADNIE `c`, jest systematyczny, nie losowy.** Stąd ~3/4 replik przekracza okno.
+**Konsekwencja dla czytania wyniku, asymetryczna:** rozkład zerowy N1 ma zawyżoną wariancję,
+więc P1 jest konserwatywne — niska wartość P1 jest wiarygodna Z NADWYŻKĄ (trudniej o nią
+przez przypadek, skoro null jest już rozdęty), natomiast wysoka wartość P1 jest **częściowo
+przypisywalna samej konstrukcji modelu zerowego, nie danym**. Ta asymetria jest ważniejsza
+niż sam odsetek i ma trafić do raportu Kroku C wprost. Nie naprawiane — z tego samego powodu
+co N2: opisujemy zjawisko protokołu, nie łatamy go po zobaczeniu problemu.
+
+**Zamknięcie przeglądu Kroku B (Claude).** Po dopisaniu tego paragrafu i powyższym
+doprecyzowaniu, przegląd kodu Kroku B jest zamknięty bez dalszych zastrzeżeń.
+
+## D-027 · 2026-08-25 · Autoryzacja Kroku C
+
+**Kontekst.** Po D-026 (wada §8 wykryta i rozstrzygnięta przed jakimkolwiek biegiem na danych
+rzeczywistych) Claude rekomendował udzielenie autoryzacji: kod przejrzany dwukrotnie, wady
+protokołu opisane przed biegiem, warunki raportowania zapisane. Autoryzacja nie leży w
+kompetencji ani Code'a, ani Claude — obaj to odnotowali wprost.
+
+**Rozstrzygnięcie (autor).** Krok C autoryzowany. `test6_null.py --run-real` odblokowane.
+Bieg wykonywany ze znajomością wyniku analizy niezgodnej (`TEST6_REPORT.md`, D-023) i ze
+znajomością wady §8 (D-026) — obie okoliczności ujawnione w raporcie Kroku C wprost, zgodnie
+z zakazem nr 10 w obie strony (nie zmieniać metodologii po wyniku, ale też nie udawać, że
+się go nie widziało).
+
+## D-028 · 2026-08-25 · Tryb przeglądu decyzji warstwy danych — zawężenie przyjęte
+
+**Kontekst.** Po D-025 (Test 7) Claude zauważył, że decyzje zmieniające zbiór danych
+(usuwanie obserwacji, przesuwanie okien, zmiana reguły kwalifikacji zdarzeń) mają tę
+własność, że ich skutek nie widać w liczbach, dopóki nie jest za późno — D-025 wyszło dobrze
+merytorycznie, ale dopiero przy weryfikacji arytmetyki ujawniło się, że przy okazji 22 diady
+straciły ogon cenzurowany (dodatek do D-025).
+
+**Rozstrzygnięcie (autor).** Przyjęte, z zawężeniem: decyzje o warstwie danych pozostają w
+gestii autora bez zmian, ale odtąd Code przy każdej takiej decyzji dołącza liczbę wierszy
+przed i po (rozbicie na typy obserwacji), a Claude sprawdza arytmetykę przed decyzją autora,
+nie po niej. Dokłada to jedną turę, ale wyłapuje dokładnie ten rodzaj rozjazdu między
+uzasadnieniem merytorycznym a niezamierzonym skutkiem ubocznym. Decyzje interpretacyjne
+(nie zmieniające zbioru) zostają w dotychczasowym trybie.
+---
 
 ## D-029 · 2026-08-25 · Przegląd `TASK_7B_BRIEF.md` wobec `TEST7_PROTOCOL.md` — cztery luki, jedna poważna
 

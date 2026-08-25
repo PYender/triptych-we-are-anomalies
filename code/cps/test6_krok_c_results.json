@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "builder": "test6_null.py Krok C (D-026/D-027) real run",
+    "seed_protocol": 20260822,
+    "B": 2000,
+    "sha256_intervals": "d2ecc0b19750abab"
+  },
+  "suite_n1_window_exceedance_overall": 0.7547777777777778,
+  "tie_detector_check": {
+    "frac_degenerate": 1.0,
+    "frac_healthy": 0.0,
+    "degenerate_flagged": true,
+    "healthy_not_flagged": true
+  },
+  "P1_N1": {
+    "model": "N1",
+    "k_obs": 0.7780145638739474,
+    "p": 0.06796601699150424,
+    "B": 2000,
+    "seed": 20260822,
+    "k_sur_mean": 0.9146592188256543,
+    "k_sur_median": 0.9110981180541047,
+    "k_sur_sd": 0.09805147247397285,
+    "frac_tie": 0.0
+  },
+  "P2_N2": {
+    "model": "N2",
+    "k_obs": 0.7780145638739474,
+    "p": 0.25287356321839083,
+    "B": 2000,
+    "seed": 20260822,
+    "k_sur_mean": 0.778014569738666,
+    "k_sur_median": 0.7780145705704381,
+    "k_sur_sd": 7.738158679341117e-09,
+    "frac_tie": 1.0,
+    "poza_regula_decyzyjna_S8": true,
+    "uwaga_D026": "zdegenerowany wzgledem k-hat pulowanego (k_sur_sd rzedu 1e-8 = szum optymalizatora, nie sygnal); 'p' policzone doslownie ze wzoru SS6 jest artefaktem szumu numerycznego przy dokladnej remisie, NIE wartoscia 1.000 w praktyce ani wynikiem empirycznym - nie raportowac jako liczby, tylko jako opisane zjawisko"
+  }
+}

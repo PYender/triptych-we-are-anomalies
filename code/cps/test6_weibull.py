@@ -59,12 +59,27 @@ def negloglik_pooled(params: np.ndarray, t: np.ndarray, event: np.ndarray) -> fl
     return -float(np.sum(ll))
 
 
-def fit_pooled(t, event, x0=(0.0, 3.0)):
-    res = minimize(negloglik_pooled, x0=np.array(x0, dtype=float), args=(t, event),
-                   method="Nelder-Mead", options=dict(xatol=1e-9, fatol=1e-11, maxiter=8000))
-    logk, loglam = res.x
-    return dict(k=float(np.exp(logk)), lam=float(np.exp(loglam)), loglik=-float(res.fun),
-               logk=float(logk), loglam=float(loglam), res=res)
+DEFAULT_X0_POOLED = [(0.0, 3.0), (0.5, 2.0)]                              # >=2, usterka 2 przeglądu
+DEFAULT_X0_FRAILTY = [(0.0, 3.0, -4.0), (0.0, 3.0, -1.0),                 # >=4, usterka 2 przeglądu
+                      (0.3, 2.7, 0.0), (-0.3, 3.3, 0.5)]
+
+
+def fit_pooled(t, event, x0_list=None):
+    """Wielostart (usterka 2 przeglądu): >=2 punkty, wybór po najwyższej wiarygodności,
+    zgodność startów zwrócona jako `converged_same` — brak zbieżności do wspólnego optimum
+    jest informacją o płaskości powierzchni, ma trafić do raportu."""
+    if x0_list is None:
+        x0_list = DEFAULT_X0_POOLED
+    results = [minimize(negloglik_pooled, x0=np.array(x0, dtype=float), args=(t, event),
+                        method="Nelder-Mead", options=dict(xatol=1e-9, fatol=1e-11, maxiter=8000))
+              for x0 in x0_list]
+    best = min(results, key=lambda r: r.fun)
+    logk, loglam = best.x
+    k_by_start = [float(np.exp(r.x[0])) for r in results]
+    converged_same = bool((max(k_by_start) - min(k_by_start)) < 1e-3 * max(1.0, abs(np.mean(k_by_start))))
+    return dict(k=float(np.exp(logk)), lam=float(np.exp(loglam)), loglik=-float(best.fun),
+               logk=float(logk), loglam=float(loglam), res=best,
+               n_starts=len(x0_list), converged_same=converged_same, k_by_start=k_by_start)
 
 
 # ============================ F1: Weibull + kruchość gamma (D-015 B) ============================
@@ -79,55 +94,108 @@ def negloglik_frailty(params: np.ndarray, t: np.ndarray, event: np.ndarray,
     H = (t / lam) ** k
     t_safe = np.where(t > 0, t, 1.0)
     logh = np.log(k / lam) + (k - 1.0) * np.log(t_safe / lam)     # log h(t), użyty tylko gdzie event==1
-    total = 0.0
-    for g in range(n_groups):
-        m = group_idx == g
-        ev = event[m] == 1
-        D = int(ev.sum())
-        Hi = float(H[m].sum())
-        sum_logh = float(logh[m][ev].sum())
-        total += (sum_logh + D * np.log(theta) + gammaln(1.0 / theta + D) - gammaln(1.0 / theta)
-                 - (1.0 / theta + D) * np.log1p(theta * Hi))
-    return -total
+    # Wektoryzacja (D-022): pętla Python po grupach skalowała się źle do 120 grup Testu 7 —
+    # ta sama funkcja jest wywoływana tysiące razy w każdej optymalizacji. np.bincount
+    # sumuje po grupach bez pętli; wynik identyczny co do bitu ze starą wersją (sprawdzone).
+    ev = event == 1
+    D = np.bincount(group_idx, weights=ev.astype(float), minlength=n_groups)
+    Hi = np.bincount(group_idx, weights=H, minlength=n_groups)
+    sum_logh = np.bincount(group_idx[ev], weights=logh[ev], minlength=n_groups)
+    total = np.sum(sum_logh + D * np.log(theta) + gammaln(1.0 / theta + D) - gammaln(1.0 / theta)
+                  - (1.0 / theta + D) * np.log1p(theta * Hi))
+    return -float(total)
 
 
-def fit_frailty(t, event, diad, x0=(0.0, 3.0, -2.0)):
+def fit_frailty(t, event, diad, x0_list=None):
+    """Wielostart obowiązkowy (brief §3: 'użyj kilku punktów startowych'; usterka 2
+    przeglądu: pojedynczy start (0,3,-2) lądował na θ→0 fałszywie zgłaszanym jako
+    zbieżność, podczas gdy inne starty znajdowały lepsze optimum o Δloglik=0,057)."""
+    if x0_list is None:
+        x0_list = DEFAULT_X0_FRAILTY
     groups, group_idx = np.unique(diad, return_inverse=True)
     n_groups = len(groups)
-    res = minimize(negloglik_frailty, x0=np.array(x0, dtype=float),
-                   args=(t, event, group_idx, n_groups),
-                   method="Nelder-Mead", options=dict(xatol=1e-9, fatol=1e-11, maxiter=12000))
-    logk, loglam, logtheta = res.x
-    return dict(k=float(np.exp(logk)), lam=float(np.exp(loglam)), theta=float(np.exp(logtheta)),
-               loglik=-float(res.fun), logk=float(logk), loglam=float(loglam),
-               logtheta=float(logtheta), res=res)
+    results = [minimize(negloglik_frailty, x0=np.array(x0, dtype=float),
+                        args=(t, event, group_idx, n_groups),
+                        method="Nelder-Mead", options=dict(xatol=1e-9, fatol=1e-11, maxiter=12000))
+              for x0 in x0_list]
+    best = min(results, key=lambda r: r.fun)
+    logk, loglam, logtheta = best.x
+    k_by_start = [float(np.exp(r.x[0])) for r in results]
+    converged_same = bool((max(k_by_start) - min(k_by_start)) < 1e-3 * max(1.0, abs(np.mean(k_by_start))))
+    # usterka 3 przeglądu: theta zwracane MUSI mieć tę samą podłogę, którą liczono
+    # wiarygodność (negloglik_frailty stosuje max(exp(logtheta),1e-10) wewnętrznie) —
+    # inaczej raport pokazuje liczby typu 1e-87, których model nigdy nie użył.
+    theta_raw = float(np.exp(logtheta))
+    theta = max(theta_raw, 1e-10)
+    return dict(k=float(np.exp(logk)), lam=float(np.exp(loglam)), theta=theta,
+               theta_at_boundary=bool(theta_raw <= 1e-10),
+               loglik=-float(best.fun), logk=float(logk), loglam=float(loglam),
+               logtheta=float(np.log(theta)), res=best,
+               n_starts=len(x0_list), converged_same=converged_same, k_by_start=k_by_start)
 
 
 # ============================ przedziały ufności (brief §4) ============================
-def profile_ci_k(negloglik_full, args, k_hat: float, rest0: np.ndarray, loglik_max: float,
-                 level: float = 0.95, n_grid: int = 81,
-                 k_lo_mult: float = 0.1, k_hi_mult: float = 10.0):
-    """Profil wiarygodności dla k: dla siatki log k, optymalizuje pozostałe parametry
-    (`rest`), zwraca (lo, hi) na progu χ²_1 przy `level`."""
-    thresh = chi2.ppf(level, df=1)
-    grid = np.linspace(np.log(k_hat * k_lo_mult), np.log(k_hat * k_hi_mult), n_grid)
-    lr = np.empty(n_grid)
-    rest = np.array(rest0, dtype=float)
-    for i, lk in enumerate(grid):
+def _profile_at(negloglik_full, args, lk, rest_starts):
+    """Optymalizuje parametry pozostałe przy ustalonym log k, z kilku punktów startowych
+    (usterka 5 przeglądu: pojedynczy start od lewej krawędzi siatki potrafił utknąć w
+    lokalnym optimum modelu kruchości, zaniżając profil i zawężając przedział)."""
+    best = None
+    for r0 in rest_starts:
         def obj(r, lk=lk):
             return negloglik_full(np.concatenate(([lk], r)), *args)
-        res = minimize(obj, x0=rest, method="Nelder-Mead",
-                       options=dict(xatol=1e-9, fatol=1e-11, maxiter=3000))
-        rest = res.x
-        lr[i] = 2.0 * (loglik_max - (-res.fun))
+        res = minimize(obj, x0=np.array(r0, dtype=float), method="Nelder-Mead",
+                       options=dict(xatol=1e-10, fatol=1e-12, maxiter=4000))
+        if best is None or res.fun < best.fun:
+            best = res
+    return best
+
+
+def profile_ci_k(negloglik_full, args, k_hat: float, rest_hat, loglik_max: float,
+                 level: float = 0.95, n_grid: int = 81,
+                 k_lo_mult: float = 0.1, k_hi_mult: float = 10.0,
+                 anchor_tol: float = 1e-2):
+    """Profil wiarygodności dla k. Zakotwiczony w k_hat (usterka 5): profiluje NA ZEWNĄTRZ
+    od k_hat w obie strony, z rozgrzanym startem (poprzedni punkt siatki + rest_hat jako
+    druga alternatywa), zamiast przechodzić siatkę od lewej krawędzi. Sprawdza w k_hat,
+    że LR ≈ 0 (inaczej wewnętrzna optymalizacja nie osiąga optimum zgłoszonego przez
+    fit_* i cały profil jest podniesiony — `anchor_ok=False` ostrzega wywołującego).
+
+    Granica przedziału nieosiągnięta w zakresie siatki (usterka 1) zwracana jako `nan`,
+    nigdy jako brzeg siatki — `lo_bounded`/`hi_bounded` mówią, która strona jest realna."""
+    thresh = chi2.ppf(level, df=1)
+    rest_hat = np.array(rest_hat, dtype=float)
+    grid = np.linspace(np.log(k_hat * k_lo_mult), np.log(k_hat * k_hi_mult), n_grid)
+    idx_hat = int(np.argmin(np.abs(grid - np.log(k_hat))))
+
+    lr = np.full(n_grid, np.nan)
+    rest_at = [None] * n_grid
+
+    res0 = _profile_at(negloglik_full, args, grid[idx_hat],
+                       [rest_hat, rest_hat * 1.1 + 1e-3, rest_hat * 0.9 - 1e-3])
+    lr[idx_hat] = 2.0 * (loglik_max - (-res0.fun))
+    rest_at[idx_hat] = res0.x
+    anchor_ok = bool(lr[idx_hat] <= anchor_tol)
+
+    prev = rest_at[idx_hat]
+    for i in range(idx_hat + 1, n_grid):
+        res = _profile_at(negloglik_full, args, grid[i], [prev, rest_hat])
+        lr[i] = 2.0 * (loglik_max - (-res.fun)); rest_at[i] = res.x; prev = res.x
+    prev = rest_at[idx_hat]
+    for i in range(idx_hat - 1, -1, -1):
+        res = _profile_at(negloglik_full, args, grid[i], [prev, rest_hat])
+        lr[i] = 2.0 * (loglik_max - (-res.fun)); rest_at[i] = res.x; prev = res.x
+
     k_grid = np.exp(grid)
-    idx_hat = int(np.argmin(np.abs(k_grid - k_hat)))
-    lo = _interp_crossing(k_grid, lr, thresh, idx_hat, -1)
-    hi = _interp_crossing(k_grid, lr, thresh, idx_hat, +1)
-    return lo, hi, k_grid, lr
+    lo, lo_bounded = _interp_crossing(k_grid, lr, thresh, idx_hat, -1)
+    hi, hi_bounded = _interp_crossing(k_grid, lr, thresh, idx_hat, +1)
+    return dict(lo=lo, hi=hi, lo_bounded=lo_bounded, hi_bounded=hi_bounded,
+               anchor_lr=float(lr[idx_hat]), anchor_ok=anchor_ok, k_grid=k_grid, lr=lr)
 
 
 def _interp_crossing(k_grid, lr, thresh, idx_hat, direction):
+    """Zwraca (wartość, czy_osiągnięto_próg_w_siatce). Gdy próg nie jest osiągnięty,
+    wartość to `nan` — usterka 1 przeglądu: zwracanie brzegu siatki jako granicy dawało
+    przedziały nieodróżnialne od prawdziwych, mimo że były artefaktem zakresu siatki."""
     i = idx_hat
     n = len(k_grid)
     while 0 <= i + direction < n:
@@ -136,13 +204,16 @@ def _interp_crossing(k_grid, lr, thresh, idx_hat, direction):
             k0, k1 = k_grid[i], k_grid[j]
             l0, l1 = lr[i], lr[j]
             frac = (thresh - l0) / (l1 - l0) if l1 != l0 else 0.0
-            return float(k0 + frac * (k1 - k0))
+            return float(k0 + frac * (k1 - k0)), True
         i = j
-    return float(k_grid[0] if direction < 0 else k_grid[-1])   # siatka nie sięga granicy
+    return float("nan"), False   # siatka nie sięga granicy — nie zgadujemy
 
 
 def bootstrap_ci_k_pooled(t, event, diad, B=2000, seed=RNG_SEED, level=0.95, x0=(0.0, 3.0)):
-    """Bootstrap CAŁYCH DIAD (nie odstępów) — brief §4."""
+    """Bootstrap CAŁYCH DIAD (nie odstępów) — brief §4. Jeden punkt startowy na replikę
+    (rozgrzany parametrami pełnej próby) zamiast pełnego wielostartu z fit_pooled — B replik
+    x wielostart byłoby zbyt kosztowne; wielostart jest tam, gdzie się liczy, czyli
+    w punktowym oszacowaniu na pełnych danych."""
     groups = np.unique(diad)
     idx_by_group = {g: np.where(diad == g)[0] for g in groups}
     rng = np.random.default_rng(seed)
@@ -150,7 +221,7 @@ def bootstrap_ci_k_pooled(t, event, diad, B=2000, seed=RNG_SEED, level=0.95, x0=
     for b in range(B):
         sampled = rng.choice(groups, size=len(groups), replace=True)
         idx = np.concatenate([idx_by_group[g] for g in sampled])
-        fit = fit_pooled(t[idx], event[idx], x0=x0)
+        fit = fit_pooled(t[idx], event[idx], x0_list=[x0])
         ks[b] = fit["k"]
     lo, hi = np.percentile(ks, [(1 - level) / 2 * 100, (1 + level) / 2 * 100])
     return float(lo), float(hi), ks
@@ -159,11 +230,18 @@ def bootstrap_ci_k_pooled(t, event, diad, B=2000, seed=RNG_SEED, level=0.95, x0=
 def bootstrap_ci_k_frailty(t, event, diad, B=2000, seed=RNG_SEED, level=0.95,
                            x0=(0.0, 3.0, -2.0)):
     """Bootstrap diadowy dla F1 — każda kopia wylosowanej diady dostaje WŁASNĄ etykietę
-    grupy (nie jest scalana z innymi kopiami tej samej diady w jedną super-grupę)."""
+    grupy (nie jest scalana z innymi kopiami tej samej diady w jedną super-grupę). Jeden
+    punkt startowy na replikę, jak w bootstrapie pulowanym — patrz uwaga tam.
+
+    D-022: zwraca też `frac_theta_boundary` — odsetek replik, w których θ̂ osiadło na
+    granicy numerycznej. Wysoki odsetek (kilkadziesiąt procent) oznacza, że przedział
+    bootstrapowy dla kruchości nie jest interpretowalny — ma być podany OBOK przedziału,
+    nie pominięty."""
     groups = np.unique(diad)
     idx_by_group = {g: np.where(diad == g)[0] for g in groups}
     rng = np.random.default_rng(seed)
     ks = np.empty(B)
+    at_boundary = np.zeros(B, dtype=bool)
     for b in range(B):
         sampled = rng.choice(groups, size=len(groups), replace=True)
         idx_parts, lab_parts = [], []
@@ -173,24 +251,39 @@ def bootstrap_ci_k_frailty(t, event, diad, B=2000, seed=RNG_SEED, level=0.95,
             lab_parts.append(np.full(len(ix), f"{g}__{rep}"))
         idx = np.concatenate(idx_parts)
         lab = np.concatenate(lab_parts)
-        fit = fit_frailty(t[idx], event[idx], lab, x0=x0)
+        fit = fit_frailty(t[idx], event[idx], lab, x0_list=[x0])
         ks[b] = fit["k"]
+        at_boundary[b] = fit["theta_at_boundary"]
     lo, hi = np.percentile(ks, [(1 - level) / 2 * 100, (1 + level) / 2 * 100])
-    return float(lo), float(hi), ks
+    return float(lo), float(hi), ks, float(at_boundary.mean())
 
 
 # ============================ dane syntetyczne (testy poprawności §3) ============================
 def group_sizes_from(path="test6_intervals.csv"):
-    """Struktura zbioru głównego: liczba zdarzeń pełnych per diada (1 cenzurowany na diadę
-    zawsze doliczany osobno) — do testu odzysku parametrów na tej samej strukturze."""
+    """Struktura zbioru: liczba zdarzeń pełnych per diada (1 cenzurowany na diadę zawsze
+    doliczany osobno) — do testu odzysku parametrów na tej samej strukturze.
+
+    Grupuje po WSZYSTKICH wierszach, nie tylko pełnych (D-022, poprawka): diady bez ani
+    jednego zdarzenia pełnego (Test 7 ma ich 58 — sedno tego testu, D-016) muszą wejść do
+    struktury jako zera, inaczej `groupby` na samych pełnych wierszach po cichu je gubi."""
     df = pd.read_csv(path, comment="#")
-    return df[df["cenzurowany"] == 0].groupby("diada").size().to_numpy()
+    return df.groupby("diada")["cenzurowany"].apply(lambda s: int((s == 0).sum())).to_numpy()
 
 
-def simulate_dataset(k, lam, theta, n_full_per_group, rng):
+def simulate_dataset(k, lam, theta, n_full_per_group, rng, censor_scale=None):
     """Symuluje zbiór o STRUKTURZE zadanej przez n_full_per_group (liczba zdarzeń pełnych
     na grupę; każda grupa ma dodatkowo dokładnie 1 obserwację cenzurowaną). Kruchość
-    gamma(1/theta, theta) o średniej 1 (theta=0 -> bez kruchości, u=1 dla wszystkich)."""
+    gamma(1/theta, theta) o średniej 1 (theta=0 -> bez kruchości, u=1 dla wszystkich).
+
+    Cenzurowanie ADMINISTRACYJNE (usterka 4 przeglądu): czas cenzurowania losowany
+    z Exp(censor_scale), NIEZALEŻNIE od kruchości `u` i od zdarzeń tej grupy — jak
+    w danych rzeczywistych, gdzie cenzurowanie wynika z domknięcia okna obserwacji
+    (2007), nie z tego, jak długo dana para by jeszcze czekała. Poprzednia wersja
+    (czas cenzurowania = ułamek świeżo wylosowanego czasu zdarzenia tej samej grupy)
+    była cenzurowaniem INFORMACYJNYM i zawyżała k̂ o ok. 5,5 pkt proc. w stronę k>1,
+    czyli w stronę hipotezy — zmierzone przez przegląd na 400 powtórzeniach."""
+    if censor_scale is None:
+        censor_scale = lam        # skala porównywalna z populacyjną, losowanie NIEZALEŻNE od T
     ts, ev, gid = [], [], []
     for g, n_full in enumerate(n_full_per_group):
         u = 1.0 if theta <= 0 else rng.gamma(shape=1.0 / theta, scale=theta)
@@ -198,11 +291,8 @@ def simulate_dataset(k, lam, theta, n_full_per_group, rng):
             e = rng.exponential(1.0)                 # H(T)=u*(T/lam)^k = E ~ Exp(1)
             T = lam * (e / u) ** (1.0 / k)
             ts.append(T); ev.append(1); gid.append(g)
-        # jedna obserwacja cenzurowana: prawdziwy czas T_true, obserwacja = frakcja < T_true
-        e = rng.exponential(1.0)
-        T_true = lam * (e / u) ** (1.0 / k)
-        frac = rng.uniform(0.05, 0.95)
-        ts.append(T_true * frac); ev.append(0); gid.append(g)
+        C = rng.exponential(censor_scale)             # administracyjne — niezależne od u i od T
+        ts.append(C); ev.append(0); gid.append(g)
     return np.array(ts), np.array(ev), np.array([f"G{g}" for g in gid])
 
 
@@ -224,22 +314,76 @@ def test_parameter_recovery(n_full_per_group, k_true, lam_true, theta_true, labe
     rng = np.random.default_rng(RNG_SEED)
     t, event, diad = simulate_dataset(k_true, lam_true, theta_true, n_full_per_group, rng)
     fit_p = fit_pooled(t, event)
-    result = dict(label=label, k_true=k_true, lam_true=lam_true, theta_true=theta_true,
-                 n_events=int(event.sum()), n_censored=int((1 - event).sum()),
-                 n_groups=len(n_full_per_group),
-                 pooled_k_hat=fit_p["k"], pooled_lam_hat=fit_p["lam"])
-    if theta_true > 0:
-        fit_f = fit_frailty(t, event, diad)
-        result.update(frailty_k_hat=fit_f["k"], frailty_lam_hat=fit_f["lam"],
-                      frailty_theta_hat=fit_f["theta"])
-    else:
-        fit_f = fit_frailty(t, event, diad, x0=(fit_p["logk"], fit_p["loglam"], np.log(1e-4)))
-        result.update(frailty_k_hat=fit_f["k"], frailty_lam_hat=fit_f["lam"],
-                      frailty_theta_hat=fit_f["theta"])
-    return result
+    x0_list = list(DEFAULT_X0_FRAILTY) + [(fit_p["logk"], fit_p["loglam"], np.log(1e-4))]
+    fit_f = fit_frailty(t, event, diad, x0_list=x0_list)
+    return dict(label=label, k_true=k_true, lam_true=lam_true, theta_true=theta_true,
+               n_events=int(event.sum()), n_censored=int((1 - event).sum()),
+               n_groups=len(n_full_per_group),
+               pooled_k_hat=fit_p["k"], pooled_lam_hat=fit_p["lam"],
+               pooled_converged_same=fit_p["converged_same"],
+               frailty_k_hat=fit_f["k"], frailty_lam_hat=fit_f["lam"],
+               frailty_theta_hat=fit_f["theta"], frailty_theta_at_boundary=fit_f["theta_at_boundary"],
+               frailty_converged_same=fit_f["converged_same"], frailty_k_by_start=fit_f["k_by_start"])
 
 
-def run_correctness_suite(intervals_csv="test6_intervals.csv"):
+def test_censoring_bias(n_full_per_group, k_true=1.0, lam_true=20.0, n_reps=400):
+    """Weryfikuje POPRAWKĘ usterki 4: cenzurowanie administracyjne nie powinno zawyżać k̂,
+    w przeciwieństwie do poprzedniego cenzurowania informacyjnego (T_true*frac), które
+    przegląd zmierzył jako +5,5 pkt proc. w stronę k>1 na 400 powtórzeniach. Uruchamia
+    pulowane dopasowanie (szybkie) n_reps razy na czystych danych (theta=0)."""
+    rng = np.random.default_rng(RNG_SEED)
+    ks = np.empty(n_reps)
+    for i in range(n_reps):
+        t, event, _ = simulate_dataset(k_true, lam_true, 0.0, n_full_per_group, rng)
+        ks[i] = fit_pooled(t, event, x0_list=[(0.0, 3.0)])["k"]
+    return dict(k_true=k_true, n_reps=n_reps, mean_k_hat=float(ks.mean()),
+               median_k_hat=float(np.median(ks)), sd_k_hat=float(ks.std(ddof=1)),
+               bias_pct=float((ks.mean() - k_true) / k_true * 100))
+
+
+def test_profile_anchor(n_full_per_group, k_true=1.4, lam_true=18.0, theta_true=0.3):
+    """Weryfikuje POPRAWKĘ usterki 5: LR w k_hat musi być ~0 dla obu modeli, inaczej
+    profil jest podniesiony i przedział sztucznie zawężony."""
+    rng = np.random.default_rng(RNG_SEED)
+    t, event, diad = simulate_dataset(k_true, lam_true, theta_true, n_full_per_group, rng)
+    fit_p = fit_pooled(t, event)
+    prof_p = profile_ci_k(negloglik_pooled, (t, event), fit_p["k"], [fit_p["loglam"]], fit_p["loglik"])
+    fit_f = fit_frailty(t, event, diad)
+    groups, gidx = np.unique(diad, return_inverse=True)
+    prof_f = profile_ci_k(negloglik_frailty, (t, event, gidx, len(groups)), fit_f["k"],
+                          [fit_f["loglam"], fit_f["logtheta"]], fit_f["loglik"])
+    return dict(pooled_anchor_lr=prof_p["anchor_lr"], pooled_anchor_ok=prof_p["anchor_ok"],
+               pooled_ci=(prof_p["lo"], prof_p["hi"]),
+               pooled_ci_bounded=(prof_p["lo_bounded"], prof_p["hi_bounded"]),
+               frailty_anchor_lr=prof_f["anchor_lr"], frailty_anchor_ok=prof_f["anchor_ok"],
+               frailty_ci=(prof_f["lo"], prof_f["hi"]),
+               frailty_ci_bounded=(prof_f["lo_bounded"], prof_f["hi_bounded"]))
+
+
+def test_frailty_boundary_collapse(n_full_per_group, k_true=1.2, n_reps=60,
+                                   theta_grid=(0.0, 0.3, 0.6, 1.0), lam_true=20.0,
+                                   boundary_floor=1e-10):
+    """D-022 (przegląd 2026-08-24, §3): θ̂ zapada się do granicy numerycznej TAKŻE, gdy
+    prawdziwa heterogeniczność istnieje — własność estymatora przy tej wielkości próby,
+    nie usterka. Konsekwencja dla D-015: jeśli θ̂ leży na granicy, F1 staje się tożsamy
+    z pulowanym i zgodność P1/F1 trafia trywialnie do przypadku pierwszego reguły decyzyjnej
+    ('brak świadectwa rytmu') niezależnie od prawdy — zgodność jest informacją TYLKO gdy
+    θ̂ nie leży na granicy. Wynik ma trafić do raportu Etapu C jako deklaracja sprzed biegu."""
+    rng = np.random.default_rng(RNG_SEED)
+    out = {}
+    for theta_true in theta_grid:
+        thetas = np.empty(n_reps)
+        for i in range(n_reps):
+            t, event, diad = simulate_dataset(k_true, lam_true, theta_true, n_full_per_group, rng)
+            thetas[i] = fit_frailty(t, event, diad)["theta"]
+        at_boundary = thetas <= boundary_floor
+        out[str(theta_true)] = dict(theta_true=theta_true, n_reps=n_reps,
+                                    frac_at_boundary=float(at_boundary.mean()),
+                                    median_theta_hat=float(np.median(thetas)))
+    return out
+
+
+def run_correctness_suite(intervals_csv="test6_intervals.csv", intervals7_csv=None):
     n_full_per_group = group_sizes_from(intervals_csv)
     out = {}
     out["theta_zero_limit"] = test_theta_zero_limit(n_full_per_group)
@@ -251,6 +395,14 @@ def run_correctness_suite(intervals_csv="test6_intervals.csv"):
         test_parameter_recovery(n_full_per_group, k_true=0.7, lam_true=25.0, theta_true=0.6,
                                 label="k=0.7 (malejacy hazard/grupowanie), theta=0.6 (kruchosc silna)"),
     ]
+    out["censoring_bias"] = test_censoring_bias(n_full_per_group)
+    out["profile_anchor"] = test_profile_anchor(n_full_per_group)
+    out["frailty_boundary_collapse_test6"] = test_frailty_boundary_collapse(n_full_per_group)
+    if intervals7_csv:
+        n_full_per_group_7 = group_sizes_from(intervals7_csv)
+        out["frailty_boundary_collapse_test7"] = test_frailty_boundary_collapse(n_full_per_group_7)
+        out["_test7_n_groups"] = int(len(n_full_per_group_7))
+        out["_test7_n_groups_zero_events"] = int((n_full_per_group_7 == 0).sum())
     return out
 
 
@@ -258,6 +410,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--intervals", default="test6_intervals.csv",
                     help="tylko do odczytu STRUKTURY (liczba zdarzeń/grupa) dla testów syntetycznych")
+    ap.add_argument("--intervals7", default=None,
+                    help="j.w. dla struktury Testu 7 (D-022, dodatek do suity)")
     ap.add_argument("--run-real", action="store_true",
                     help="ZABLOKOWANE w Etapie B — patrz TASK_6B_BRIEF.md §6/§8")
     a = ap.parse_args()
@@ -265,7 +419,7 @@ def main():
         raise SystemExit("Etap B: uruchamianie na danych rzeczywistych jest zablokowane do Kroku 3 "
                          "(TASK_6B_BRIEF.md §6, §8). Usuń --run-real dopiero po przeglądzie kodu.")
     import json
-    print(json.dumps(run_correctness_suite(a.intervals), indent=2, default=float))
+    print(json.dumps(run_correctness_suite(a.intervals, a.intervals7), indent=2, default=float))
 
 
 if __name__ == "__main__":
