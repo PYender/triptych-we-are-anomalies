@@ -1,6 +1,7 @@
 # TEST 6 — Krok A (D-023): odwzorowanie wariantów S1–S8 na warstwę danych po D-013/D-014
 
-**Status: PROPOZYCJA DO DECYZJI, nie implementacja. STOP przed Krokiem B.**
+**Status: ZATWIERDZONE z trzema korektami (D-024). Krok B odblokowany i wykonany
+(`test6_null.py`), czeka na przegląd przed uruchomieniem na danych rzeczywistych.**
 
 Kontekst: `TEST6_PROTOCOL.md` §7 pre-rejestruje osiem wariantów wrażliwości (S1–S8) na
 populacji i definicji odstępu sprzed D-013 (scalanie w epizody) i D-014 (ekspozycja zamiast
@@ -23,6 +24,15 @@ druga jest już objęta osobno przez S-B (D-013/D-014, próg na wierszach surowy
 D-013, potem próg). Uzasadnienie: S1 ma odpowiadać na pytanie "czy wynik zależy od wartości
 progu", trzymając jednostkę stałą — inaczej wynik S1 byłby nieinterpretowalny (nie wiadomo,
 czy zmiana pochodzi od wartości czy od jednostki).
+
+**Konsekwencja liczbowa (D-024) — MA STAĆ W RAPORCIE PRZED wynikiem S1.** Rozkład epizodów
+na diadę w zbiorze głównym: 10 diad ma 3, 7 ma 4, 1 ma 5. Próg ≥4 zostawia **8 diad, 25
+zdarzeń** — niecałą połowę zbioru głównego (18/45). Odchylenie k̂ rośnie z ok. 0,12 do
+ok. 0,16 (rząd wielkości z symulacji odzysku parametrów, nie z biegu na S1 — S1 samo jeszcze
+nie policzone). Bez tego zastrzeżenia zgodność S1 z P1 zostałaby po fakcie odczytana jako
+potwierdzenie, podczas gdy przy tej różnicy precyzji nie jest ani potwierdzeniem, ani
+zaprzeczeniem — przedziały tej szerokości mogą się zgadzać przez brak mocy, nie przez
+zgodność merytoryczną.
 
 ## S2 — bez cenzurowania (kontrola, obciążony)
 
@@ -63,6 +73,13 @@ epizodu), nie pojedynczego surowego konfliktu — spójne z tym, co faktycznie p
 mierzony odstęp w P1. Analogiczna decyzja została już podjęta dla Testu 7
 (`TEST7_PROTOCOL.md` §6: "czas trwania poprzedniego epizodu").
 
+**Model zerowy dopisany (D-024) — S4 nie ma go automatycznie z §6.** Wzór §6 jest
+zdefiniowany dla parametru kształtu k; S4 pyta o współczynnik przy czasie trwania
+poprzedniego epizodu — inna wielkość, ten sam wzór nie stosuje się wprost. Ten sam surogat
+N1 (proces Poissona per diada), ale statystyka testowa to `|β̂_czas_trwania|` zamiast
+`|k̂−1|`, podstawiona pod ten sam wzór p. **S4 nie wchodzi do reguły decyzyjnej §8** — jest
+odrębnym pytaniem („czy dłuższa wojna wydłuża regenerację"), nie wariantem wrażliwości P1.
+
 ## S5 — podział przed/po 1914 (H6.2, kontrast epok)
 
 **Kwalifikacja: wykonywany bez zmian (warstwa danych już gotowa; sam wariant nigdy nie
@@ -88,56 +105,82 @@ Nigdy nie wykonany dotąd.
 
 ## S7 — poziom B, państwa ≥6 konfliktów (rytm agresji pojedynczego aktora)
 
-**Kwalifikacja: wymaga decyzji autora przed wykonaniem — nie mieści się czysto w żadnej
-z trzech kategorii.**
+**Kwalifikacja: ROZSTRZYGNIĘTE (D-024) — reguła implementatora ODWRÓCONA.**
 
-To jedyny wariant, dla którego mechaniczne zastosowanie D-013 nie jest oczywiste. Scalanie
+To jedyny wariant, dla którego mechaniczne zastosowanie D-013 nie było oczywiste. Scalanie
 epizodów (D-013) zostało zdefiniowane **na poziomie diady**: "konflikty **tej samej diady**...
 nachodzące się lub stykające". Na poziomie państwa pojedynczy kraj może prowadzić kilka wojen
-naraz z **różnymi** przeciwnikami — pytanie, czy takie nakładające się wojny z różnymi
-przeciwnikami mają się scalać w jeden epizod państwa (analogicznie do diady), czy pozostać
-osobnymi zdarzeniami mimo nakładania się w czasie, nie ma odpowiedzi w D-013 i wymaga nowego
-rozstrzygnięcia, nie tylko technicznego przeniesienia.
+naraz z **różnymi** przeciwnikami — pytanie, czy takie nakładające się wojny mają się scalać
+w jeden epizod państwa niezależnie od przeciwnika, czy tylko gdy dotyczą tego samego
+przeciwnika, nie miało odpowiedzi w D-013 wprost i wymagało rozstrzygnięcia.
 
-**Rekomendacja, nie decyzja:** scalać tylko wojny tego samego państwa, które nachodzą się
-**i** dotyczą przynajmniej częściowo tego samego przeciwnika/koalicji (bliżej duchowi D-013:
-brak przerwy regeneracyjnej), a NIE każde dwie wojny państwa nakładające się w czasie
-niezależnie od przeciwnika — ale to jest propozycja implementatora, nie fakt wynikający
-z istniejących decyzji, i wymaga jawnego zatwierdzenia albo odrzucenia. Nigdy nie wykonany.
+Pierwotna rekomendacja implementatora (scalać tylko wojny z tym samym przeciwnikiem/koalicją)
+**była błędna i została odrzucona.** **Rozstrzygnięcie: scalamy WSZYSTKIE nakładające się lub
+stykające się wojny tego samego państwa, niezależnie od przeciwnika.** Uzasadnienie: zegar
+mierzy regenerację **podmiotu**, którego zegar liczymy — państwo kończące wojnę z jednym
+przeciwnikiem i prowadzące nadal wojnę z innym **nie regeneruje się**, niezależnie od tego,
+czy przeciwnik jest ten sam. Reguła implementatora policzyłaby jako czas oczekiwania okres,
+w którym państwo faktycznie walczy — błąd tej samej klasy, jaki D-013 naprawiło na poziomie
+diady. Kryterium z D-013 przenosi się przez **tożsamość podmiotu**, nie przez tożsamość
+przeciwnika. Nigdy nie wykonany (implementacja pozostaje do Etapu z krokiem realizującym S7,
+nie do Kroku B, który dotyczy N1/N2 na zbiorze głównym).
 
 ## S8 — poziom A rozszerzony o Extra-State
 
-**Kwalifikacja: wykonywany w zmodyfikowanej postaci (rozszerzenie danych wejściowych).**
+**Kwalifikacja: ZMIENIONA (D-024) — WYMAGAŁO decyzji, nie było czysto techniczne, jak
+pierwotnie sklasyfikowano.**
 
 `TEST6_DATA_REPORT.md` §8 (Etap A) już odnotował ten wariant jako świadomie odłożony:
 "Zbiór ogranicza się do `Inter-StateWarData_v4.0.csv`... Rozszerzenie na Extra-/Intra-State
 zmieniałoby definicję diady i nie jest podejmowane teraz." S8 jest dokładnie tym
 odłożonym rozszerzeniem — pre-rejestrowanym od początku, nie nowym pomysłem.
 
-**Modyfikacja:** `build_diads`/`war_spans`/`merge_episodes` (D-013) i ekspozycja (D-014)
-stosowane identycznie, na konfliktach z `Inter-StateWarData_v4.0.csv` **i**
-`Extra-StateWarData_v4.0.csv` łącznie. Mechanika scalania i ekspozycji nie jest specyficzna
-dla kategorii COW — generalizuje się bez nowej decyzji merytorycznej. Nigdy nie wykonany.
+Pierwotna klasyfikacja tego wariantu jako „czysto technicznego" była błędna: konflikty
+Extra-State toczą się przeciw podmiotom bez kodu w `system2016.csv` (nie-państwowym albo
+nieuznanym). D-014 wymaga obecności **obu** kodów w danym roku dla policzenia ekspozycji;
+zastosowane dosłownie do S8 wyzerowałoby ekspozycję całego wariantu, czyli usunęło go
+efektywnie, nie rozszerzyło — to wymagało rozstrzygnięcia, nie tylko technicznego
+przeniesienia.
+
+**Rozstrzygnięcie:** ekspozycja dla par Extra-State liczona **wyłącznie po stronie
+państwowej** (obecność w `system2016.csv` tylko dla strony, która ma kod); okno domyka się
+na 2007 albo na wyjście strony państwowej z systemu, w zależności co wcześniejsze. **S8
+raportowany jako wariant opisowy**, nie wchodzi do reguły decyzyjnej §8 na równi z P1 —
+metodologia ekspozycji jest tu z konieczności inna, więc porównanie ilościowe z P1 byłoby
+mylące. Mechanika scalania (D-013) stosowana identycznie na konfliktach z
+`Inter-StateWarData_v4.0.csv` **i** `Extra-StateWarData_v4.0.csv` łącznie. Nigdy nie
+wykonany.
 
 ---
 
-## Podsumowanie
+## Podsumowanie (po D-024)
 
-| wariant | kwalifikacja | wymaga decyzji autora poza techniczną? |
+| wariant | kwalifikacja | wymagało decyzji autora poza techniczną? |
 |---|---|---|
-| S1 | zmodyfikowany (próg na epizodach) | nie |
+| S1 | zmodyfikowany (próg na epizodach) + konsekwencja liczbowa (8 diad/25 zdarzeń, SD≈0,16) raportowana PRZED wynikiem | nie |
 | S2 | bez zmian | nie |
 | S3 | zmodyfikowany (start epizodu) + zastrzeżenie o nieporównywalności (bez zmian) | nie |
-| S4 | zmodyfikowany (czas trwania epizodu) | nie |
+| S4 | zmodyfikowany (czas trwania epizodu) + własny model zerowy (`\|β̂_czas_trwania\|`), poza regułą §8 | nie |
 | S5 | bez zmian w danych; nigdy nie uruchomiony | nie |
 | S6 | bez zmian w danych + ograniczenie niemiecko-dyadyczne; nigdy nie uruchomiony | nie |
-| S7 | **wymaga nowej decyzji** (reguła scalania na poziomie państwa nieokreślona) | **tak** |
-| S8 | zmodyfikowany (dodanie Extra-State) | nie |
+| S7 | **reguła implementatora ODWRÓCONA** — scalanie niezależne od przeciwnika (tożsamość podmiotu, nie przeciwnika) | **tak — rozstrzygnięte** |
+| S8 | **reklasyfikowany** — ekspozycja tylko po stronie państwowej, wariant opisowy, poza regułą §8 | **tak — rozstrzygnięte** |
 
 Żaden wariant nie jest bezprzedmiotowy po D-013/D-014 — wszystkie osiem pozostaje sensowne
-i wykonalne, siedem przez techniczne (nie merytoryczne) przeniesienie na nową jednostkę
-(epizod, ekspozycja), jeden (S7) wymaga jawnego rozstrzygnięcia reguły scalania na poziomie
-państwa, zanim można go zaimplementować.
+i wykonalne. Dwa (S7, S8) wymagały jawnego rozstrzygnięcia merytorycznego, nie tylko
+technicznego przeniesienia na nową jednostkę (epizod, ekspozycja) — oba rozstrzygnięte
+w D-024, w obu przypadkach odwracając albo poprawiając pierwotną (błędną) klasyfikację
+implementatora.
 
-**STOP.** Czekam na zatwierdzenie powyższego odwzorowania (w szczególności rekomendacji dla
-S1/S3/S4/S8 i pytania o S7) przed Krokiem B (implementacja N1/N2).
+**Luka nieporuszona (D-024), celowo.** `TEST6_PROTOCOL.md` §1 stawia H6.2 (kontrast epok),
+ale §8 formułuje regułę decyzyjną wyłącznie dla P1 — protokół nie ma kryterium falsyfikacji
+dla kontrastu epokowego (S5/S6). Nie dopisano go po fakcie — zrobienie tego po zapoznaniu
+się z wynikiem biegu niezgodnego (D-023) naruszałoby zakaz nr 10 w tę samą stronę, co
+dopisywanie kryterium do P1 po wyniku. S5 i S6 pozostają opisowe; raport Kroku C ma stwierdzić
+wprost, że H6.2 nie została w Teście 6 rozstrzygnięta — nie „wsparta" ani „obalona", tylko
+nieobjęta regułą decyzyjną.
+
+**STATUS: zatwierdzone, Krok B odblokowany i wykonany.** `test6_null.py` (N1/N2 per §6,
+ziarno 20260822, B=2000, `test6_weibull.fit_pooled` jako estymator) zaimplementowany,
+z bliźniaczym `.md` — czeka na przegląd przed uruchomieniem na danych rzeczywistych
+(`--run-real`).
