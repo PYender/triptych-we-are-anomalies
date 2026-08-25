@@ -1006,3 +1006,102 @@ STOP na przegląd, bez uruchamiania na danych rzeczywistych.
 Dwa błędy w ciągu jednej doby (D-023 i przeoczenia w pierwotnym odwzorowaniu S1–S8) wynikły
 z pracy na streszczeniu dokumentu źródłowego zamiast na jego tekście. **Każdy brief ma odtąd
 cytować paragraf protokołu, który realizuje, zamiast go streszczać.**
+
+## D-026 · 2026-08-25 · N2 zdegenerowany względem k̂ pulowanego — wada protokołu, nie implementacji
+
+**Kontekst.** Przegląd Kroku B (`test6_null.py`) wykrył, że model zerowy N2 (permutacja
+odstępów między diadami, §6) jest **algebraicznie zdegenerowany** względem statystyki
+pierwszorzędnej z §5/§7 (k̂ z `fit_pooled`). `negloglik_pooled(params, t, event)` sumuje po
+wszystkich obserwacjach bez odniesienia do etykiety diady — k̂ zależy wyłącznie od
+multizbioru par `(t, event)`. Permutacja N2 przenosi wartości MIĘDZY diadami, ale nie zmienia
+tego multizbioru (te same wartości `t` i `event`, tylko inaczej przypisane do diad) — k̂_sur
+jest więc identyczne z k̂_obs dla KAŻDEJ permutacji, z konstrukcji, niezależnie od danych.
+
+**Zweryfikowane niezależnie (Code), na danych syntetycznych o strukturze Testu 6** (18 grup,
+rozkład wielkości 1×4/7×3/10×2), 5 permutacji zgodnie z mechanizmem `simulate_n2_once`: k̂_sur
+identyczne do k̂_obs do ~8 miejsca po przecinku (różnice rzędu 1e-8, w granicach tolerancji
+optymalizatora Nelder-Mead, nie prawdziwa różnica) — potwierdza zgłoszenie przeglądu.
+
+**Konsekwencja — poprawiona po dodatkowej weryfikacji na danych realnych (Code).**
+Teoretycznie `p = (1 + #{|k_sur−1| ≥ |k_obs−1|}) / (B+1) = (1+B)/(B+1)` powinno wynosić
+tożsamościowo **1,000**, skoro k̂_sur ≡ k̂_obs matematycznie. **W praktyce, uruchamiając
+dosłownie kod i wzór §6 na `test6_intervals.csv` (B=2000), tak nie jest:** `k_sur_sd ≈
+7,7·10⁻⁹` potwierdza degenerację (to szum optymalizatora, nie sygnał), ale wynikowe `p` =
+**0,253** (ziarno protokołu `20260822`) i **0,266** (inne ziarno) — nie 1,000, nie 0,5,
+tylko pozornie sensowna, w praktyce przypadkowa liczba zależna od ziarna (deterministyczna
+przy ustalonym ziarnie — powtórzone uruchomienie daje identyczny wynik — ale bez treści).
+Przyczyna: porównanie `|k_sur−1| >= |k_obs−1|` rozstrzyga o remisie na poziomie szumu
+zmiennoprzecinkowego (permutacja zmienia kolejność sumowania tych samych wartości w
+`np.sum(ll)`, nieasocjatywność arytmetyki przesuwa optimum Nelder-Mead o ~1e-8 w tę lub inną
+stronę) — to JEST ta sama degeneracja, tylko widoczna na innym poziomie precyzji, nie inne
+zjawisko. **Ani „1,000" (teoria), ani „0,253"/"0,266" (to, co kod faktycznie zwraca) nie są
+prawdziwym wynikiem** — raportowanie którejkolwiek z tych liczb jako p-wartości byłoby
+mylące; poprawnie jest opisać zjawisko (degeneracja, brak treści), nie podawać liczbę.
+Reguła decyzyjna §8 wymaga trzech warunków naraz, w tym P2<0,10 — skoro P2 nie niesie
+żadnej treści o danych (ani w teorii, ani w praktycznym wykonaniu kodu), **żaden zbiór
+danych nie może w informacyjny sposób spełnić §8**. Zamrożony protokół (w obecnym brzmieniu
+§6) nie ma osiągalnego wyniku pozytywnego dla H6.1.
+
+**To nie jest wada implementacji.** `test6_null.py` odtwarza §6 dosłownie i poprawnie —
+problem leży w tym, że §6 opisuje model niszczący strukturę wewnątrz diady (sensowny dla
+statystyki wrażliwej na grupowanie, np. θ z modelu kruchości), podczas gdy §5/§7 ustanowiły
+statystyką pierwszorzędną k̂ pulowane, które grupowanie ignoruje z definicji. Paragraf szósty
+zakłada inną statystykę niż ustanawiają paragrafy piąty i siódmy — niespójność wewnętrzna
+protokołu, nie błąd realizacji.
+
+### Rozstrzygnięcie
+
+1. **P1 liczymy i raportujemy normalnie** — N1 tej wady nie ma (permutuje/losuje wewnątrz
+   struktury per-diady, nie między diadami, więc nie jest degenerowany względem k̂ pulowanego).
+2. **P2 raportowany jako zdegenerowany/nieinformacyjny, z wyjaśnieniem mechanizmu** —
+   NIE jako liczba „1,000" (teoria) ani jako liczba, którą faktycznie zwraca kod (~0,25,
+   artefakt szumu numerycznego przy dokładnej remisie) — żadna z tych liczb nie ma treści.
+3. **Reguła §8 raportowana jako niespełnialna w obecnym brzmieniu.** H6.1 pozostaje
+   **nierozstrzygnięta w ramach zamrożonego protokołu** — nie „obalona" ani „wsparta częściowo".
+4. **Nie podstawiamy w miejsce N2 innego modelu zerowego, żeby regułę §8 uratować.** Byłoby to
+   dokładnie to podstawienie metodologii po zobaczeniu problemu, które doprowadziło do D-023 —
+   tym razem świadome, więc gorsze, nie lepsze.
+5. **Wolno (nie: trzeba) policzyć N2 dla modelu kruchości F1**, gdzie permutacja faktycznie
+   niszczy mierzoną strukturę (θ zależy od grupowania wewnątrz diady, więc permutacja między
+   diadami jest tam informacyjna) — wyłącznie jako diagnostyka, jawnie oznaczona jako **poza
+   §8**, nie jako zamiennik P2. Zastrzeżenie: przy zapadaniu się θ do granicy numerycznej
+   (D-022) wynik może wyjść nieinformacyjny i ma być tak opisany, nie przemilczany.
+
+### Dwie weryfikacje przed biegiem P1 (zlecone w przeglądzie, wykonane przez Code)
+
+**A. Rozbicie średniego k̂_sur≈0,92 (N1) na dwa składniki.** Zmierzone niezależnie na danych
+syntetycznych: (a) mieszanka wykładniczych o różnych λ̂ per diada, dopasowana jednym wspólnym
+k, ciągnie k̂ w dół (mechanizm z D-015/F1) oraz (b) sam estymator `fit_pooled` ma przy n=45
+zdarzeniach obciążenie w górę — zmierzone tutaj na strukturze 18 grup (1×4/7×3/10×2) pod
+**jednorodną** prawdą (k=1, jedno wspólne λ dla wszystkich diad, więc składnik (a) jest z
+konstrukcji zerowy): średnie k̂ = 1,024 (mediana 1,015), **obciążenie ≈ +2,4%** — rząd
+wielkości zgodny ze zgłoszonymi ~3% z drugiego przeglądu. Oba składniki działają w
+przeciwne strony (mieszanka w dół, obciążenie małej próby w górę) i oba mają trafić do
+raportu Kroku C osobno, nie jako jedna zbiorcza liczba.
+
+**B. Czy Σt_sim+c surogatu N1 mieści się w realnym oknie obserwacji diady.** Sprawdzone na
+realnej strukturze `test6_intervals.csv` (18 diad, B=2000 na diadę): **75,4% surogatowych
+replik ma Σt_sim+c przekraczające realną długość okna diady** (zakres per-diada: 41%–98%,
+rośnie z udziałem cenzurowania `c/T` w oknie). **To NIE jest zjawisko marginalne.** Przyczyna
+algebraiczna: `λ̂ = n/T` (T = realna ekspozycja całkowita, włącznie z `c`), więc
+`E[Σt_sim] = n·(1/λ̂) = T`, a surogat dokłada do tego jeszcze niezmienione `c` — stąd
+`E[Σt_sim+c] = T+c > T` systematycznie, dla każdej diady z `c>0`. Jest to dodatkowe źródło
+wariancji rozkładu zerowego N1 (surogaty generują historie dłuższe niż diada mogła realnie
+mieć), co czyni test N1 **konserwatywnym** (trudniej odrzucić H0, niż gdyby surogaty były
+ograniczone do realnego okna) — ma być nazwane wprost w raporcie Kroku C, nie tylko
+zasygnalizowane jedną liczbą.
+
+### Ujawnienie do raportu Kroku C (obok D-023 §5)
+
+Wada §8 (degeneracja N2) została wykryta **przy przeglądzie kodu, przed jakimkolwiek biegiem
+na danych rzeczywistych.** Kolejność ta jest sprawdzalna niezależnie od zaufania do
+oświadczenia: degeneracja N2 jest własnością algebraiczną, niezależną od danych (zależy
+wyłącznie od tego, że `negloglik_pooled` nie używa etykiety diady) — jej wykrycie nie mogło
+zostać zainspirowane wynikiem, bo nie wymagało żadnego wyniku do zaobserwowania.
+
+### Zakres
+
+Dotyczy wyłącznie N2 (permutacja międzydiadyczna) w kontekście statystyki k̂ pulowanego.
+Nie dotyczy N1 (poprawny). Nie unieważnia Kroku B jako całości — P1(N1) pozostaje
+prawidłową, obliczalną ścieżką do wyniku dla H6.1, tylko bez towarzyszącego jej P2 jako
+drugiego, niezależnego potwierdzenia przewidzianego przez §8.

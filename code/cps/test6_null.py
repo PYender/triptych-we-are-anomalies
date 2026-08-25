@@ -100,6 +100,16 @@ def run_n1(path: str, B: int = B_NULL, seed: int = SEED_PROTOCOL):
 
 
 # ============================ N2 — permutacyjny (między diadami) ============================
+# D-026: N2 jest ZDEGENEROWANY względem k̂ pulowanego. `negloglik_pooled(params, t, event)`
+# sumuje po obserwacjach bez odniesienia do etykiety diady — k̂ zależy wyłącznie od
+# multizbioru par (t, event). Permutacja N2 przenosi wartości MIĘDZY diadami, ale nie
+# zmienia tego multizbioru: k̂_sur == k̂_obs dla KAŻDEJ permutacji, z konstrukcji, niezależnie
+# od danych. Konsekwencja: p_N2 = (1+B)/(B+1) ≡ 1,000 zawsze — nie wynik, tożsamość algebraiczna.
+# §8 wymaga P2<0,10 razem z dwoma innymi warunkami; skoro P2≡1, §8 jest niespełnialne w
+# obecnym brzmieniu protokołu. Kod poniżej ODTWARZA §6 dosłownie i poprawnie — wada leży w
+# niespójności protokołu (§6 kontra §5/§7), nie w tej implementacji. `run_n2` pozostaje do
+# diagnostyki (np. na modelu kruchości F1, gdzie permutacja NIE jest zdegenerowana, bo θ
+# zależy od grupowania wewnątrz diady) — NIE wchodzi do reguły decyzyjnej §8 dla P1.
 def simulate_n2_once(grouped, rng) -> tuple[np.ndarray, np.ndarray]:
     full_pool = np.concatenate([t_full for _, t_full, _ in grouped]) if any(len(t_full) for _, t_full, _ in grouped) else np.array([])
     cens_pool = np.array([c for _, _, c in grouped], float)
@@ -118,6 +128,19 @@ def simulate_n2_once(grouped, rng) -> tuple[np.ndarray, np.ndarray]:
 
 
 def run_n2(path: str, B: int = B_NULL, seed: int = SEED_PROTOCOL):
+    """D-026: DIAGNOSTYKA, poza regułą decyzyjną §8 — zdegenerowany względem k̂ pulowanego
+    (patrz komentarz nad `simulate_n2_once`). MATEMATYCZNIE k̂_sur ≡ k̂_obs dla każdej permutacji
+    (ten sam multizbiór par (t,event)), więc TEORETYCZNIE p powinno wynosić tożsamościowo
+    (1+B)/(B+1)=1,000. W PRAKTYCE, na tym kodzie (Nelder-Mead, tolerancja ~1e-8), k̂_sur różni
+    się od k̂_obs o szum numeryczny (kolejność sumowania zmienia się przy permutacji, stąd
+    inny wynik optymalizacji w granicach tolerancji) — `p` liczone dosłownie ze wzoru §6
+    wychodzi jako WARTOŚĆ POZORNIE SENSOWNA, ale w rzeczywistości przypadkowa i zależna od
+    ziarna (sprawdzone: 0,253 i 0,266 dla dwóch różnych ziarn na tych samych danych realnych,
+    identyczne p przy identycznym ziarnie — deterministyczne, ale bez treści). Ani 1,000, ani
+    ta pozorna wartość nie są prawdziwym wynikiem — obie są artefaktem tej samej degeneracji,
+    tylko widocznym na innym poziomie precyzji. Funkcja zostaje ze względu na przejrzystość
+    (pokazuje degenerację wprost, nie ukrywa jej usuwając kod) i jako baza pod ewentualną
+    diagnostykę F1 (niewykonaną tutaj)."""
     kobs, grouped = k_obs(path)
     rng = np.random.default_rng(seed)
     k_sur = np.empty(B)
@@ -127,7 +150,36 @@ def run_n2(path: str, B: int = B_NULL, seed: int = SEED_PROTOCOL):
     p = (1 + int(np.sum(np.abs(k_sur - 1.0) >= np.abs(kobs - 1.0)))) / (B + 1)
     return dict(model="N2", k_obs=kobs, p=p, B=B, seed=seed,
                k_sur_mean=float(k_sur.mean()), k_sur_median=float(np.median(k_sur)),
-               k_sur_sd=float(k_sur.std(ddof=1)))
+               k_sur_sd=float(k_sur.std(ddof=1)),
+               poza_regula_decyzyjna_S8=True,
+               uwaga_D026="zdegenerowany wzgledem k-hat pulowanego (k_sur_sd rzedu 1e-8 = "
+                          "szum optymalizatora, nie sygnal); 'p' policzone doslownie ze wzoru "
+                          "SS6 jest artefaktem szumu numerycznego przy dokladnej remisie, NIE "
+                          "wartoscia 1.000 w praktyce ani wynikiem empirycznym - nie raportowac "
+                          "jako liczby, tylko jako opisane zjawisko")
+
+
+# ============================ D-026: diagnostyki zlecone przed biegiem P1 ============================
+def n1_window_exceedance(grouped, B: int = B_NULL, seed: int = SEED_PROTOCOL):
+    """Frakcja replik N1, w których Σt_sim + c przekracza realną długość okna diady (Σt_full_real
+    + c). Nie marginalne z konstrukcji: λ̂ = n/T (T = realna ekspozycja całkowita, włącznie z c),
+    więc E[Σt_sim] = T, a surogat dokłada niezmienione c -> E[Σt_sim+c] = T+c > T systematycznie
+    dla każdej diady z c>0. Dodatkowe źródło wariancji rozkładu zerowego N1 (surogaty generują
+    historie dłuższe niż diada mogła realnie mieć) -> czyni test N1 konserwatywnym."""
+    rng = np.random.default_rng(seed)
+    per_diad, total_exceed, total_reps = [], 0, 0
+    for d, t_full, c in grouped:
+        tot_real = float(t_full.sum() + c)
+        n_full = len(t_full)
+        lam_hat = n_full / tot_real if tot_real > 0 else 0.0
+        exceed = 0
+        for _ in range(B):
+            sim_full_sum = rng.exponential(1.0 / lam_hat, size=n_full).sum() if (n_full > 0 and lam_hat > 0) else 0.0
+            if sim_full_sum + c > tot_real:
+                exceed += 1
+        per_diad.append(dict(diada=d, n=n_full, c=c, tot_real=tot_real, frac_exceed=exceed / B))
+        total_exceed += exceed; total_reps += B
+    return dict(overall_frac_exceed=total_exceed / total_reps, per_diad=per_diad, B=B, seed=seed)
 
 
 def main():
