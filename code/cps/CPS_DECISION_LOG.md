@@ -906,16 +906,27 @@ i uzasadnieniem — nie z całej diady, tylko z tego jednego odstępu. Diada poz
 w zbiorze przez swoje pozostałe obserwacje (epizody, okno), ale nie wnosi tego konkretnego
 czasu oczekiwania.
 
-**Uzasadnienie autora.** Przypadek jest analogiczny do sytuacji, w której państwo walczy
-(np. z zaborcą) nie istniejąc formalnie jako podmiot — pierwsza wojna dosłownie wymazała
-drugą stronę z systemu międzypaństwowego na czas okupacji. Próbki do analizy statystycznej
-muszą być reprezentatywne dla mierzonej wielkości (czas oczekiwania między wojnami
-suwerennych podmiotów); odstęp, w którym jedna ze stron przez cały czas nie istnieje jako
-podmiot, nie jest tym, co mierzymy, niezależnie od tego, jak został wygenerowany.
+**Uzasadnienie (poprawione po przeglądzie — nie jest to wyjątek, tylko D-013 zastosowane
+w czasie ekspozycji).** D-013 nakazuje scalać epizody stykające się lub nakładające się w
+czasie. Między „Conquest of Ethiopia" (1935–1936) a II wś (od 1939) nie ma **ani jednego
+roku ekspozycji** — w zegarze, którym faktycznie mierzymy odstępy (suma lat ekspozycji, nie
+kalendarz), te dwa epizody się stykają. D-013 zastosowane poprawnie w tym zegarze każe je
+scalić, a nie traktować jako dwa osobne zdarzenia oddzielone odstępem. Scalenie i
+wykluczenie dają identyczny wynik liczbowy dla tej diady (zero wniesionych obserwacji
+`pelny`/`cenzurowany` z tego przejścia), więc decyzja operacyjna (wykluczenie jednego
+odstępu z jawną flagą, zamiast przepisywania `merge_episodes`) zostaje bez zmian, ale
+przestaje być traktowana jako wyjątek wymagający osobnej licencji — jest konsekwencją D-013
+już obowiązującego, tylko dotąd niezastosowanego w prawidłowej jednostce czasu. Analogia do
+Polski walczącej z zaborcami, nieistniejącej formalnie jako podmiot, pozostaje trafną
+ilustracją *dlaczego* zerowa ekspozycja oznacza zerowy dystans między epizodami — ale nie
+jest już samodzielną podstawą decyzji.
 
-**Dlaczego nie scalanie w jeden epizod (droga odrzucona).** Scaliłoby to konflikty na
-podstawie stanu politycznego (okupacja), nie nakładania się dat, jak definiuje D-013 —
-zmiana kryterium scalania, nie zastosowanie istniejącego.
+**Kierunek obciążenia (dopisany po przeglądzie).** Usunięcie odstępu o zerowej długości
+usuwa masę z **dolnego końca** rozkładu odstępów. To podnosi oszacowany parametr kształtu
+k̂ w stronę 1, czyli w stronę modelu zerowego (brak pamięci) — **działa przeciw hipotezie
+H9b (malejący hazard/regeneracja), nie na jej korzyść**. Decyzja nie jest więc podejrzana
+o naginanie danych pod oczekiwany wynik; gdyby czegokolwiek dotyczyła stronniczo, to
+zaniżenia efektu, nie jego wzmocnienia.
 
 **Dlaczego nie usunięcie całej diady (droga odrzucona).** Diada wnosi też inne, poprawne
 informacje (epizody, ekspozycję poza tym jednym odstępem); usunięcie całości byłoby
@@ -928,3 +939,35 @@ Jeden odstęp, jedna diada ze stu dwudziestu. Mechanizm implementacyjny: asercja
 zamieniona na zgłoszenie + wykluczenie z listy zdarzeń, z zapisem w osobnej tabeli
 wykluczeń (diada, lata, przyczyna, ekspozycja) — analogicznie do tabeli epizodów
 częściowych z D-021, nic nie znika bez śladu.
+
+### Dodatek — weryfikacja hipotezy o zasięgu Skutku A (przegląd 2026-08-25)
+
+Po przeliczeniu Etapu A zauważono, że liczba obserwacji cenzurowanych spadła ze 120
+(62 `cenzurowany` + 58 `cenzurowany_bez_epizodow`, po jednej na diadę) do 98
+(42 + 56) — 22 diady straciły ogon cenzurowany, mimo że D-021 explicite dotyczyło tylko
+4 zgłoszonych przypadków. Hipoteza zgłoszona do weryfikacji: Skutek A działa wszędzie tam,
+gdzie ostatni kwalifikujący epizod kończy się w chwili domknięcia okna ryzyka lub później
+(`last["end"] >= win_end`), niezależnie od tego, czy przypadek był wcześniej zgłoszony.
+
+**Potwierdzone bezpośrednim przeliczeniem.** Dokładnie 22 z 64 diad z epizodami mają
+`last["end"] >= win_end`: United States of America–Japan, Brazil–Paraguay,
+Paraguay–Argentina, United Kingdom–Germany, United Kingdom–China, United Kingdom–Japan,
+France–Austria-Hungary, France–Italy, France–China, France–Thailand, Germany–Poland,
+Germany–USSR, Austria-Hungary–Italy, Austria-Hungary–Yugoslavia, Austria-Hungary–USSR,
+Hungary–Yugoslavia, Italy–Ethiopia, Yugoslavia–Turkey, Bulgaria–Romania, USSR–Turkey,
+USSR–Japan, Uganda–Tanzania. W większości (I i II wś) to konwencja kodowania Thompsona,
+która kończy okres rywalizacji razem z wojną, która ją rozstrzyga; kilka przypadków
+niezwiązanych ze światowymi wojnami (Lopez War 1870, Boxer Rebellion 1900, Franco-Thai
+1941, Uganda-Tanzania 1979) pokazuje, że mechanizm jest ogólny, nie ograniczony do
+konfliktów światowych.
+
+**Status: własność strukturalna zbioru, nie margines.** Zachowanie kodu jest poprawne —
+D-021 to jedna reguła zastosowana jednolicie do wszystkich 120 diad, nie cztery reguły
+punktowe. Ale przy 22/64 = 34% diad z epizodami zdarzenie i domknięcie okna są z
+**definicji równoczesne** — to nie są niezależne obserwacje czasu oczekiwania w tym samym
+sensie co pozostałe 42, gdzie okno domyka się niezależnie od tego, kiedy skończyła się
+ostatnia wojna. Zapisane w `TEST7_DATA_REPORT.md` (Etap A), nie odłożone do Etapu C — przy
+4 przypadkach byłaby to uwaga na marginesie, przy 22 jest to fakt o strukturze danych, z
+którym Etap B musi się liczyć od początku (możliwy wpływ na sposób traktowania obserwacji
+`cenzurowany` kontra `pelny`/`t0`-only w modelu — nie rozstrzygane tutaj, tylko
+udokumentowane).
