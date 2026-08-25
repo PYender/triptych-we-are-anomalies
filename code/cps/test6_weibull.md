@@ -1,8 +1,9 @@
 # TEST 6 — Etap B: kod estymacji Weibulla (rodzina 9)
 
 **Realizuje:** `TASK_6B_BRIEF.md` (D-015) na zbiorach z Kroku 1b (D-012–D-014).
-**Kod:** `test6_weibull.py` · **Status:** poprawiony po przeglądzie (`PRZEGLAD_test6_weibull.md`),
-do ponownego przeglądu — **wciąż NIEURUCHOMIONY na danych rzeczywistych**. Estymator jest
+**Kod:** `test6_weibull.py` · **Status:** pięć usterek naprawionych i zaakceptowanych
+(`PRZEGLAD_test6_weibull.md`); warunek D-022 wykonany (§8–9) — **Krok 3 odblokowany**,
+kod dotąd NIEURUCHOMIONY na `test6_intervals*.csv`. Estymator jest
 wspólny z Testem 7 (`TASK_7B_BRIEF.md` §1) — poprawki obsługują oba tory naraz.
 
 ---
@@ -168,12 +169,47 @@ ograniczone. Tabela w §0.5.
 - Nie uruchamia niczego na `test6_intervals*.csv` poza odczytem struktury grup
   (`group_sizes_from`) do testów syntetycznych. `main()` blokuje `--run-real`.
 
-## 8. STOP — do ponownego przeglądu
+## 8. D-022 — zapadanie się θ̂ do granicy (dodatek do suity, warunek Kroku 3, nie przegląd kodu)
 
-Pięć usterek z `PRZEGLAD_test6_weibull.md` poprawionych, wszystkie testy poprawności
-(θ→0, odzysk ×3, obciążenie cenzurowania, zakotwiczenie profilu) ponownie uruchomione i
-zaliczone. Kod wciąż nieuruchomiony na `test6_intervals*.csv` ani na danych Testu 7. Po
-akceptacji: Krok 3 Testu 6, potem Etap B Testu 7 na tym samym, już naprawionym estymatorze
-(`TASK_7B_BRIEF.md` §7) — symulacja odzysku dla Testu 7 na jego własnej strukturze (120 grup,
-~43 zdarzenia, 120 cenzurowanych) i z cenzurowaniem administracyjnym pozostaje do wykonania
-osobno przed Etapem B siódemki.
+Drugi przegląd zaakceptował pięć poprawek bez zastrzeżeń do kodu i znalazł własność
+estymatora: θ̂ zapada się do granicy numerycznej **także gdy heterogeniczność naprawdę
+istnieje** — przy 18–120 grupach nie zawsze da się ją wykryć. Pełne uzasadnienie i
+konsekwencja dla reguły decyzyjnej D-015 B: `CPS_DECISION_LOG.md` D-022.
+
+**`test_frailty_boundary_collapse`** (nowa, na stałe w `run_correctness_suite`): k=1,2,
+60 powtórzeń, θ prawdziwe ∈ {0; 0,3; 0,6; 1,0}, na strukturze Testu 6 i Testu 7 naraz:
+
+| θ prawdziwe | Test 6 (18 grup): % granica / mediana θ̂ | Test 7 (120 grup, 58 bez zdarzeń): % granica / mediana θ̂ |
+|---|---|---|
+| 0,0 | 60,0% / 1e-10 | 26,7% / 6,0·10⁻⁸ |
+| 0,3 | 33,3% / 0,0050 | 18,3% / 0,0428 |
+| 0,6 | 11,7% / 0,231 | 6,7% / 0,268 |
+| 1,0 | 1,7% / 0,454 | 0,0% / 0,643 |
+
+Zgodne co do rzędu wielkości z pomiarem przeglądu na strukturze Testu 6 (35%/0,0003;
+17%/0,20; 0%/0,42 — różnice z innego strumienia losowań). Test 7, mimo 58 diad bez
+zdarzeń, identyfikuje θ nieco lepiej niż Test 6 na każdym poziomie (więcej grup przeważa
+nad brakiem zdarzeń w części z nich).
+
+**Konsekwencja dla raportu Etapu C (obu testów):** zgodność P1/F1 czytana jako „brak
+świadectwa rytmu" (D-015 B, przypadek pierwszy) **tylko gdy θ̂ nie leży na granicy**. Przy
+θ̂ na granicy wynik jest nierozstrzygający co do heterogeniczności, raportowany osobno od
+wyniku dla k.
+
+**`bootstrap_ci_k_frailty`** zwraca teraz też `frac_theta_boundary` — jeśli przekracza
+kilkadziesiąt procent replik, przedział bootstrapowy dla kruchości nie jest interpretowalny
+i ma być tak opisany, nie podany jako goła liczba.
+
+**Poprawki wydajnościowe wymuszone tą symulacją** (bez zmiany wyniku, zweryfikowane
+identycznością z poprzednią wersją przed zamianą): `negloglik_frailty` zwektoryzowany
+(`np.bincount` zamiast pętli Python po grupach — konieczne dla 120 grup Testu 7);
+`group_sizes_from` poprawiony, by grupować po wszystkich wierszach, nie tylko pełnych —
+inaczej 58 diad Testu 7 bez zdarzeń znikało po cichu ze struktury syntetycznej.
+
+## 9. STOP — Krok 3 odblokowany
+
+Warunek Kroku 3 (D-022, dodatek do suity) wykonany — bez ponownego przeglądu kodu, zgodnie
+z decyzją autora. Wszystkie testy poprawności (θ→0, odzysk ×3, obciążenie cenzurowania,
+zakotwiczenie profilu, zapadanie θ̂ ×2 struktury) zaliczone. **Krok 3 Testu 6 może się
+rozpocząć.** Etap B Testu 7 na tym samym estymatorze — po Kroku 3 Testu 6, zgodnie z
+`TASK_7B_BRIEF.md` §1 (kolejność prac).

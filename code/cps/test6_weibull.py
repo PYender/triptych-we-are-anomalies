@@ -94,16 +94,16 @@ def negloglik_frailty(params: np.ndarray, t: np.ndarray, event: np.ndarray,
     H = (t / lam) ** k
     t_safe = np.where(t > 0, t, 1.0)
     logh = np.log(k / lam) + (k - 1.0) * np.log(t_safe / lam)     # log h(t), użyty tylko gdzie event==1
-    total = 0.0
-    for g in range(n_groups):
-        m = group_idx == g
-        ev = event[m] == 1
-        D = int(ev.sum())
-        Hi = float(H[m].sum())
-        sum_logh = float(logh[m][ev].sum())
-        total += (sum_logh + D * np.log(theta) + gammaln(1.0 / theta + D) - gammaln(1.0 / theta)
-                 - (1.0 / theta + D) * np.log1p(theta * Hi))
-    return -total
+    # Wektoryzacja (D-022): pętla Python po grupach skalowała się źle do 120 grup Testu 7 —
+    # ta sama funkcja jest wywoływana tysiące razy w każdej optymalizacji. np.bincount
+    # sumuje po grupach bez pętli; wynik identyczny co do bitu ze starą wersją (sprawdzone).
+    ev = event == 1
+    D = np.bincount(group_idx, weights=ev.astype(float), minlength=n_groups)
+    Hi = np.bincount(group_idx, weights=H, minlength=n_groups)
+    sum_logh = np.bincount(group_idx[ev], weights=logh[ev], minlength=n_groups)
+    total = np.sum(sum_logh + D * np.log(theta) + gammaln(1.0 / theta + D) - gammaln(1.0 / theta)
+                  - (1.0 / theta + D) * np.log1p(theta * Hi))
+    return -float(total)
 
 
 def fit_frailty(t, event, diad, x0_list=None):
@@ -231,11 +231,17 @@ def bootstrap_ci_k_frailty(t, event, diad, B=2000, seed=RNG_SEED, level=0.95,
                            x0=(0.0, 3.0, -2.0)):
     """Bootstrap diadowy dla F1 — każda kopia wylosowanej diady dostaje WŁASNĄ etykietę
     grupy (nie jest scalana z innymi kopiami tej samej diady w jedną super-grupę). Jeden
-    punkt startowy na replikę, jak w bootstrapie pulowanym — patrz uwaga tam."""
+    punkt startowy na replikę, jak w bootstrapie pulowanym — patrz uwaga tam.
+
+    D-022: zwraca też `frac_theta_boundary` — odsetek replik, w których θ̂ osiadło na
+    granicy numerycznej. Wysoki odsetek (kilkadziesiąt procent) oznacza, że przedział
+    bootstrapowy dla kruchości nie jest interpretowalny — ma być podany OBOK przedziału,
+    nie pominięty."""
     groups = np.unique(diad)
     idx_by_group = {g: np.where(diad == g)[0] for g in groups}
     rng = np.random.default_rng(seed)
     ks = np.empty(B)
+    at_boundary = np.zeros(B, dtype=bool)
     for b in range(B):
         sampled = rng.choice(groups, size=len(groups), replace=True)
         idx_parts, lab_parts = [], []
@@ -247,16 +253,21 @@ def bootstrap_ci_k_frailty(t, event, diad, B=2000, seed=RNG_SEED, level=0.95,
         lab = np.concatenate(lab_parts)
         fit = fit_frailty(t[idx], event[idx], lab, x0_list=[x0])
         ks[b] = fit["k"]
+        at_boundary[b] = fit["theta_at_boundary"]
     lo, hi = np.percentile(ks, [(1 - level) / 2 * 100, (1 + level) / 2 * 100])
-    return float(lo), float(hi), ks
+    return float(lo), float(hi), ks, float(at_boundary.mean())
 
 
 # ============================ dane syntetyczne (testy poprawności §3) ============================
 def group_sizes_from(path="test6_intervals.csv"):
-    """Struktura zbioru głównego: liczba zdarzeń pełnych per diada (1 cenzurowany na diadę
-    zawsze doliczany osobno) — do testu odzysku parametrów na tej samej strukturze."""
+    """Struktura zbioru: liczba zdarzeń pełnych per diada (1 cenzurowany na diadę zawsze
+    doliczany osobno) — do testu odzysku parametrów na tej samej strukturze.
+
+    Grupuje po WSZYSTKICH wierszach, nie tylko pełnych (D-022, poprawka): diady bez ani
+    jednego zdarzenia pełnego (Test 7 ma ich 58 — sedno tego testu, D-016) muszą wejść do
+    struktury jako zera, inaczej `groupby` na samych pełnych wierszach po cichu je gubi."""
     df = pd.read_csv(path, comment="#")
-    return df[df["cenzurowany"] == 0].groupby("diada").size().to_numpy()
+    return df.groupby("diada")["cenzurowany"].apply(lambda s: int((s == 0).sum())).to_numpy()
 
 
 def simulate_dataset(k, lam, theta, n_full_per_group, rng, censor_scale=None):
@@ -349,7 +360,30 @@ def test_profile_anchor(n_full_per_group, k_true=1.4, lam_true=18.0, theta_true=
                frailty_ci_bounded=(prof_f["lo_bounded"], prof_f["hi_bounded"]))
 
 
-def run_correctness_suite(intervals_csv="test6_intervals.csv"):
+def test_frailty_boundary_collapse(n_full_per_group, k_true=1.2, n_reps=60,
+                                   theta_grid=(0.0, 0.3, 0.6, 1.0), lam_true=20.0,
+                                   boundary_floor=1e-10):
+    """D-022 (przegląd 2026-08-24, §3): θ̂ zapada się do granicy numerycznej TAKŻE, gdy
+    prawdziwa heterogeniczność istnieje — własność estymatora przy tej wielkości próby,
+    nie usterka. Konsekwencja dla D-015: jeśli θ̂ leży na granicy, F1 staje się tożsamy
+    z pulowanym i zgodność P1/F1 trafia trywialnie do przypadku pierwszego reguły decyzyjnej
+    ('brak świadectwa rytmu') niezależnie od prawdy — zgodność jest informacją TYLKO gdy
+    θ̂ nie leży na granicy. Wynik ma trafić do raportu Etapu C jako deklaracja sprzed biegu."""
+    rng = np.random.default_rng(RNG_SEED)
+    out = {}
+    for theta_true in theta_grid:
+        thetas = np.empty(n_reps)
+        for i in range(n_reps):
+            t, event, diad = simulate_dataset(k_true, lam_true, theta_true, n_full_per_group, rng)
+            thetas[i] = fit_frailty(t, event, diad)["theta"]
+        at_boundary = thetas <= boundary_floor
+        out[str(theta_true)] = dict(theta_true=theta_true, n_reps=n_reps,
+                                    frac_at_boundary=float(at_boundary.mean()),
+                                    median_theta_hat=float(np.median(thetas)))
+    return out
+
+
+def run_correctness_suite(intervals_csv="test6_intervals.csv", intervals7_csv=None):
     n_full_per_group = group_sizes_from(intervals_csv)
     out = {}
     out["theta_zero_limit"] = test_theta_zero_limit(n_full_per_group)
@@ -363,6 +397,12 @@ def run_correctness_suite(intervals_csv="test6_intervals.csv"):
     ]
     out["censoring_bias"] = test_censoring_bias(n_full_per_group)
     out["profile_anchor"] = test_profile_anchor(n_full_per_group)
+    out["frailty_boundary_collapse_test6"] = test_frailty_boundary_collapse(n_full_per_group)
+    if intervals7_csv:
+        n_full_per_group_7 = group_sizes_from(intervals7_csv)
+        out["frailty_boundary_collapse_test7"] = test_frailty_boundary_collapse(n_full_per_group_7)
+        out["_test7_n_groups"] = int(len(n_full_per_group_7))
+        out["_test7_n_groups_zero_events"] = int((n_full_per_group_7 == 0).sum())
     return out
 
 
@@ -370,6 +410,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--intervals", default="test6_intervals.csv",
                     help="tylko do odczytu STRUKTURY (liczba zdarzeń/grupa) dla testów syntetycznych")
+    ap.add_argument("--intervals7", default=None,
+                    help="j.w. dla struktury Testu 7 (D-022, dodatek do suity)")
     ap.add_argument("--run-real", action="store_true",
                     help="ZABLOKOWANE w Etapie B — patrz TASK_6B_BRIEF.md §6/§8")
     a = ap.parse_args()
@@ -377,7 +419,7 @@ def main():
         raise SystemExit("Etap B: uruchamianie na danych rzeczywistych jest zablokowane do Kroku 3 "
                          "(TASK_6B_BRIEF.md §6, §8). Usuń --run-real dopiero po przeglądzie kodu.")
     import json
-    print(json.dumps(run_correctness_suite(a.intervals), indent=2, default=float))
+    print(json.dumps(run_correctness_suite(a.intervals, a.intervals7), indent=2, default=float))
 
 
 if __name__ == "__main__":

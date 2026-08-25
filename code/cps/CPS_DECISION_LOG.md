@@ -805,3 +805,61 @@ nie wymagają ponownego liczenia, wymagają **przeglądu przez autora**, zanim K
 niezależnie od tego, co powiedzą dane rzeczywiste — bez jej przeglądu wynik nierozstrzygający
 z Kroku 3 byłby nieodróżnialny od wyniku źle policzonego. Zatwierdzenie kodu musi poprzedzać
 jego uruchomienie na danych, niezależnie od tego, na której gałęzi kod fizycznie leży.
+
+---
+
+## D-022 · 2026-08-24 · θ̂ na granicy nie oznacza braku heterogeniczności — poprawka do czytania D-015
+
+**Kontekst.** Drugi przegląd `test6_weibull.py` (po naprawie pięciu usterek z pierwszego)
+zmierzył własność estymatora kruchości, nie usterkę kodu: parametr θ̂ zapada się do
+granicy numerycznej (podłoga 1e-10) **także wtedy, gdy prawdziwa heterogeniczność
+istnieje**. Na strukturze Testu 6 (18 grup, 45 zdarzeń), k=1,2, 60 powtórzeń: przy
+prawdziwym θ=0,3 granica w 35% biegów (mediana θ̂=0,0003); przy θ=0,6 w 17% (mediana 0,20);
+przy θ=1,0 w 0% biegów, ale mediana wciąż 0,42 — ponad dwukrotne zaniżenie.
+
+Code odtworzył pomiar niezależnie (`test_frailty_boundary_collapse`, ten sam protokół:
+k=1,2, 60 powtórzeń) na obu strukturach:
+
+| θ prawdziwe | Test 6 (18 grup): % granica / mediana θ̂ | Test 7 (120 grup, 58 bez zdarzeń): % granica / mediana θ̂ |
+|---|---|---|
+| 0,0 | 60,0% / 1e-10 | 26,7% / 6,0e-8 |
+| 0,3 | 33,3% / 0,0050 | 18,3% / 0,0428 |
+| 0,6 | 11,7% / 0,231 | 6,7% / 0,268 |
+| 1,0 | 1,7% / 0,454 | 0,0% / 0,643 |
+
+Zgodne co do rzędu wielkości z pomiarem przeglądu (różnice — inny strumień losowań).
+Test 7 (więcej grup, mimo że 58 bez zdarzeń) identyfikuje θ nieco lepiej niż Test 6 na
+każdym poziomie — odnotowane, nie tłumaczone dalej.
+
+### Rozstrzygnięcie
+
+**θ̂ na granicy numerycznej nie jest dowodem braku heterogeniczności — jest niemożnością
+jej wykrycia przy tej wielkości próby.** Reguła czytania rozbieżności/zgodności P1 i F1
+zadeklarowana w D-015 B wymaga poprawki: zgodność P1 z F1 (oba modele dają ten sam wynik)
+jest informacją o braku heterogeniczności **tylko wtedy, gdy θ̂ nie leży na granicy**.
+Jeżeli θ̂ jest na granicy, F1 staje się algebraicznie tożsamy z P1 i ich zgodność jest
+trywialna — nie wolno jej czytać jako „przypadek pierwszy" reguły D-015 („brak świadectwa
+rytmu"), niezależnie od tego, czy heterogeniczność naprawdę istnieje.
+
+**Wynik przy θ̂ na granicy raportowany jest jako nierozstrzygający co do heterogeniczności**,
+osobno od wyniku dla parametru kształtu k — nie jako potwierdzenie modelu pulowanego.
+
+### Zmiany w kodzie (weszły do suity na stałe)
+
+1. `test_frailty_boundary_collapse` — powyższa symulacja, uruchamiana na obu strukturach
+   (Test 6 i Test 7) jako stały element `run_correctness_suite`.
+2. `bootstrap_ci_k_frailty` zwraca teraz `frac_theta_boundary` obok przedziału — jeśli
+   przekracza kilkadziesiąt procent replik, przedział bootstrapowy dla kruchości nie jest
+   interpretowalny i ma być tak opisany w raporcie, nie podany jako liczba bez zastrzeżenia.
+3. `group_sizes_from` poprawiony, by grupować po WSZYSTKICH wierszach (nie tylko pełnych) —
+   inaczej 58 diad Testu 7 bez żadnego zdarzenia znikało po cichu ze struktury syntetycznej.
+4. `negloglik_frailty` zwektoryzowany (`np.bincount` zamiast pętli Python po grupach) —
+   wymagane wydajnościowo przez tę symulację na strukturze 120-grupowej Testu 7;
+   zweryfikowane jako identyczne co do zaokrąglenia ze starą wersją przed zamianą.
+
+### Kolejność i zakres
+
+Warunek dotyczył testu, nie kodu — Krok 3 Testu 6 nie wymaga nowego przeglądu, tylko
+wykonania tej symulacji i przejścia dalej (ustalone przez autora). Wynik trafia do raportu
+Etapu C jako deklaracja sprzed biegu, nie jako wyjaśnienie po fakcie — zgodnie z zasadą
+stosowaną konsekwentnie w obu testach rodziny 9/9b.
