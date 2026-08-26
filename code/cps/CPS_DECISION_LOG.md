@@ -1462,3 +1462,80 @@ dopiero potem bieg na danych rzeczywistych.
 oba dokumenty były dotąd przekazywane wyłącznie jako tekst w rozmowie, nigdy nie zapisane
 jako pliki, co przyczyniło się pośrednio do ryzyka błędu typu D-023 (praca na streszczeniu
 zamiast na źródle).
+
+## D-030 · 2026-08-25 · Przegląd `test7_estimate.py` — naruszenie protokołu naprawione, nowe odkrycie o kruchości
+
+**Kontekst.** Przegląd `PRZEGLAD_test7_estimate.md` sprawdził obie luki zgłoszone w Etapie B
+(D-029 §5b/§6, patrz `test7_estimate.md` pierwszej wersji) w źródłach, zamiast rozstrzygać
+z pamięci, i znalazł dodatkowo trzy braki wobec wymagań już zapisanych.
+
+### Luka 1 (`positional`) — rozstrzygnięta
+
+Brak wartości w `positional` oznacza nieobecność składnika (0) — konwencja już użyta w
+projekcie dla `spatial` (kontrola 152, D-016). Zweryfikowane niezależnie: S2 = `spatial==1`
+i `positional!=1` daje **76 wierszy, 73 diady** — wykonalny, nie pusty. Budowa S2 pozostaje
+do zrobienia, poza zakresem tego Etapu B.
+
+### Luka 2 (diady ucięte) — NARUSZENIE PROTOKOŁU, naprawione
+
+`TEST7_PROTOCOL.md` §3 nie zostawia alternatywy: diady lewostronnie ucięte „muszą... wchodzić
+do wariantu S3, nie do modelu głównego". Pierwsza wersja `test7_estimate.py` błędnie
+traktowała to jako lukę interpretacyjną i zostawiała te diady (5 diad, 9 wierszy) w modelu
+głównym. **Naprawione:** `load_grouped` wyklucza teraz całe diady `ucieta==1` z modelu
+głównego, włącza je z powrotem w S3. Liczby przed/po (D-028): n 106→**101**, pełne 43→**37**,
+cenzurowane 98→**95**.
+
+### Brak 1 — pomiar procentowy zapadania θ̂, wykonany, wynik NIEOCZEKIWANY
+
+`test_frailty_boundary_collapse_test7` (60 powtórzeń/θ, jak D-022): odsetek na granicy jest
+NISKI na tej strukturze (0–1,7%, nie 60% jak w Teście 6 przy θ=0) — ale **mediana θ̂ wynosi
+1,4–1,6 niezależnie od θ prawdziwego, włącznie z θ=0**. Zweryfikowane, że to nie awaria
+wielostartu: wszystkie 4 starty zbiegają do tego samego θ̂≈1,60 (przy θ_prawdziwe=0),
+z log-wiarygodnością (−189,13) WYŻSZĄ niż na granicy (−192,14, = pulowany) — **to jest
+prawdziwe, dobrze zidentyfikowane maksimum, nie błąd optymalizacji**. Przy tylko 11 z 101
+grup niosących ≥2 zdarzenia (informujących o kruchości), gamma-kruchość MLE ma tendencję do
+znajdowania pozornej heterogeniczności nawet bez prawdziwej — **poważniejszy problem niż
+„szeroki przedział" przewidywany w brief §5**: to nie kwestia szerokości wokół prawdy, tylko
+systematyczne przesunięcie punktowe, dobrze zidentyfikowane, więc bez prostego sygnału
+ostrzegawczego typu „θ̂ na granicy". Wpływa na `k̂` orzekający (kruchość), nie tylko na `θ̂`.
+**Nie rozstrzygnięte samodzielnie — zgłoszone do oceny przed Etapem C**, analogicznie do
+D-022, ale poważniejsze.
+
+### Brak 2 — model zerowy N1 liczył niewłaściwą statystykę, naprawione
+
+`run_n1_test7` liczył `k_obs` i surogaty wyłącznie przez `fit_pooled`, podczas gdy
+statystyką orzekającą w Teście 7 jest `fit_frailty` (§7 protokołu) — diagnostyka
+(D-029 pkt 2) nie odpowiadała na pytanie, dla którego powstała. **Naprawione:** liczy teraz
+obie wersje, `pooled` (B=2000) i `frailty` (statystyka orzekająca, `B_frailty=500` —
+kompromis kosztowy zaakceptowany w przeglądzie), oba `p` raportowane obok siebie.
+
+### Brak 3 — bootstrap nie raportował odsetka θ̂ na granicy, naprawione
+
+`bootstrap_ci_k_frailty` zwraca ten odsetek od D-022; `ci_p1` woła funkcję i nie
+rozpakowywała/etykietowała czwartego elementu zwracanej krotki. Naprawione: `ci_p1` zwraca
+`frac_theta_boundary` i flagę `interpretowalny` (próg 30%) jawnie obok przedziału
+bootstrapowego dla kruchości. Uwaga zapisana: przy strukturze Testu 7 problemem może być NIE
+granica (rzadka, patrz „Brak 1"), więc `frac_theta_boundary` sam nie wykryje rozjazdu w górę
+— ma być czytany razem z §3b/§3c `test7_estimate.md`, nie osobno.
+
+### Uwagi niebolkujące, uwzględnione
+
+**Realizm cenzurowania w symulacji.** Stosunek mediany cenzurowanej do mediany pełnej: w
+danych realnych **2,25** (18 wobec 8 lat), w symulacji **0,90** — symulacja nie odtwarza
+asymetrii realnych danych (cenzurowane obserwacje są tam typowo znacznie dłuższe). Wyniki
+symulacji odzysku mają być czytane orientacyjnie, nie jako precyzyjna kalibracja. Nie
+naprawiane teraz.
+
+**14 diad typu Troi.** Diady, których jedyna wojna zakończyła rywalizację, nie wnoszą nic do
+modelu głównego (§1 `test7_estimate.md`) — nie obciąża to estymacji, ale zmienia, o czym
+test orzeka: populacja dobrana po stawce (nie po liczbie wojen) miała objąć właśnie takie
+pary, a model główny i tak ich nie widzi. Ma trafić do ograniczeń raportu Etapu C.
+
+### Rozstrzygnięcie
+
+Cztery punkty blokujące (luka 2, braki 1-3) naprawione. Bieg na danych rzeczywistych
+pozostaje **zablokowany** — kod wymaga ponownego przeglądu (bez dodatkowej tury zgodnie z
+§7 przeglądu, „po ich wykonaniu przegląd kodu bez ponownej tury"), a Etap C wymaga osobnej,
+jawnej autoryzacji autora, analogicznie do D-027. Odkrycie o rozjeździe θ̂ (Brak 1) ma zostać
+ocenione przed tą autoryzacją — wpływa na to, jak czytać `k̂` orzekający, nie jest samo w
+sobie powodem do zatrzymania budowy kodu, ale jest powodem do namysłu przed biegiem.
