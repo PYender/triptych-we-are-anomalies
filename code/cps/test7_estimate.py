@@ -124,63 +124,100 @@ def ci_p1(diads, t, event, fit_pooled, fit_frailty, B=B_BOOTSTRAP, seed=w.RNG_SE
 
 
 # ============================ symulacja odzysku parametrów (brief §4) ============================
+# POPRAWIONA wg PRZEGLAD_test7_estimate.md (drugi przegląd, po zatwierdzeniu pierwszej wersji
+# przez tego samego recenzenta — usterka jego własna, odnotowana przez niego wprost): pierwsza
+# konstrukcja NIE odtwarzała mechanizmu cenzurowania. Ustalała z góry liczbę zdarzeń i czy
+# istnieje obserwacja cenzurowana (`group_specs`, z realnej struktury), a czas cenzurowania
+# losowała NIEZALEŻNIE od czasów zdarzeń — zdarzenie i cenzurowanie „nigdy się nie spotykały".
+# W rzeczywistości obserwacja jest cenzurowana, gdy czas administracyjny wypadł PRZED
+# zdarzeniem: widzimy min(T,C), a liczba zdarzeń pełnych jest WYNIKIEM tego wyścigu, nie
+# założeniem. Zmierzone przez recenzenta: przy k_prawdziwe=1, poprawny mechanizm daje
+# nieobciążone k̂ na każdym poziomie cenzurowania (mediana 0,989–1,013), stara konstrukcja
+# jest nieobciążona TYLKO przypadkiem, gdy `censor_scale` akurat równa się λ (mediana 1,025),
+# i systematycznie zaniża k̂ przy innej skali (mediana 0,670 przy skali 2,5×λ) — dokładnie
+# reżim, w jakim leżą realne dane (stosunek median cenzurowane/pełne = 2,25, sprawdzone).
+#
+# Poprawiony mechanizm: dla każdej diady realna DŁUGOŚĆ OKNA ADMINISTRACYJNEGO W_g (suma
+# wszystkich realnych `ekspozycja` tej diady w modelu głównym — fakt strukturalny/egzogeniczny,
+# jak liczba grup, NIE wynik do odzyskania) jest STAŁA i znana z góry. Symulacja losuje
+# kolejne odstępy T~Weibull(k,λ)·kruchość, dopóki suma mieści się w W_g — te są PEŁNE.
+# Pierwszy odstęp, który przekroczyłby W_g, nie jest obserwowany w całości: ucina się na
+# W_g, dając JEDNĄ obserwację cenzurowaną o długości W_g−suma_dotychczasowa (może wynosić ~0,
+# analogicznie do Skutku A/D-021, gdzie realna obserwacja cenzurowana i tak nie istnieje —
+# różnica nieistotna dla wiarygodności: log S(~0)≈0). Liczba zdarzeń pełnych jest WYNIKIEM
+# tego wyścigu, nie parametrem wejściowym.
+def window_lengths_from(path: str = "test7_intervals.csv", include_t0: bool = False):
+    """Lista realnych długości okna administracyjnego (Σ wszystkich `ekspozycja` modelu
+    głównego) per diada — jedyna rzecz odczytywana z realnych wartości `t`, i to jako SUMA,
+    fakt egzogeniczny (długość okna obserwacji nie jest wynikiem procesu wojen, tylko dat
+    kalendarzowych/członkostwa) — analogicznie do `T` używanego już w `test6_null.py`/D-026
+    (λ̂=n/T per diada) i w Kroku C Testu 6, nie nowe naruszenie zasady „nigdy wartości t"."""
+    grouped = load_grouped(path, include_t0=include_t0)
+    return [float(t_full.sum() + (c if c is not None else 0.0)) for _, t_full, c in grouped]
+
+
 def group_specs_from(path: str = "test7_intervals.csv", include_t0: bool = False):
-    """Lista (n_full, ma_cenzurowany: bool) per diada — struktura REALNA modelu głównego,
-    odczytana wyłącznie ze struktury (liczby wierszy), NIGDY z wartości `t`. Różni się od
-    `test6_weibull.group_sizes_from`, które zakłada zawsze dokładnie 1 cenzurowany/diadę —
-    założenie nieprawdziwe tutaj (moduł docstring pkt 2-3)."""
+    """ZACHOWANE dla wstecznej zgodności/raportowania struktury (rozkład n_full, D-030) —
+    NIE używane już przez `simulate_dataset_test7` (patrz uwaga wyżej), tylko przez
+    `structure_report`-owe podsumowania liczebności."""
     grouped = load_grouped(path, include_t0=include_t0)
     return [(len(t_full), c is not None) for _, t_full, c in grouped]
 
 
-def simulate_dataset_test7(k, lam, theta, group_specs, rng):
-    """Jak `test6_weibull.simulate_dataset`, ale każda grupa ma cenzurowanie WEDŁUG
-    `group_specs` (0 albo 1 obserwacja cenzurowana), nie zawsze dokładnie 1. Cenzurowanie,
-    gdy obecne, jest ADMINISTRACYJNE (niezależne od czasu zdarzenia) — brief §4, usterka 4
-    przeglądu Testu 6: cenzurowanie zależne od T zawyża k̂ o ok. 5 pkt proc."""
+def simulate_dataset_test7(k, lam, theta, windows, rng):
+    """Poprawiony mechanizm (patrz komentarz wyżej): `windows` to lista realnych długości
+    okna W_g per diada (z `window_lengths_from`), NIE `group_specs` (n_full, has_cens) —
+    liczba zdarzeń pełnych i istnienie/długość obserwacji cenzurowanej są tu WYNIKIEM
+    symulacji wyścigu T-kontra-W_g, nie założeniem."""
     ts, ev, gid = [], [], []
-    for g, (n_full, has_cens) in enumerate(group_specs):
+    for g, W in enumerate(windows):
         u = 1.0 if theta <= 0 else rng.gamma(shape=1.0 / theta, scale=theta)
-        for _ in range(int(n_full)):
+        cum = 0.0
+        while True:
             e = rng.exponential(1.0)
-            t = lam * (e / u) ** (1.0 / k)
-            ts.append(t); ev.append(1); gid.append(g)
-        if has_cens:
-            c = rng.exponential(scale=lam)              # administracyjne, niezależne od u/zdarzeń
-            ts.append(c); ev.append(0); gid.append(g)
+            T = lam * (e / u) ** (1.0 / k)
+            if cum + T <= W:
+                ts.append(T); ev.append(1); gid.append(g)
+                cum += T
+            else:
+                ts.append(W - cum); ev.append(0); gid.append(g)     # cenzurowana: reszta okna
+                break
     return np.array(ts, float), np.array(ev, int), np.array(gid)
 
 
-def test_parameter_recovery_test7(group_specs, k_true, lam_true, theta_true, label, seed=w.RNG_SEED):
+def test_parameter_recovery_test7(windows, k_true, lam_true, theta_true, label, seed=w.RNG_SEED):
     rng = np.random.default_rng(seed)
-    t, event, diad = simulate_dataset_test7(k_true, lam_true, theta_true, group_specs, rng)
+    t, event, diad = simulate_dataset_test7(k_true, lam_true, theta_true, windows, rng)
     fit_p = w.fit_pooled(t, event)
     x0_list = list(w.DEFAULT_X0_FRAILTY) + [(fit_p["logk"], fit_p["loglam"], np.log(1e-4))]
     fit_f = w.fit_frailty(t, event, diad, x0_list=x0_list)
     return dict(label=label, k_true=k_true, lam_true=lam_true, theta_true=theta_true,
                n_events=int(event.sum()), n_censored=int((1 - event).sum()),
-               n_groups=len(group_specs),
+               n_groups=len(windows),
                pooled_k_hat=fit_p["k"], pooled_converged_same=fit_p["converged_same"],
                frailty_k_hat=fit_f["k"], frailty_theta_hat=fit_f["theta"],
                frailty_theta_at_boundary=fit_f["theta_at_boundary"],
                frailty_converged_same=fit_f["converged_same"])
 
 
-def test_frailty_boundary_collapse_test7(group_specs, k_true=1.2, n_reps=60,
+def test_frailty_boundary_collapse_test7(windows, k_true=1.2, n_reps=60,
                                          theta_grid=(0.0, 0.3, 0.6, 1.0), lam_true=20.0,
                                          boundary_floor=1e-10):
     """D-022, przeniesione na strukturę Testu 7 (PRZEGLAD_test7_estimate.md §3 — brak tego
     pomiaru w pierwszej wersji był brakiem, nie formalnością: w Teście 7 ORZEKA model z
     kruchością, więc jeśli θ̂ zapada się w większości biegów, reguła §8 rozstrzyga w praktyce
-    na modelu pulowanym). Analogiczne do `test6_weibull.test_frailty_boundary_collapse`, ale
-    na `simulate_dataset_test7`/`group_specs` (0/1-cenzurowanie), nie na
-    `test6_weibull.simulate_dataset` (zawsze-1-cenzurowany, niepoprawne dla tej struktury)."""
+    na modelu pulowanym). Używa poprawionego mechanizmu (`windows` = realne długości okna,
+    liczba zdarzeń jako wynik) — pierwsza wersja (na `group_specs`, liczba zdarzeń jako
+    założenie) miała usterkę opisaną nad `simulate_dataset_test7`; wynik z tamtej wersji
+    (mediana θ̂ 1,4–1,6 niezależnie od prawdy) NIE jest już uznawany za wiarygodny i wymaga
+    tego przeliczenia, żeby ustalić, czy zjawisko jest realną własnością struktury, czy
+    artefaktem złego mechanizmu cenzurowania."""
     rng = np.random.default_rng(w.RNG_SEED)
     out = {}
     for theta_true in theta_grid:
         thetas = np.empty(n_reps)
         for i in range(n_reps):
-            t, event, diad = simulate_dataset_test7(k_true, lam_true, theta_true, group_specs, rng)
+            t, event, diad = simulate_dataset_test7(k_true, lam_true, theta_true, windows, rng)
             thetas[i] = w.fit_frailty(t, event, diad)["theta"]
         at_boundary = thetas <= boundary_floor
         out[str(theta_true)] = dict(theta_true=theta_true, n_reps=n_reps,
@@ -272,14 +309,14 @@ def run_n1_test7(path: str = "test7_intervals.csv", B: int = B_NULL, B_frailty: 
 
 
 # ============================ testy poprawności (brief §3-§4, obowiązkowe przed --run-real) ========
-def test_theta_zero_limit_test7(group_specs):
+def test_theta_zero_limit_test7(windows):
     """theta=1e-6 (wartość użyta w wersji Testu 6) NIE zbiega tu poniżej progu 1e-4 —
     sprawdzone bezpośrednio: różnica maleje monotonicznie i gładko wraz z θ (0,35 przy
     logθ=-6 do 4e-6 przy logθ=-20), więc to wolniejsze tempo zbieżności na tej strukturze
     (nie błąd) — użyto θ=1e-9, bliżej rzeczywistej podłogi numerycznej (1e-10) stosowanej
     gdzie indziej w kodzie, żeby granica była zademonstrowana z tą samą precyzją co w Teście 6."""
     rng = np.random.default_rng(w.RNG_SEED)
-    t, event, diad = simulate_dataset_test7(1.3, 20.0, 0.0, group_specs, rng)
+    t, event, diad = simulate_dataset_test7(1.3, 20.0, 0.0, windows, rng)
     groups, gidx = np.unique(diad, return_inverse=True)
     ll_pooled = -w.negloglik_pooled(np.array([np.log(1.3), np.log(20.0)]), t, event)
     ll_frailty = -w.negloglik_frailty(np.array([np.log(1.3), np.log(20.0), np.log(1e-9)]),
@@ -289,14 +326,15 @@ def test_theta_zero_limit_test7(group_specs):
                abs_diff=diff, ok=diff < 1e-4)
 
 
-def censoring_realism_check(intervals_csv, group_specs, k_true=1.0, lam_true=20.0, theta_true=0.0,
+def censoring_realism_check(intervals_csv, windows, k_true=1.0, lam_true=20.0, theta_true=0.0,
                             seed=w.RNG_SEED):
-    """PRZEGLAD_test7_estimate.md §6 (nie blokujące, ale zlecone): cenzurowanie w symulacji
-    (`c = Exponential(scale=lam)`, administracyjne) ma odsetek zgodny z konstrukcją, ale jego
-    ROZKŁAD nie musi przypominać realnego (gdzie czas cenzurowany to pozostała ekspozycja, a
-    dla 56 diad bez epizodów — całe okno). Podaje stosunek mediany czasów cenzurowanych do
-    mediany czasów zdarzeń, realnie i w symulacji, żeby dało się ocenić, na ile symulacja
-    odzysku przewiduje zachowanie na realnym zbiorze."""
+    """PRZEGLAD_test7_estimate.md §6, ponownie po poprawie mechanizmu: pierwsza wersja
+    porównywała stosunek median cenzurowane/pełne realny (2,25) wobec symulowanego (0,90) —
+    duża rozbieżność, która okazała się objawem usterki nadrzędnej (mechanizm cenzurowania
+    niezgodny z rzeczywistością, patrz komentarz nad `simulate_dataset_test7`), nie osobnym
+    zjawiskiem. Po poprawie (okno realne W_g jako fakt, liczba zdarzeń jako wynik) ten sam
+    stosunek ma wyjść bliski realnemu z konstrukcji — sprawdzone tutaj jako test spójności
+    naprawy, nie jako niezależna nowa diagnostyka."""
     df = pd.read_csv(intervals_csv, comment="#")
     df = df[(df["t0_flag"] == 0) & (df["ucieta"] == 0)]
     real_full = df.loc[df["cenzurowany"] == 0, "ekspozycja"].to_numpy(float)
@@ -304,7 +342,7 @@ def censoring_realism_check(intervals_csv, group_specs, k_true=1.0, lam_true=20.
     real_ratio = float(np.median(real_cens) / np.median(real_full)) if len(real_full) and len(real_cens) else float("nan")
 
     rng = np.random.default_rng(seed)
-    t, event, _ = simulate_dataset_test7(k_true, lam_true, theta_true, group_specs, rng)
+    t, event, _ = simulate_dataset_test7(k_true, lam_true, theta_true, windows, rng)
     sim_full = t[event == 1]
     sim_cens = t[event == 0]
     sim_ratio = float(np.median(sim_cens) / np.median(sim_full)) if len(sim_full) and len(sim_cens) else float("nan")
@@ -315,22 +353,62 @@ def censoring_realism_check(intervals_csv, group_specs, k_true=1.0, lam_true=20.
                k_true=k_true, lam_true=lam_true, theta_true=theta_true)
 
 
+def event_count_distribution(path: str = "test7_intervals.csv", include_t0: bool = False):
+    """Rozkład liczby zdarzeń pełnych na diadę — same liczebności, żądane niezależnie od
+    testów poprawności (Claude, po drugim przeglądzie)."""
+    import collections
+    group_specs = group_specs_from(path, include_t0=include_t0)
+    counts = collections.Counter(n for n, _ in group_specs)
+    return dict(sorted(counts.items()))
+
+
+def declared_deviation(windows, estimator, k_true=1.0, lam_true=1.0, n_reps=300, seed=w.RNG_SEED):
+    """Przeliczenie zadeklarowanego odchylenia parametru orzekającego (Claude, po drugim
+    przeglądzie) — POPRAWIONYM mechanizmem (`simulate_dataset_test7`, okno realne, liczba
+    zdarzeń jako wynik), pod prawdą k=1/θ=0 (bez pamięci, bez kruchości), dla obu testów:
+    `estimator='pooled'` (statystyka orzekająca Testu 6) albo `'frailty'` (statystyka
+    orzekająca Testu 7, protokół §7). `lam_true` ma być skalibrowane tak, żeby liczba
+    zdarzeń zbliżała się do realnej (patrz `run_correctness_suite_test7` dla Testu 7;
+    dla Testu 6: Σokien/n_zdarzeń_realnych = 1557/45 ≈ 34,6)."""
+    rng = np.random.default_rng(seed)
+    ks = np.empty(n_reps)
+    for i in range(n_reps):
+        t, event, diad = simulate_dataset_test7(k_true, lam_true, 0.0, windows, rng)
+        if estimator == "pooled":
+            ks[i] = w.fit_pooled(t, event)["k"]
+        elif estimator == "frailty":
+            ks[i] = w.fit_frailty(t, event, diad)["k"]
+        else:
+            raise ValueError(estimator)
+    return dict(estimator=estimator, k_true=k_true, lam_true=lam_true, n_reps=n_reps,
+               n_groups=len(windows), mean_k_hat=float(ks.mean()), median_k_hat=float(np.median(ks)),
+               sd_k_hat=float(ks.std(ddof=1)))
+
+
 def run_correctness_suite_test7(intervals_csv: str = "test7_intervals.csv"):
-    group_specs = group_specs_from(intervals_csv)
+    group_specs = group_specs_from(intervals_csv)          # tylko do raportowania liczebności
+    windows = window_lengths_from(intervals_csv)            # do symulacji (mechanizm poprawiony)
     out = {"n_groups_with_rows": len(group_specs),
           "n_full_total": sum(n for n, _ in group_specs),
-          "n_cens_total": sum(1 for _, has in group_specs if has)}
-    out["theta_zero_limit"] = test_theta_zero_limit_test7(group_specs)
+          "n_cens_total": sum(1 for _, has in group_specs if has),
+          "n_full_distribution": event_count_distribution(intervals_csv)}
+    # lam_true=89 skalibrowane na Σokien/n_zdarzen_realnych = 3279/37 ≈ 88,6 — bez tego
+    # (poprzednio lam_true=15-25) symulacja z poprawionym mechanizmem produkowałaby kilka
+    # razy więcej zdarzeń pełnych niż realny zbiór (sprawdzone: lam=20 dawało ~160 zdarzeń
+    # zamiast 37), bo teraz liczba zdarzeń jest wynikiem wyścigu z realnym oknem, nie
+    # założeniem — scenariusz musi być kalibrowany, żeby reżim cenzurowania (~73% realnie)
+    # był reprezentowany, a nie tylko struktura grup.
+    out["theta_zero_limit"] = test_theta_zero_limit_test7(windows)
     out["recovery"] = [
-        test_parameter_recovery_test7(group_specs, k_true=1.0, lam_true=20.0, theta_true=0.0,
+        test_parameter_recovery_test7(windows, k_true=1.0, lam_true=89.0, theta_true=0.0,
                                       label="k=1 (bez pamieci), theta=0 (bez kruchosci)"),
-        test_parameter_recovery_test7(group_specs, k_true=1.5, lam_true=15.0, theta_true=0.3,
+        test_parameter_recovery_test7(windows, k_true=1.5, lam_true=89.0, theta_true=0.3,
                                       label="k=1.5 (rosnacy hazard), theta=0.3 (kruchosc umiarkowana)"),
-        test_parameter_recovery_test7(group_specs, k_true=0.7, lam_true=25.0, theta_true=0.6,
+        test_parameter_recovery_test7(windows, k_true=0.7, lam_true=89.0, theta_true=0.6,
                                       label="k=0.7 (malejacy hazard/grupowanie), theta=0.6 (kruchosc silna)"),
     ]
-    out["frailty_boundary_collapse"] = test_frailty_boundary_collapse_test7(group_specs)
-    out["censoring_realism"] = censoring_realism_check(intervals_csv, group_specs)
+    out["frailty_boundary_collapse"] = test_frailty_boundary_collapse_test7(windows, lam_true=89.0)
+    out["censoring_realism"] = censoring_realism_check(intervals_csv, windows, lam_true=89.0)
     return out
 
 
