@@ -1539,3 +1539,87 @@ pozostaje **zablokowany** — kod wymaga ponownego przeglądu (bez dodatkowej tu
 jawnej autoryzacji autora, analogicznie do D-027. Odkrycie o rozjeździe θ̂ (Brak 1) ma zostać
 ocenione przed tą autoryzacją — wpływa na to, jak czytać `k̂` orzekający, nie jest samo w
 sobie powodem do zatrzymania budowy kodu, ale jest powodem do namysłu przed biegiem.
+
+## D-031 · 2026-08-27 · Symulacja odzysku miała zły mechanizm cenzurowania — „rozjazd θ̂" z D-030 WYCOFANY
+
+**Kontekst.** Drugi przegląd `test7_estimate.py` wykrył usterkę we własnym kodzie
+recenzenta, wcześniej zatwierdzonym: `simulate_dataset_test7` (i analogicznie
+`test6_weibull.simulate_dataset`) ustalała z góry liczbę zdarzeń pełnych i istnienie
+obserwacji cenzurowanej (z realnej struktury, `group_specs`), a czas cenzurowania losowała
+**niezależnie** od czasów zdarzeń. W rzeczywistości obserwacja jest cenzurowana, gdy czas
+administracyjny wypada PRZED zdarzeniem — widzimy `min(T,C)`, a liczba zdarzeń pełnych jest
+WYNIKIEM tego wyścigu, nie założeniem wejściowym. Stara konstrukcja nigdy nie odtwarzała
+tego wyścigu — zdarzenie i cenzurowanie „nigdy się nie spotykały".
+
+**Zmierzone przez recenzenta (k_prawdziwe=1):** właściwy mechanizm daje nieobciążone k̂ na
+każdym poziomie cenzurowania (mediana 0,989–1,013 przy 15%/34%/48% cenzurowania). Stara
+konstrukcja jest nieobciążona TYLKO, gdy skala cenzurowania przypadkiem równa się λ (mediana
+1,025) — i zaniża k̂ o **jedną trzecią** przy skali 2,5×λ (mediana 0,670). Realne dane leżą
+dokładnie w tym drugim reżimie: stosunek median cenzurowane/pełne = 2,25.
+
+### Naprawa
+
+`window_lengths_from` (nowa funkcja) odczytuje realną długość okna administracyjnego per
+diada — Σ wszystkich realnych `ekspozycja` tej diady w modelu głównym. To fakt
+**egzogeniczny/strukturalny** (długość okna wynika z dat kalendarzowych i członkostwa w
+systemie, nie z procesu wojen, który mamy zmierzyć) — analogiczne do `T` już używanego w
+`test6_null.py`/D-026 (λ̂=n/T per diada), nie nowe naruszenie zasady „nigdy wartości t".
+`simulate_dataset_test7` symuluje teraz właściwy wyścig: kolejne odstępy T losowane, dopóki
+suma mieści się w oknie (pełne); pierwszy, który by je przekroczył, ucina się do reszty
+okna (cenzurowany). **Liczba zdarzeń pełnych jest wynikiem symulacji, nie parametrem
+wejściowym** — dokładnie tak, jak zażądał przegląd.
+
+### WYCOFANIE — D-030 „spuriously podwyższone θ̂"
+
+D-030 zgłosiło (na podstawie starego, wadliwego mechanizmu): θ̂ na strukturze Testu 7 nie
+zapada się do granicy jak w Teście 6, tylko konsekwentnie ląduje w dobrze zidentyfikowanym,
+ale spuriously podwyższonym miejscu (mediana 1,4–1,6) NIEZALEŻNIE od θ prawdziwego, z
+weryfikacją, że wszystkie 4 starty multistartu zbiegały do tego samego, lepszego niż granica,
+optimum. **Po naprawie mechanizmu to zjawisko ZNIKA.** Pomiar procentowy powtórzony
+(60 biegów/θ, poprawiony mechanizm): odsetek na granicy maleje monotonicznie z θ prawdziwym
+(48,3%/26,7%/16,7%/3,3% dla θ=0/0,3/0,6/1,0), mediana θ̂ rośnie w stronę prawdy (0,0088 →
+0,950) — **wzorzec analogiczny do D-022 (Test 6)**, nie odrębny, poważniejszy problem.
+
+Wielostart faktycznie konsekwentnie zbiegał do jednego optimum za każdym razem — ale było to
+optimum WŁAŚCIWE DLA ŹLE SKONSTRUOWANYCH DANYCH SYNTETYCZNYCH, nie realna własność struktury
+Testu 7 ani artefakt samego wielostartu. **Wniosek D-030 o „poważniejszym problemie niż
+brief §5 przewidywał" jest niniejszym wycofany** — analogicznie do tego, jak sam recenzent
+wycofał własne wcześniejsze podejrzenie o usterce przy θ→0 (sprawdził: różnica maleje
+liniowo z θ, zachowanie poprawne).
+
+### Zadeklarowane odchylenie — przeliczone dla obu testów (zlecone przez recenzenta)
+
+SD(k̂) pod prawdą k=1/θ=0, poprawiony mechanizm, λ skalibrowane do realnej liczby zdarzeń:
+
+| test | statystyka orzekająca | n grup | n powtórzeń | mediana k̂ | SD k̂ |
+|---|---|---|---|---|---|
+| Test 6 | pulowana | 18 | 300 | 1,010 | **0,127** |
+| Test 7 | kruchość | 101 | 150 | 1,013 | **0,138** |
+
+Test 6: 0,127, praktycznie identyczne z wcześniej deklarowanym „~0,12" — `test6_weibull.
+simulate_dataset` domyślnie losuje cenzurowanie ze skalą `censor_scale=lam`, dokładnie
+przypadek, który recenzent zmierzył jako przypadkowo nieobciążony; **deklaracja Testu 6
+nie wymaga korekty.** Test 7: 0,138, nieco niżej niż wcześniej cytowane „~0,15" — różnica w
+granicach szumu (150 vs 300 powtórzeń), nie precyzyjna do trzeciego miejsca.
+
+### Rozkład liczby zdarzeń na diadę (zażądane przez recenzenta)
+
+Struktura Testu 7 (101 diad modelu głównego): 0 zdarzeń — 82 diady, 1 — 8, 2 — 5, 3 — 5,
+4 — 1.
+
+### Uwaga metodologiczna do zachowania
+
+Ta sama klasa błędu co D-023/D-026/D-030 §Luka2: usterka wykryta przez konstrukcję
+(zamrożony protokół, druga para oczu, obowiązek pomiaru zamiast założenia), nie przez wynik
+— żadna z tych usterek nie byłaby widoczna w samych liczbach końcowych. Trzecia z rzędu
+usterka wykryta we własnym, wcześniej zatwierdzonym kodzie recenzenta — odnotowana przez
+niego wprost, bez próby ukrycia wcześniejszego zatwierdzenia.
+
+### Zakres
+
+Dotyczy wyłącznie narzędzia symulacji odzysku/testów poprawności (`simulate_dataset_test7`,
+`test6_weibull.simulate_dataset`) — używanego do deklarowania oczekiwanej precyzji i
+testowania własności estymatora na danych syntetycznych o znanej prawdzie. **Nie dotyczy
+decyzyjnego wyniku Kroku C Testu 6** (D-027, p=0,068) — ten wynik pochodzi z `test6_null.py`
+(model N1), który używa realnej wartości `c` per diada trzymanej na stałe, nie symulowanej
+z arbitralnego rozkładu, więc nie ma tej usterki z konstrukcji.

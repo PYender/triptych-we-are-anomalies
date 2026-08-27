@@ -3,9 +3,10 @@
 **Realizuje:** `TEST7_PROTOCOL.md` §5, §7, §8 (cytowane niżej, nie streszczane — reguła D-024)
 · `TASK_7B_BRIEF.md` §2-§6 (D-029) · **Kod:** `test7_estimate.py` · **Estymator:**
 `test6_weibull.py` po naprawie (pięć usterek + D-022), zweryfikowany w Kroku C Testu 6
-(D-027) — **nie napisany od nowa** (brief §1). **Status: po przeglądzie
-`PRZEGLAD_test7_estimate.md` — 4 punkty blokujące naprawione (§1b niżej), plus jedno NOWE,
-poważniejsze odkrycie (§3b) wykryte przy okazji naprawy. NIEURUCHOMIONY na
+(D-027) — **nie napisany od nowa** (brief §1). **Status: po DRUGIM przeglądzie
+`PRZEGLAD_test7_estimate.md` — usterka mechanizmu cenzurowania w symulacji odzysku
+naprawiona (§3); w konsekwencji WYCOFANE zgłoszenie D-030 o „spuriously podwyższonym θ̂"
+(§3b) — było artefaktem złego mechanizmu, nie własnością danych. NIEURUCHOMIONY na
 `test7_intervals.csv` w sensie decyzyjnym** — patrz §4 (ujawnienie) niżej.
 
 ---
@@ -84,86 +85,110 @@ strukturze problemem może być NIE granica (niski odsetek), tylko rozjazd w dru
 `frac_theta_boundary` sam w sobie nie wykryje tego drugiego zjawiska, co ma być odnotowane
 w raporcie Etapu C, nie mylone z „przedział jest OK, bo granica rzadka".
 
-## 3. Symulacja odzysku parametrów na strukturze rzeczywistej (brief §4)
+## 3. Symulacja odzysku parametrów na strukturze rzeczywistej (brief §4) — MECHANIZM NAPRAWIONY (drugi przegląd)
 
-`group_specs_from` odczytuje **wyłącznie strukturę** (n_full, czy_ma_cenzurowany) per diada
-— nigdy wartości `t` — z modelu głównego (101 grup, po §1b). Różni się od
-`test6_weibull.group_sizes_from`, które zakłada zawsze dokładnie 1 cenzurowany/diadę
-(założenie fałszywe tutaj, patrz §1). `simulate_dataset_test7` generalizuje
-`test6_weibull.simulate_dataset` na to 0/1-cenzurowanie, z cenzurowaniem
-**administracyjnym** (niezależnym od czasu zdarzenia — usterka 4 przeglądu Testu 6:
-cenzurowanie zależne od T zawyża k̂ o ok. 5 pkt proc.).
+**Usterka wykryta w drugim przeglądzie, we własnym, wcześniej zatwierdzonym kodzie
+recenzenta.** Pierwsza wersja (`group_specs_from` + stara `simulate_dataset_test7`) ustalała
+z góry liczbę zdarzeń pełnych i to, czy istnieje obserwacja cenzurowana (z realnej
+struktury), a czas cenzurowania losowała **niezależnie** od czasów zdarzeń — zdarzenie i
+cenzurowanie nigdy się nie „spotykały". W rzeczywistości obserwacja jest cenzurowana, gdy
+czas administracyjny wypada PRZED zdarzeniem: widzimy `min(T,C)`, a liczba zdarzeń pełnych
+jest WYNIKIEM tego wyścigu, nie założeniem.
+
+Recenzent zmierzył skutek: przy k_prawdziwe=1, właściwy mechanizm daje nieobciążone k̂ na
+każdym poziomie cenzurowania (mediana 0,989–1,013); stara konstrukcja jest nieobciążona
+TYLKO, gdy skala cenzurowania przypadkiem równa się λ (mediana 1,025), i zaniża k̂ o **jedną
+trzecią** przy skali 2,5×λ (mediana 0,670) — dokładnie reżim, w jakim leżą realne dane
+(stosunek median cenzurowane/pełne = 2,25, §4b).
+
+**Naprawione:** `window_lengths_from` odczytuje realną długość okna administracyjnego (Σ
+wszystkich realnych `ekspozycja` danej diady w modelu głównym) — fakt egzogeniczny/
+strukturalny (długość okna nie jest wynikiem procesu wojen, tylko dat kalendarzowych/
+członkostwa), analogicznie do `T` już używanego w `test6_null.py`/D-026, nie nowe naruszenie
+zasady „nigdy wartości t". `simulate_dataset_test7` symuluje teraz właściwy wyścig:
+odstępy pełne, dopóki suma mieści się w oknie, ostatni ucina się do reszty okna jako
+cenzurowany. **Liczba zdarzeń jest wynikiem, nie założeniem.**
 
 **Struktura jest ekstremalnie rzadka: tylko 11 ze 101 grup ma ≥2 zdarzenia pełne** (82 grupy
-mają 0, 8 mają 1). Tylko te 11 grup niosą jakąkolwiek informację o heterogeniczności — to
-mniej korzystne niż w Teście 6 (gdzie żadna grupa nie miała zera zdarzeń) i gorsze, niż
-przewidywał brief §5 („kilkanaście grup niosących informację" — trafne co do liczby, ale
-patrz §3b, konsekwencja jest poważniejsza niż „szeroki przedział").
+mają 0, 8 mają 1) — rozkład pełny w §3d. Scenariusze skalibrowane na λ=89 (Σokien/n_zdarzeń
+realnych = 3279/37 ≈ 88,6), żeby liczba zdarzeń symulacji zbliżała się do realnej (37) —
+poprzednie λ=15-25 dawało kilkukrotnie więcej zdarzeń niż realny zbiór, bo teraz liczba
+zdarzeń jest wynikiem, nie parametrem wejściowym.
 
-Trzy zestawy uruchomione (wyłącznie dane syntetyczne, struktura 101 grup / 37 zdarzeń /
-95 cenzurowanych, zgodnie ze strukturą prawdziwego zbioru po §1b):
+Trzy zestawy uruchomione (dane syntetyczne, poprawiony mechanizm, 101 okien realnych):
 
-| zestaw | k praw. | θ praw. | k̂ pulowany | k̂ kruchość | θ̂ kruchość |
-|---|---|---|---|---|---|
-| k=1, θ=0 | 1,0 | 0,0 | 0,946 | 1,051 | **1,302 — nie na granicy** |
-| k=1,5, θ=0,3 | 1,5 | 0,3 | 1,229 | 1,442 | 1,482 — nie na granicy |
-| k=0,7, θ=0,6 | 0,7 | 0,6 | 0,777 | 0,804 | 0,343 — nie na granicy |
+| zestaw | k praw. | θ praw. | n zdarzeń (wynik) | k̂ pulowany | k̂ kruchość | θ̂ kruchość |
+|---|---|---|---|---|---|---|
+| k=1, θ=0 | 1,0 | 0,0 | 38 | 0,900 | 0,900 | **1e-10 (granica)** — poprawnie: brak kruchości wykryty |
+| k=1,5, θ=0,3 | 1,5 | 0,3 | 22 | 1,606 | 1,607 | **1e-10 (granica)** — nieodróżnione od zera |
+| k=0,7, θ=0,6 | 0,7 | 0,6 | 52 | 0,650 | 0,682 | 0,345 — nie na granicy, sensowny rząd wielkości |
 
 `test_theta_zero_limit_test7`: log-wiarygodność pulowana vs kruchość(θ=1e-9) zgodne do
-2,7·10⁻⁵ — test zaliczony (θ=1e-6 użyte pierwotnie zbiegało wolniej na tej strukturze,
-sprawdzone bezpośrednio: różnica maleje gładko z θ, 0,35→4·10⁻⁶ między logθ=−6 a −20 —
-wolniejsze tempo zbieżności, nie błąd; zamieniono na θ=1e-9).
+3,5·10⁻⁵ — test zaliczony.
 
-## 3b. ODKRYCIE NOWE, POWAŻNIEJSZE niż brief §5 przewidywał — θ̂ nie zapada się, tylko rozjeżdża w GÓRĘ, spuriously
+## 3b. WYCOFANIE — „spuriously podwyższone θ̂" (D-030) było artefaktem złego mechanizmu, nie własnością danych
 
-Zlecony przez przegląd pomiar procentowy (§3c niżej) ujawnił coś innego niż D-022 dla Testu
-6: na tej strukturze (11/101 grup informujących) `θ̂` **nie zapada się do granicy** —
-zapada się w 0–1,7% biegów na 60, w zależności od θ prawdziwego (patrz tabela §3c). Zamiast
-tego **mediana θ̂ wynosi 1,4–1,6 NIEZALEŻNIE od θ prawdziwego, włącznie z θ_prawdziwe=0**:
+**Poprzednia wersja tego dokumentu (i wpis D-030) zgłaszała, że θ̂ konsekwentnie ląduje w
+dobrze zidentyfikowanym, ale spuriously podwyższonym miejscu (mediana 1,4–1,6) NIEZALEŻNIE
+od θ prawdziwego, włącznie z θ=0 — z weryfikacją, że wszystkie 4 starty multistartu zbiegały
+do tego samego optimum, lepszego niż granica.** Po naprawie mechanizmu cenzurowania (§3)
+zjawisko **znika**: przy θ_prawdziwe=0, k̂_kruchość zbiega do granicy θ̂=1e-10 (poprawnie —
+brak kruchości wykryty), nie do 1,6. Multistart faktycznie zbiegał konsekwentnie do jednego
+optimum za każdym razem — ale było to optimum WŁAŚCIWE DLA ŹLE SKONSTRUOWANYCH DANYCH
+(sztucznie utworzonych przez niezależne losowanie zdarzeń i cenzurowania), nie artefakt
+samego wielostartu ani realna własność struktury Testu 7. **Wniosek D-030 o „poważniejszym
+problemie niż brief §5 przewidywał" jest tu wycofany** — dokładnie zgodnie z tym, jak sam
+recenzent wycofał własne wcześniejsze podejrzenie o usterce w granicy θ→0 po sprawdzeniu.
+Pełny pomiar procentowy z poprawionym mechanizmem — §3c.
 
-**Zweryfikowane, że to nie jest awaria wielostartu.** Dla repliki syntetycznej z θ_prawdziwe=0:
-wszystkie 4 punkty startowe zbiegły do tego samego θ̂≈1,60 (`converged_same=True`,
-`k_by_start` identyczne do 6 miejsca), z log-wiarygodnością **−189,13**, WYRAŹNIE wyższą
-(lepszą) niż na granicy θ=1e-10 (log-wiarygodność −192,14, identyczna z modelem pulowanym).
-**To jest prawdziwe, dobrze zidentyfikowane maksimum wiarygodności — nie błąd optymalizacji
-ani przypadek startu.**
+## 3c. Zapadanie się θ̂ — pomiar procentowy, poprawiony mechanizm
 
-**Interpretacja.** Przy tak małej liczbie grup niosących informację (11/101), gamma-kruchość
-MLE ma tendencję do znajdowania **pozornej heterogeniczności** nawet, gdy jej prawdziwie nie
-ma — przypadkowa zmienność w tym, jak nieliczne wielo-zdarzeniowe grupy rozkładają odstępy,
-zostaje wchłonięta przez `θ̂` jako rzekoma kruchość, bo model ma na to miejsce (mało grup
-kontrolnych, żeby to obalić). To jest **poważniejszy problem niż ten, o który pytał brief
-§5** („szeroki przedział, spodziewaj się"): to nie jest kwestia szerokości przedziału wokół
-prawdziwej wartości — **punktowe θ̂ jest systematycznie przesunięte w górę, niezależnie od
-prawdy, i jest to dobrze zidentyfikowany (nie graniczny) wynik**, więc nie ma prostego
-sygnału ostrzegawczego typu „θ̂ na granicy" do wyłapania go automatycznie.
-
-**Konsekwencja dla P1 (orzekający, protokół §7).** Statystyka orzekająca dla H9b.1 to `k̂`
-z modelu z kruchością, nie samo `θ̂` — ale `k̂` z kruchością jest liczone **łącznie** z
-oszacowaniem `θ̂`, więc spuriously podwyższone `θ̂` wpływa też na `k̂` (patrz tabela §3: przy
-θ_prawdziwe=0, k̂_kruchość=1,051 vs k̂_pulowany=0,946 — kruchość i pulowany DAJĄ RÓŻNE
-odpowiedzi nawet, gdy prawdziwej kruchości nie ma, bo model kruchości "zużywa" część
-zmienności na spurious θ̂ zamiast na k). **Nie naprawiam tego teraz — zgłaszam jako
-ustalenie do oceny przed Etapem C**, analogicznie do D-022 dla Testu 6, ale gorsze: tam
-zgodność P1/F1 była czasem niediagnostyczna (granica), tutaj F1 (orzekający) może dawać
-systematycznie inny wynik niż intuicja o „braku kruchości" sugerowałaby.
-
-## 3c. Zapadanie się/rozjazd θ̂ — pomiar procentowy (naprawiony brak nr 1 z przeglądu)
-
-`test_frailty_boundary_collapse_test7` (60 powtórzeń na θ, jak D-022 dla Testu 6, ale na
-`simulate_dataset_test7`/`group_specs` — 0/1-cenzurowanie, nie zawsze-1-cenzurowany):
+`test_frailty_boundary_collapse_test7` (60 powtórzeń/θ, jak D-022, poprawiony mechanizm §3,
+λ=89):
 
 | θ prawdziwe | % na granicy (60 biegów) | mediana θ̂ |
 |---|---|---|
-| 0,0 | 0,0% | **1,588** |
-| 0,3 | 1,7% | **1,647** |
-| 0,6 | 0,0% | **1,488** |
-| 1,0 | 0,0% | **1,426** |
+| 0,0 | **48,3%** | 0,0088 |
+| 0,3 | 26,7% | 0,111 |
+| 0,6 | 16,7% | 0,684 |
+| 1,0 | 3,3% | 0,950 |
 
-Zgodne z §3b: procent na granicy jest NISKI (przeciwieństwo Testu 6, gdzie przy θ=0 granica
-wychodziła w 60% biegów) — ale mediana θ̂ jest **oderwana od prawdy** w każdym wierszu.
-Niski odsetek granicy TUTAJ nie oznacza dobrej identyfikowalności — oznacza, że estymator
-konsekwentnie ląduje w innym, spuriously-podwyższonym miejscu zamiast na granicy.
+**Wzorzec sensowny, analogiczny do D-022 (Test 6, 60%/33%/12%/2% na tych samych progach θ)**:
+odsetek na granicy MALEJE monotonicznie wraz z θ prawdziwym, mediana θ̂ ROŚNIE w stronę
+prawdy (0,95 przy θ=1,0 — bardzo bliskie). Test 7 (101 grup, mimo 82 puste) zapada się
+NIECO CZĘŚCIEJ niż Test 6 przy θ=0 (48% wobec 60%... — w tym samym rzędzie wielkości,
+różnica prawdopodobnie wynika ze strumienia losowań i różnicy w rozmiarze próby, nie
+odnotowuję dalej bez dodatkowej weryfikacji). To jest DOKŁADNIE zjawisko, jakiego brief §5
+się spodziewał („szeroki przedział dla θ") — nie coś gorszego, jak błędnie zgłoszono w D-030
+przy złym mechanizmie.
+
+## 3d. Rozkład liczby zdarzeń na diadę — same liczebności (zażądane przez Claude)
+
+| n zdarzeń pełnych | liczba diad |
+|---|---|
+| 0 | 82 |
+| 1 | 8 |
+| 2 | 5 |
+| 3 | 5 |
+| 4 | 1 |
+| **razem** | **101** |
+
+## 3e. Zadeklarowane odchylenie — przeliczone dla obu testów, poprawionym mechanizmem
+
+Zlecone przez Claude: odchylenie standardowe k̂ (statystyka orzekająca każdego testu) pod
+prawdą k=1/θ=0, poprawionym mechanizmem, λ skalibrowane do realnej liczby zdarzeń:
+
+| test | statystyka orzekająca | n grup | λ | n powtórzeń | mediana k̂ | odch. std. k̂ |
+|---|---|---|---|---|---|---|
+| Test 6 | pulowana (`fit_pooled`) | 18 | 34,6 | 300 | 1,010 | **0,127** |
+| Test 7 | kruchość (`fit_frailty`) | 101 | 89,0 | 150 | 1,013 | **0,138** |
+
+Test 6: 0,127 — praktycznie identyczne z wcześniej deklarowanym „~0,12" (ta wartość okazuje
+się nie wymagać korekty, bo `test6_weibull.simulate_dataset` domyślnie losuje cenzurowanie
+ze skalą `censor_scale=lam` — dokładnie ten przypadek, który recenzent zmierzył jako
+przypadkowo nieobciążony). Test 7: 0,138 — nieco NIŻSZE niż poprzednio cytowane „~0,15"
+(Claude), z poprawionym mechanizmem i skalibrowanym λ. Różnica jest w granicach szumu tych
+liczby powtórzeń (150 vs 300) — nie traktuję jej jako precyzyjnej do trzeciego miejsca.
 
 ## 4. Model zerowy N1 — diagnostyczny, poza regułą §8 (D-029 pkt 2)
 
@@ -201,21 +226,16 @@ interpretowane** — były widoczne na ekranie podczas weryfikacji kodu i nie s�
 nr 10 w drugą stronę), ale nie stanowią wyniku Etapu C, który wymaga osobnego biegu przy
 ustalonym ziarnie protokołu i, jak Test 6, osobnej autoryzacji.
 
-## 4b. Realizm cenzurowania w symulacji — uwaga niebolkująca z przeglądu, sprawdzona
+## 4b. Realizm cenzurowania w symulacji — sprawdzony ponownie po naprawie mechanizmu
 
-Cenzurowanie administracyjne `c = Exponential(scale=lam)` ma poprawny ODSETEK (zgodny z
-konstrukcją grupy), ale jego ROZKŁAD nie musi przypominać realnego, gdzie czas cenzurowany
-to pozostała ekspozycja, a dla diad bez epizodów — całe okno. `censoring_realism_check`
-porównuje medianę: **w realnych danych stosunek mediany cenzurowanej do mediany pełnej
-wynosi 2,25** (18 wobec 8 lat) — obserwacje cenzurowane są typowo znacznie DŁUŻSZE niż
-odstępy pełne. **W symulacji (k=1,λ=20,θ=0) stosunek wynosi 0,90** — w symulacji
-cenzurowanie jest, jeśli już, odrobinę KRÓTSZE niż zdarzenia, nie dłuższe. **Symulacja
-odzysku nie odtwarza tej asymetrii** — informacyjność (długość) obserwacji cenzurowanych
-względem pełnych jest w symulacji zaniżona względem rzeczywistości, więc wyniki symulacji
-odzysku (§3, §3b, §3c) mogą NIE przewidywać dokładnie zachowania na realnym zbiorze w tym
-wymiarze — mają być czytane jako orientacyjne co do rzędu wielkości/kierunku problemu, nie
-jako precyzyjna kalibracja. Nie naprawiane teraz (zmiana rozkładu symulowanego cenzurowania
-wymagałaby decyzji o modelu tego rozkładu, wykraczającej poza ten Etap B).
+Przed naprawą (§3): stosunek mediany cenzurowanej do mediany pełnej wynosił **2,25** realnie
+wobec **0,90** w symulacji — duża rozbieżność, która okazała się OBJAWEM usterki nadrzędnej
+(cenzurowanie losowane niezależnie od zdarzeń), nie osobnym zjawiskiem do korygowania z
+osobna. **Po naprawie (okno realne jako fakt, liczba zdarzeń jako wynik):** stosunek wynosi
+**1,52** — znacznie bliżej realnego (2,25) niż poprzednio (0,90), choć nie identyczne (jeden
+konkretny scenariusz k=1/λ=89/θ=0 nie musi odtworzyć każdego aspektu realnego rozkładu co do
+liczby, tylko mechanizm generowania). Traktowane jako potwierdzenie, że naprawa poprawiła
+realizm we właściwym kierunku, nie jako precyzyjna kalibracja.
 
 ## 5. Warianty wrażliwości — status (brief §3, protokół §7)
 
@@ -262,26 +282,27 @@ pary są widoczne modelowi, który z niej korzysta.
 
 Nie liczy `k_obs` P1 na `test7_intervals.csv` jako wynik decyzyjny — patrz §4, ujawnienie.
 Nie buduje S1/S2/S4 (§5) — S2 rozstrzygnięty co do definicji (§5b), ale niezbudowany. Nie
-naprawia rozjazdu θ̂ opisanego w §3b (opisujemy, nie łatamy, zgodnie z zasadą D-022/D-026).
-Nie zmienia rozkładu cenzurowania symulacji (§4b). `main()` blokuje `--run-real`
-(`SystemExit`).
+zmienia rozkładu cenzurowania symulacji poza mechanizmem już naprawionym w §3 (drobna
+rozbieżność 1,52 wobec 2,25 w §4b nie jest korygowana dalej — jeden scenariusz nie musi
+odtworzyć całego realnego rozkładu). `main()` blokuje `--run-real` (`SystemExit`).
 
 ## 8. STOP
 
-Cztery punkty blokujące z `PRZEGLAD_test7_estimate.md` naprawione: §1b (naruszenie
-protokołu — ucieta), §3c (pomiar procentowy zapadania/rozjazdu θ̂), §4 (N1 liczony obiema
-statystykami), §2 (frac_theta_boundary surfaced w bootstrapie). Uwagi niebolkujące
-uwzględnione: §4b (realizm cenzurowania), §6 (ograniczenie diad typu Troi).
+**Pierwsza runda** (D-030): cztery punkty blokujące z pierwszego przeglądu naprawione —
+§1b (naruszenie protokołu, ucieta), §3c (pomiar procentowy), §4 (N1 obiema statystykami),
+§2 (frac_theta_boundary). Uwagi niebolkujące: §4b (realizm cenzurowania — pierwsza wersja),
+§6 (ograniczenie Troi).
 
-**Odkrycie nowe, wykryte przy naprawie, ważniejsze niż punkt zlecony (§3b):** na strukturze
-Testu 7 (11/101 grup informujących o kruchości) `θ̂` nie zapada się do granicy jak w Teście
-6 — zamiast tego ląduje w dobrze zidentyfikowanym, ale spuriously podwyższonym miejscu
-(mediana 1,4–1,6) NIEZALEŻNIE od prawdy, włącznie z brakiem prawdziwej kruchości. To nie
-jest naprawione ani rozstrzygnięte samodzielnie — zgłaszam do oceny przed Etapem C, bo
-wpływa bezpośrednio na wiarygodność `k̂` orzekającego (kruchość), nie tylko na `θ̂` samo
-w sobie.
+**Druga runda (ten dokument):** drugi przegląd wykrył usterkę mechanizmu cenzurowania w
+samej symulacji odzysku — recenzent wskazał ją we własnym, wcześniej zatwierdzonym kodzie i
+odnotował to wprost. Naprawiona (§3): okno realne jako fakt egzogeniczny, liczba zdarzeń
+jako wynik wyścigu T-kontra-okno, nie założenie. **Konsekwencja: „odkrycie" z D-030 o
+spuriously podwyższonym θ̂ jest WYCOFANE (§3b)** — po naprawie θ̂ zachowuje się sensownie,
+analogicznie do D-022 (Test 6). Zadeklarowane odchylenie przeliczone dla obu testów (§3e):
+Test 6 0,127 (bez zmian względem „~0,12"), Test 7 0,138 (nieco niżej niż „~0,15"). Rozkład
+liczebności zdarzeń na diadę podany osobno (§3d).
 
-Kod P1(główny, po §1b)+S3, symulacja odzysku, model zerowy N1 (obie statystyki), suita
-poprawności (rozszerzona o §3c/§4b) gotowe do ponownego przeglądu. Bieg na danych
-rzeczywistych (Etap C) dopiero po nim i, analogicznie do Testu 6 (D-027), po jawnej
-autoryzacji — nie automatycznie po samym przeglądzie.
+Kod P1(główny, po §1b)+S3, symulacja odzysku (mechanizm naprawiony), model zerowy N1 (obie
+statystyki), suita poprawności gotowe do kolejnego przeglądu. Bieg na danych rzeczywistych
+(Etap C) dopiero po nim i, analogicznie do Testu 6 (D-027), po jawnej autoryzacji — nie
+automatycznie po samym przeglądzie.
