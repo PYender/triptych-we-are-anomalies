@@ -2270,3 +2270,46 @@ sama liczba epizodów, ale zależność koncentruje się w mniejszości obserwac
 większości — obie liczby podane obok siebie, bez rozstrzygania która ma być brana pod uwagę.
 
 **STOP po tych trzech pomiarach, przed Etapem 3 (bieg), zgodnie z TASK_S7.md §7.**
+
+---
+
+## D-043 · 2026-09-02 · S7 Etap 3: autoryzacja + deklaracje sprzed biegu
+
+**Autoryzacja.** Autor autoryzuje Etap 3 wariantu S7. Blokada `--run-real` zdjęta. Zapadła
+PRZED jakimkolwiek dopasowaniem na danych rzeczywistych — żaden bieg na `test6_s7_intervals.csv`
+nie został wykonany przed tym wpisem.
+
+**Deklaracja 1 — wykrywalność (moc).** SD(k̂)=0,0782 (D-042) daje próg wykluczenia jedynki
+poniżej 0,847 albo powyżej 1,153. Test 6 dał k̂=0,778, Test 7 (P1, kruchość) dał k̂=0,843 —
+**oba obserwowane dotąd efekty mieszczą się w zakresie wykrywalności S7.** Jeżeli ten sam
+efekt istnieje na poziomie państw, S7 go zobaczy. Jeżeli S7 NIE odrzuci jedynki, będzie to
+**pierwszy wynik negatywny tej rodziny przypisywalny danym, nie brakowi mocy narzędzia.**
+
+**Deklaracja 2 — kanał sklejenia próby, poprawka względem D-042.** Sklejenie działa innym
+kanałem niż zakładano w zadaniu przed Etapem 2: NIE przez odstępy zaczynające się od końca
+wojny światowej (tych jest 12,7%, D-042) — przez to, że TE SAME wojny wchodzą do
+życiorysów wielu państw naraz (9/13 dla obu wojen światowych, D-042). Miarą będzie **rozjazd
+między przedziałem z profilu a przedziałem bootstrapowym na poziomie państw** (nie
+odstępów) — to jest najważniejsza liczba tego biegu, bo mówi, ile ze 110 odstępów jest
+efektywnie niezależnych.
+
+**Deklaracja 3 — oczekiwania autora, spisane przed wynikiem (żeby uniknąć wrażenia
+dopasowania opisu do liczb post factum).** Parametr w okolicach 0,75–0,90 (podobny do Testu
+6 i 7), odrzucenie jedynki przez przedział z profilu. Przedział bootstrapowy WYRAŹNIE
+szerszy niż profilowy (bo trzynaście państw dzieli te same wojny) i traktowany jako
+właściwa miara niepewności, nie profilowy. Jeżeli OBA przedziały wykluczą jedynkę — pierwszy
+wynik pozytywny rodziny dziewiątej. Jeżeli wykluczy TYLKO profil — wynik jak w Teście 6:
+sygnał widoczny narzędziem optymistycznym, znikający pod ostrożniejszym.
+
+**Specyfikacja biegu (bez odstępstw od §5–§8 protokołu Testu 6).** Statystyka pierwszorzędna:
+k̂ pulowane (§5). Kruchość obok jako drugorzędna, z odsetkiem replik bootstrapowych z θ̂ na
+granicy. N1, ziarno 20260822, B=2000, zabezpieczenie przed remisem D-026 §7. N2 pominięty
+jednym zdaniem (D-026: zdegenerowany wobec statystyki pulowanej). Oba przedziały (profil +
+bootstrap) **na poziomie państw**, podane obok siebie z rozjazdem, żadien nie wybrany jako
+"ten właściwy".
+
+**§8 zadania obowiązuje niezależnie od wyniku:** S7 pozostaje wariantem wrażliwości. Nawet
+korzystniejszy wynik niż Test 6/7 nie awansuje go na wariant pierwszorzędny.
+
+**STOP po biegu, przed jakąkolwiek narracją** — surowe liczby, jak przy Kroku C Testu 6 i
+Etapie C Testu 7.
