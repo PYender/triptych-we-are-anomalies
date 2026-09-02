@@ -2077,3 +2077,29 @@ najbardziej prawdopodobnej przyczyny.
 Po wykonaniu wszystkich pięciu kroków: **STOP, surowe liczby przedstawione bez narracji,
 zanim powstanie ich opis.** Powód zapisany przez autora: raport pisany razem z liczbami zbyt
 łatwo staje się ich uzasadnieniem.
+
+---
+
+## D-038 · 2026-09-02 · S7 (poziom państwa, Test 6 poziom B): jednostka progu
+
+**Wpisane PRZED budową zbioru**, zgodnie z TASK_S7.md §2 — decyzja, nie odczyt protokołu.
+
+**Kontekst.** `TEST6_PROTOCOL.md` §3 poziom B wymaga „≥ 6 konfliktów" dla wariantu S7. Po
+D-013 (scalanie konfliktów w epizody) pytanie brzmi, czy próg liczyć na SUROWYCH
+uczestnictwach (wiersze pliku `InterStateWarData_v4_0.csv`, w tym rozbite fazy) czy na
+EPIZODACH (po scaleniu D-024 §5).
+
+**Rozstrzygnięcie: próg liczony na epizodach.** Precedens D-024 §2 dla S1: próg ma zmieniać
+wartość przy STAŁEJ jednostce analizy, inaczej wariant miesza dwie osie naraz (jednostkę
+progu i jednostkę estymacji). Ta sama jednostka, której używa estymacja (odstęp między
+epizodami), ma być jednostką progu.
+
+**Scalanie, D-024 §5 (przywołane, nie ponownie rozstrzygane tutaj):** wszystkie nakładające
+się lub stykające się (gap≤0, ta sama definicja co D-013 dla diad) wojny TEGO SAMEGO państwa,
+niezależnie od przeciwnika, scalają się w jeden epizod.
+
+**Konsekwencja dla stanu 12 kontra 6 poprzednich testów.** Państwo przy progu ≥6 epizodów ma
+istotnie więcej zdarzeń niż jakakolwiek diada w Teście 6 (≥3 epizody) czy Teście 7 — właśnie
+dlatego wariant jest atrakcyjny mocą, i właśnie dlatego próg musi być zdefiniowany na tej samej
+jednostce, którą się potem estymuje, żeby liczba `12 państw / N zdarzeń` znaczyła to, co ma
+znaczyć.

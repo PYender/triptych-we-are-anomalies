@@ -1,0 +1,140 @@
+# {"builder": "test6_build_s7.py v1.0 (D-038, TASK_S7.md)", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "zrodlo_czlonkostwo": "system2016.csv", "liczby_kontrolne_SS4": {"wierszy_uczestnictw_1816_2007": {"oczekiwane": 337, "policzone": 337}, "przedzialow_po_rozbiciu_faz": {"oczekiwane": 356, "policzone": 356}, "panstw_w_pliku": {"oczekiwane": 98, "policzone": 98}, "panstw_prog_ge6": {"oczekiwane": 12, "policzone": 15}, "odstepow_pelnych_prog_ge6": {"oczekiwane": 98, "policzone": 123}, "panstw_prog_ge3": {"oczekiwane": 37, "policzone": 40}, "odstepow_pelnych_prog_ge3": {"oczekiwane": 168, "policzone": 190}}, "rozbieznosc_odnotowana": "TAK - patrz S7_DYSKREPANCJA.md, nie dopasowywane na sile (TASK_S7.md SS4)", "podsumowanie_ge6": {"panstwa": 15, "odstepy_pelne": 123, "odstepy_cenzurowane": 15, "pelne_ekspozycja_zero": 0}, "podsumowanie_ge3": {"panstwa": 40, "odstepy_pelne": 190, "odstepy_cenzurowane": 40, "pelne_ekspozycja_zero": 0}, "panstwa_odrzucone_prog_ge6_liczba": 83}
+ccode,panstwo,rok_konca_poprz,rok_poczatku_nast,dlugosc_odstepu,dlugosc_kalendarzowa,cenzurowany,ekspozycja_zero
+2,United States of America,1847,1898,51,51,0,False
+2,United States of America,1898,1900,2,2,0,False
+2,United States of America,1900,1917,17,17,0,False
+2,United States of America,1918,1941,23,23,0,False
+2,United States of America,1945,1950,5,5,0,False
+2,United States of America,1953,1965,12,12,0,False
+2,United States of America,1973,1991,18,18,0,False
+2,United States of America,1991,1999,8,8,0,False
+2,United States of America,1999,2001,2,2,0,False
+2,United States of America,2001,2003,2,2,0,False
+2,United States of America,2003,2007,4,4,1,False
+200,United Kingdom,1857,1882,25,25,0,False
+200,United Kingdom,1882,1900,18,18,0,False
+200,United Kingdom,1900,1914,14,14,0,False
+200,United Kingdom,1918,1939,21,21,0,False
+200,United Kingdom,1945,1950,5,5,0,False
+200,United Kingdom,1953,1956,3,3,0,False
+200,United Kingdom,1956,1982,26,26,0,False
+200,United Kingdom,1982,1991,9,9,0,False
+200,United Kingdom,1991,1999,8,8,0,False
+200,United Kingdom,1999,2001,2,2,0,False
+200,United Kingdom,2001,2003,2,2,0,False
+200,United Kingdom,2003,2007,4,4,1,False
+220,France,1823,1849,26,26,0,False
+220,France,1849,1854,5,5,0,False
+220,France,1856,1859,3,3,0,False
+220,France,1859,1862,3,3,0,False
+220,France,1867,1870,3,3,0,False
+220,France,1871,1884,13,13,0,False
+220,France,1885,1900,15,15,0,False
+220,France,1900,1914,14,14,0,False
+220,France,1918,1919,1,1,0,False
+220,France,1921,1939,18,18,0,False
+220,France,1941,1944,2,3,0,False
+220,France,1945,1951,6,6,0,False
+220,France,1953,1956,3,3,0,False
+220,France,1956,1958,2,2,0,False
+220,France,1958,1991,33,33,0,False
+220,France,1991,1999,8,8,0,False
+220,France,1999,2001,2,2,0,False
+220,France,2001,2007,6,6,1,False
+230,Spain,1823,1859,36,36,0,False
+230,Spain,1860,1865,5,5,0,False
+230,Spain,1866,1898,32,32,0,False
+230,Spain,1898,1909,11,11,0,False
+230,Spain,1910,1957,47,47,0,False
+230,Spain,1958,2007,49,49,1,False
+255,Germany,1848,1849,1,1,0,False
+255,Germany,1849,1864,15,15,0,False
+255,Germany,1864,1866,2,2,0,False
+255,Germany,1866,1870,4,4,0,False
+255,Germany,1871,1914,43,43,0,False
+255,Germany,1919,1939,20,20,0,False
+255,Germany,1945,1999,10,54,0,False
+255,Germany,1999,2007,8,8,1,False
+300,Austria-Hungary,1848,1849,1,1,0,False
+300,Austria-Hungary,1849,1859,10,10,0,False
+300,Austria-Hungary,1859,1864,5,5,0,False
+300,Austria-Hungary,1864,1866,2,2,0,False
+300,Austria-Hungary,1866,1914,48,48,0,False
+300,Austria-Hungary,1918,1918,0,0,1,True
+325,Italy,1848,1849,1,1,0,False
+325,Italy,1849,1855,6,6,0,False
+325,Italy,1856,1859,3,3,0,False
+325,Italy,1859,1860,1,1,0,False
+325,Italy,1861,1866,5,5,0,False
+325,Italy,1866,1911,45,45,0,False
+325,Italy,1912,1915,3,3,0,False
+325,Italy,1918,1935,17,17,0,False
+325,Italy,1936,1940,4,4,0,False
+325,Italy,1945,1991,46,46,0,False
+325,Italy,1991,1999,8,8,0,False
+325,Italy,1999,2007,8,8,1,False
+345,Yugoslavia,1912,1913,1,1,0,False
+345,Yugoslavia,1913,1914,1,1,0,False
+345,Yugoslavia,1918,1941,23,23,0,False
+345,Yugoslavia,1941,1992,49,51,0,False
+345,Yugoslavia,1992,1999,7,7,0,False
+345,Yugoslavia,1999,2007,8,8,1,False
+350,Greece,1897,1912,15,15,0,False
+350,Greece,1913,1917,4,4,0,False
+350,Greece,1918,1919,1,1,0,False
+350,Greece,1922,1940,18,18,0,False
+350,Greece,1941,1951,8,10,0,False
+350,Greece,1953,2007,54,54,1,False
+365,USSR,1829,1853,24,24,0,False
+365,USSR,1856,1877,21,21,0,False
+365,USSR,1878,1900,22,22,0,False
+365,USSR,1900,1904,4,4,0,False
+365,USSR,1905,1914,9,9,0,False
+365,USSR,1917,1918,1,1,0,False
+365,USSR,1920,1929,9,9,0,False
+365,USSR,1929,1938,9,9,0,False
+365,USSR,1938,1939,1,1,0,False
+365,USSR,1940,1941,1,1,0,False
+365,USSR,1945,1956,11,11,0,False
+365,USSR,1956,2007,51,51,1,False
+640,Turkey,1829,1853,24,24,0,False
+640,Turkey,1856,1877,21,21,0,False
+640,Turkey,1878,1897,19,19,0,False
+640,Turkey,1897,1911,14,14,0,False
+640,Turkey,1913,1914,1,1,0,False
+640,Turkey,1918,1919,1,1,0,False
+640,Turkey,1922,1950,28,28,0,False
+640,Turkey,1953,1974,21,21,0,False
+640,Turkey,1974,1999,25,25,0,False
+640,Turkey,1999,2007,8,8,1,False
+651,Egypt,1882,1948,12,66,0,False
+651,Egypt,1949,1956,7,7,0,False
+651,Egypt,1956,1967,11,11,0,False
+651,Egypt,1967,1969,2,2,0,False
+651,Egypt,1970,1973,3,3,0,False
+651,Egypt,1973,1991,18,18,0,False
+651,Egypt,1991,2007,16,16,1,False
+666,Israel,1949,1956,7,7,0,False
+666,Israel,1956,1967,11,11,0,False
+666,Israel,1967,1969,2,2,0,False
+666,Israel,1970,1973,3,3,0,False
+666,Israel,1973,1982,9,9,0,False
+666,Israel,1982,2007,25,25,1,False
+710,China,1885,1894,9,9,0,False
+710,China,1895,1900,5,5,0,False
+710,China,1900,1929,29,29,0,False
+710,China,1929,1931,2,2,0,False
+710,China,1933,1937,4,4,0,False
+710,China,1945,1950,5,5,0,False
+710,China,1953,1954,1,1,0,False
+710,China,1955,1958,3,3,0,False
+710,China,1958,1962,4,4,0,False
+710,China,1962,1979,17,17,0,False
+710,China,1979,1987,8,8,0,False
+710,China,1987,2007,20,20,1,False
+740,Japan,1895,1900,5,5,0,False
+740,Japan,1900,1904,4,4,0,False
+740,Japan,1905,1914,9,9,0,False
+740,Japan,1918,1931,13,13,0,False
+740,Japan,1933,1937,4,4,0,False
+740,Japan,1945,2007,56,62,1,False
