@@ -52,14 +52,22 @@ def run_variant(label, intervals_path, include_t0=False, B_boot=e.B_BOOTSTRAP,
 
 
 def _profile_ci_and_boot_p2(negloglik, args_fn, grouped_fit_fn, t, event, diad, X, j,
-                            beta_hat, n_beta, level=0.95, B=1000):
+                            beta_hat, n_beta, level=0.95, B=400):
+    """UWAGA (usterka złapana w teście dymnym, poprawiona przed biegiem rzeczywistym):
+    `pf.profile_ci_beta`'s `j` musi być pozycją w PEŁNYM wektorze parametrów
+    [logk, loglam0, beta_0..beta_{p-1}, logtheta] (bo `np.insert(rest_free, j, bj)` wstawia
+    tam z powrotem), NIE pozycją kowariantu w X. Pierwsza wersja przekazywała gołe `j`
+    (0 albo 1) — dla P2a/P2b z p=2 to wstawiało wartość na miejsce logk albo loglam0,
+    dając bezsensowny przedział (np. lo=6.6 > hi=6.5, oba dodatnie, dla współczynnika
+    o wartości -0,16). Sprawdzone bezpośrednio na wyniku testu dymnego przed pełnym biegiem."""
     fit = grouped_fit_fn()
     rest0 = [fit["logk"], fit["loglam0"], *[b for i, b in enumerate(fit["beta"]) if i != j], fit["logtheta"]]
+    j_full = 2 + j
     def negloglik_full(full, t, event, gidx, n_groups, X):
         return pf.negloglik_frailty_cov(full, t, event, gidx, n_groups, X)
     groups, gidx = np.unique(diad, return_inverse=True)
     lo, hi, grid, lr = pf.profile_ci_beta(negloglik_full, (t, event, gidx, len(groups), X),
-                                          beta_hat, j, rest0, fit["loglik"], level=level)
+                                          beta_hat, j_full, rest0, fit["loglik"], level=level)
     beta0_rest = [b for i, b in enumerate(fit["beta"])]
     blo, bhi, betas, frac_boundary = pf.bootstrap_ci_beta_frailty(t, event, diad, X, j, B=B,
                                                                   seed=SEED, level=level,
@@ -91,7 +99,7 @@ def run_p2a_variant(cinc_col, label):
     ci_cinc = _profile_ci_and_boot_p2(None, None, fit_fn, t, event, diad, Xz, 0, fit["beta"][0], 2)
     ci_status = _profile_ci_and_boot_p2(None, None, fit_fn, t, event, diad, Xz, 1, fit["beta"][1], 2)
 
-    n_params = 2 + len(fit["beta"])  # k, lam0, theta + p kowariantow = 5 przy p=2
+    n_params = 3 + len(fit["beta"])  # k, lam0, theta + p kowariantow = 5 przy p=2
     n_events = int(event.sum())
 
     return dict(
@@ -130,7 +138,7 @@ def run_p2b():
     ci_dur = _profile_ci_and_boot_p2(None, None, fit_fn, t, event, diad, Xz, 0, fit["beta"][0], 2)
     ci_bd = _profile_ci_and_boot_p2(None, None, fit_fn, t, event, diad, Xz, 1, fit["beta"][1], 2)
 
-    n_params = 2 + len(fit["beta"])
+    n_params = 3 + len(fit["beta"])
     n_events = int(event.sum())
 
     return dict(
