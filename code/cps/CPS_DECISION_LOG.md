@@ -1623,3 +1623,174 @@ testowania własności estymatora na danych syntetycznych o znanej prawdzie. **N
 decyzyjnego wyniku Kroku C Testu 6** (D-027, p=0,068) — ten wynik pochodzi z `test6_null.py`
 (model N1), który używa realnej wartości `c` per diada trzymanej na stałe, nie symulowanej
 z arbitralnego rozkładu, więc nie ma tej usterki z konstrukcji.
+
+## D-032 · 2026-09-02 · Trzy decyzje autora: kolejność Etapu C, brak deklaracji szczytu, dopuszczalny dryf fazy
+
+*Wpis przekazany przez autora w całości, wklejony bez skrótów — dokument źródłowy
+`D032.md`.*
+
+### 1. Etap C Testu 7 odłożony do czasu modelu ze zmiennymi objaśniającymi
+
+Bieg P1 na obecnym zbiorze **nie jest uruchamiany teraz**. Powód zadeklarowany przed
+odłożeniem: przy 37 zdarzeniach i odchyleniu `k̂` około 0,138 przedział wykluczy jedynkę
+dopiero przy wartości poniżej 0,73 albo powyżej 1,27, a efekt zaobserwowany w Teście 6
+wynosił 0,778. Model ze zmiennymi objaśniającymi wyciąga z tej samej liczby zdarzeń więcej
+informacji.
+
+**To jest odłożenie, nie anulowanie.** P1 pozostaje wariantem orzekającym dla H9b.1 i
+zostanie policzony. Kolejność zmienia się tak, że najpierw powstaje warstwa danych dla P2.
+
+**Zapisane dla porządku:** decyzja zapada bez znajomości wyniku P1, który nie został
+policzony na danych rzeczywistych. Blokada `--run-real` pozostaje aktywna.
+
+### 2. Położenie szczytu hazardu — autor świadomie NIE deklaruje przedziału
+
+Do §4 protokołu 9c: **autor nie podaje przedziału dla położenia maksimum hazardu**,
+z uzasadnieniem, że wskazanie tej wartości jest zadaniem testu, a nie jego założeniem.
+
+**Konsekwencja, zapisana przed biegiem.** Test odpowiada wyłącznie na pytanie, **czy garb
+istnieje**, a nie na pytanie, czy wypada tam, gdzie przewiduje hipoteza. Jest to test
+**słabszy** od wersji z zadeklarowanym przedziałem:
+
+- wynik pozytywny stwierdzi tylko tyle, że hazard nie jest monotoniczny;
+- **nie potwierdzi żadnej konkretnej długości cyklu**;
+- położenie szczytu, które z niego wyjdzie, jest wielkością **oszacowaną, nie potwierdzoną**,
+  i nie wolno jej później przedstawiać jako przewidzianej.
+
+Stanowisko autora jest spójne z D-005, które ustaliło, że okres 35,1 roku jest produktem
+łańcucha przetwarzania, a nie wielkością mierzoną. Autor nie ma zatem liczby, do której
+mógłby się zobowiązać, i deklarowanie jej wyłącznie po to, żeby wzmocnić test, byłoby
+zobowiązaniem pozornym.
+
+**Zakaz wynikający z tej decyzji.** Jeżeli test wskaże szczyt w okolicy jakiejkolwiek liczby
+bliskiej wcześniejszym hipotezom, **nie wolno tego przedstawiać jako potwierdzenia**.
+Zbieżność liczby nieprzewidzianej z liczbą wcześniej wymienianą nie jest predykcją.
+To zdanie ma stać w raporcie niezależnie od wyniku.
+
+### 3. Dopuszczalny dryf fazy: 5–7 lat (D-009 zamknięte)
+
+Autor deklaruje dopuszczalny dryf fazy na **5 do 7 lat**. Zamyka to pytanie otwarte od
+D-009.
+
+**Operacjonalizacja, konieczna, bo sama liczba nie jest jeszcze regułą.** Przyjmuję
+i wprowadzam do protokołu 9c oraz do wznowionego wariantu D-009:
+
+> Dryf mierzy się jako **różnicę położenia maksimum hazardu między epokami** wyznaczonymi
+> podziałem na okres przed 1914 i po 1914 (ten sam podział co S5 Testu 6). Zjawisko uznaje
+> się za **to samo zjawisko przesunięte**, a nie za dwa różne, jeżeli różnica położeń nie
+> przekracza zadeklarowanego progu.
+
+**Wariant pierwszorzędny: 7 lat. Wariant wrażliwości: 5 lat.**
+
+Wybór szerszej wartości jako pierwszorzędnej jest celowy i wymaga wyjaśnienia, bo działa
+w obie strony. Większa dopuszczalna tolerancja **ułatwia** uznanie zjawiska za wspólne, więc
+wynik negatywny przy siedmiu latach jest mocny, a wynik pozytywny słaby. Odwrotnie przy
+pięciu. Raport ma podać obie wartości obok siebie i ta asymetria ma być w nim nazwana.
+
+**Zastrzeżenie o mocy.** Przy 37 zdarzeniach w Teście 7 i 45 w Teście 6 podział na dwie
+epoki zostawia po około dwadzieścia zdarzeń na epokę. Oszacowanie położenia szczytu w każdej
+z nich będzie miało przedział ufności prawdopodobnie szerszy niż sam próg siedmiu lat.
+**W takim wypadku test dryfu nie rozstrzygnie niczego** i ta możliwość ma zostać zapisana
+teraz, przed biegiem, a nie użyta później jako wyjaśnienie.
+
+### 4. Kolejność zmiennych objaśniających — odłożona świadomie
+
+Autor nie deklaruje jeszcze kolejności czterech zmiennych z §6 protokołu Testu 7. Decyzja
+odłożona do czasu, gdy powstanie warstwa danych.
+
+**Warunek wiążący:** kolejność musi zostać zadeklarowana **przed pierwszym dopasowaniem
+modelu ze zmiennymi**, nie po. Do tego czasu Code buduje wyłącznie warstwę danych i nie
+uruchamia żadnej estymacji z udziałem zmiennych objaśniających.
+
+### 5. Skutek dla harmonogramu
+
+1. Pobranie i weryfikacja NMC, budowa czterech zmiennych → **STOP**
+2. Deklaracja kolejności zmiennych przez autora → zamrożenie
+3. Symulacja mocy dla protokołu 9c (§7 szkicu) → **STOP**, decyzja o uruchomieniu 9c
+4. Etap C Testu 7 z P2, potem P1
+
+## D-033 · 2026-09-02 · NMC pobrane i zweryfikowane; warstwa danych P2 zbudowana dla 3 z 4 zmiennych — status mocarstwowy zablokowany brakiem `majors2016.csv`
+
+**Kontekst.** Wykonanie kroku 1 harmonogramu D-032 §5: pobranie COW NMC, weryfikacja, budowa
+warstwy danych dla czterech zmiennych §6 protokołu. Żadna estymacja nie uruchomiona.
+
+### NMC — pobrane i zweryfikowane
+
+Sklonowane `svmiller/peacesciencer` z tym samym commitem co `tss_rivalries.rda`
+(`fe150a2648056fbd4fbbbd833f0c9e437b2ed04b`), plik `data/cow_nmc.rda` skopiowany do repo
+(`code/cps/data/rivalries/cow_nmc.rda`). Zweryfikowane bezpośrednio: suma kontrolna
+`c265ab4ffa73c87ddc565ce08a12963e8a6aa5020a56e3658108add14b24e82d` (zgadza się z podaną
+`c265ab4f...`), 17121 wierszy, kolumny `ccode, year, milex, milper, irst, pec, tpop, upop,
+cinc` (zgadza się), zakres lat 1816–2022 (zgadza się), zero braków w `cinc` w całym zbiorze
+i w szczególności w oknie Testu 7 (1816–2007).
+
+### Wersja — sprawdzona, NIEZGODNA z §12 protokołu, ujawniona zgodnie z instrukcją
+
+Dokumentacja źródłowa (`data-raw/cow_nmc.R`, `man/cow_nmc.Rd` w klonie peacesciencer)
+potwierdza wprost: *„These are version 7.0 of the Correlates of War National Military
+Capabilities data."* `TEST7_PROTOCOL.md` §12 wymienia `NMC_v6.0`. **To jest niezgodność
+wersji, nie podmieniona po cichu:**
+
+- **Konsekwencja dla okna do 2007, nieznana co do wielkości.** v6.0 i v7.0 mogą się różnić
+  nie tylko zasięgiem lat (2016 vs 2022), ale też rewizjami wartości historycznych CINC
+  wewnątrz okna 1816–2007 — dokumentacja NMC ostrzega wprost o niespójnościach nawet
+  wewnątrz jednej wersji (np. suma CINC ≠ 1 w większości lat). Brak dostępu do v6.0 do
+  bezpośredniego porównania w tym kroku.
+- **Rozstrzygnięcie operacyjne (Code, nie autor):** użyto v7.0, bo to jedyna wersja
+  dostępna przez wskazany kanał (D-032, svmiller/peacesciencer, ten sam commit co
+  rywalizacje) — jawnie oznaczone w metadanych wyjściowego pliku
+  (`test7_p2_variables.csv`, klucz `nmc_wersja`), nie milcząco przyjęte. Kompletność
+  (brak braków w oknie) nie jest problemem niezależnie od wersji.
+- **Do potwierdzenia przez autora** przed jakąkolwiek estymacją z udziałem CINC: czy v7.0
+  jest akceptowalna, czy potrzebne jest dotarcie do v6.0 konkretnie.
+
+### Status mocarstwowy — NIEZBUDOWANY, `majors2016.csv` brak w repo
+
+`TEST7_PROTOCOL.md` §12 twierdzi „w repo" dla `majors2016.csv` (razem z `system2016.csv`) —
+sprawdzone bezpośrednio: plik **nie istnieje** nigdzie w repozytorium, `system2016.csv` nie
+ma kolumny oznaczającej mocarstwo. Zmienna „status mocarstwowy" (0/1/2 mocarstwa w diadzie)
+**nie została zbudowana** — brakuje jej wprost w wyjściu (`test7_p2_variables.csv` nie ma tej
+kolumny), nie zastąpiona substytutem. Trzy pozostałe zmienne (czas trwania, straty, CINC)
+zbudowane w całości.
+
+### Warstwa danych P2 — liczby (D-028)
+
+`test7_build_p2_variables.py`, wyjście `test7_p2_variables.csv`:
+
+| | liczba |
+|---|---|
+| wiersze modelu głównego (t0, ucieta wyłączone) | 132 |
+| z tego kandydujące do P2 (`pelny`+`cenzurowany`, wyłączone `cenzurowany_bez_epizodow`) | 77 |
+| P2 z dopasowanym poprzednim epizodem | **77 (100%)** |
+| P2 bez dopasowania | 0 |
+| diady ze 101 mające ≥1 wiersz P2 | **46** |
+
+**Pokrycie per zmienna (spośród 101 diad modelu głównego, pełne pokrycie = wszystkie
+wiersze P2 tej diady mają wartość, nie tylko część):**
+
+| zmienna | diady w pełni pokryte |
+|---|---|
+| czas trwania poprzedniego epizodu | 46 / 101 |
+| straty (BatDeath, suma diady, log) | 46 / 101 |
+| CINC (suma + stosunek, rok końca epizodu) | 46 / 101 |
+| status mocarstwowy | **0 / 101 — zablokowane** |
+
+Pokrycie identyczne (46/46) dla trzech zbudowanych zmiennych — zero braków wewnątrz
+populacji P2-kwalifikującej się (77 wierszy, wszystkie trzy zmienne policzalne dla każdego).
+Górne ograniczenie pokrycia to sama definicja P2 (§6 protokołu wyklucza `t0` i diady bez
+epizodów z definicji) — 46/101 to nie usterka, to rozmiar populacji, dla której H9b.2 jest
+w ogóle zdefiniowana.
+
+### Zakres roku dla CINC — decyzja techniczna, do potwierdzenia
+
+Protokół §6 nie podaje explicite roku odniesienia dla CINC (w przeciwieństwie do statusu
+mocarstwowego, „w roku końca epizodu"). Przyjęto konsekwentnie **rok końca poprzedniego
+epizodu**, tę samą regułę co dla statusu mocarstwowego — wybór implementatora, nie
+rozstrzygnięcie protokołu, do potwierdzenia przy deklaracji kolejności zmiennych (D-032 §4).
+
+### STOP
+
+Żadna estymacja z udziałem tych zmiennych nie uruchomiona, zgodnie z D-032 §4. Czeka na:
+(a) potwierdzenie akceptowalności NMC v7.0, (b) dostarczenie lub rezygnację z
+`majors2016.csv`, (c) deklarację kolejności wprowadzania zmiennych przez autora — dopiero
+wtedy pierwsze dopasowanie modelu ze zmiennymi.
