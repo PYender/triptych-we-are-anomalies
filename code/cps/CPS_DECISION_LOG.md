@@ -1941,3 +1941,68 @@ zapis wyniku po każdym kroku) przyjęta do wykonania, gdy padnie osobna autoryz
 blokada `--run-real` pozostaje aktywna, zgodnie z D-034 §4. S1 (wykluczenie epizodów
 1914–18/1939–45, wymaga przebudowy sekwencji zdarzeń) nadal niezbudowane — zgłoszone już w
 `test7_estimate.md` §5, poza zakresem tego wpisu.
+
+## D-036 · 2026-09-02 · S1 zbudowany (reguła okna, D-035); sprostowanie do pytania o Bahrajn
+
+**Kontekst.** Wykonanie zleceń z wiadomości po potwierdzeniu D-035: budowa S1 wg reguły
+okna, oraz dosprawdzenie maksimum różnicy `cinc` v6/v7 ograniczonego do kodów państw
+Testu 7. Żadna estymacja nie uruchomiona.
+
+### S1 — mechanizm
+
+`test7_build_s1.py`: lata epizodu przecinającego 1914–1918 albo 1939–1945 (przecięcie, nie
+zawieranie) wycięte z `periods` diady — dokładnie ten sam mechanizm co istniejąca przerwa
+między okresami rywalizacji (Chiny–Japonia), bez żadnej zmiany w `classify_events`/
+`diad_rows`/`exposure_multi` (reużyte z `test7_build_windows.py` bez modyfikacji, nakarmione
+już przyciętymi `periods`/`episodes`). Odstęp przed wykluczonym epizodem domyka się jako
+cenzurowany na roku jego startu; po roku jego końca otwiera się nowy odcinek okna.
+
+**Test spójności (obowiązkowy, wykonany):** 92 diady bez żadnego epizodu przecinającego
+wojny światowe dają w S1 wiersze **identyczne co do wartości** z P1 — potwierdzone
+bezpośrednim porównaniem (`test_spojnosci_diady_niedotkniete_identyczne_z_P1: true`).
+
+### Liczby przed biegiem (zadanie z wiadomości)
+
+- **Epizody wypadłe: 34**, dotykające **28 diad**.
+- **1 diada (France–Thailand) traci całe okno** — jedyny epizod (Franco-Thai, 1940–41) był
+  jednocześnie jedynym źródłem okna ryzyka tej pary; po wykluczeniu okno puste, diada
+  wypada z S1 w całości. W P1 ta diada i tak nie wnosiła nic do modelu głównego (jedyny
+  wiersz to `t0` o zerowej rozpiętości — Skutek A natychmiastowy), więc nie ubywa żaden
+  wiersz modelu głównego P1.
+- **8 diad zyskuje wiersz modelu głównego, którego nie miały w P1** (Austria-Hungary–
+  Yugoslavia, France–Italy, Germany–Poland, Hungary–Yugoslavia, Italy–Ethiopia, United
+  Kingdom–Germany, United Kingdom–Japan, United States of America–Japan) — mechanizm:
+  w P1 ich JEDYNY epizod kwalifikujący był epizodem wojny światowej ze Skutkiem A (D-021),
+  więc wnosiły zero wierszy do modelu głównego; w S1 ten epizod przestaje kwalifikować,
+  więc diada staje się `cenzurowany_bez_epizodow` na całym oknie. Żadna diada nie traci
+  wiersza, który miała w P1 (zbiór P1∖S1 na poziomie diad modelu głównego jest pusty).
+
+| | P1 (model główny) | S1 (model główny) |
+|---|---|---|
+| wiersze | 132 | 131 |
+| pełne (zdarzenia) | 37 | **23** |
+| cenzurowane | 95 | **108** |
+| diady | 101 | 109 |
+
+**Kierunek zgodny z oczekiwaniem D-035 §3** („spadek liczby zdarzeń i wzrost cenzurowania,
+czyli mniejsza moc niż P1") — sprawdzone programowo (`kierunek_zgodny_z_D035_SS3: true`),
+nie tylko opisowo. Spadek zdarzeń jest istotny (37→23, −38%), zgodnie z przewidywaniem.
+
+### NMC v6/v7 — sprostowanie, nie nowy pomiar
+
+Poprzednio podane maksimum różnicy względnej (≈10,2%, ccode 692) **już było** ograniczone
+do kodów państw ze stu jeden diad Testu 7 (zbiór `ccode_a`/`ccode_b` modelu głównego,
+zweryfikowany jako dokładnie 101 unikalnych kodów). **Ccode 692 to Bahrajn, i JEST w tej
+populacji** — diada `BAH–Qatar` (ccode 692/694) jest jedną ze stu jeden diad modelu
+głównego, zweryfikowane bezpośrednio. Przypuszczenie, że Bahrajn „najpewniej" nie występuje
+w tej populacji, jest błędne — sprawdzone, nie założone. Liczba się nie zmienia: **mediana
+różnicy względnej = 0,0, maksimum ≈ 10,2% (Bahrajn–Katar, ccode 692, lata 2001–2006)**,
+216 z 8732 dopasowanych par ccode-rok (2,5%) powyżej 1% różnicy.
+
+### STOP
+
+Żadna estymacja nie uruchomiona. Wraz z S1, S3 (już gotowe od Etapu B, `test7_estimate.py`
+`load_grouped(include_t0=True)`) i P2a/P2b (D-035), komplet zbiorów wymaganych przez
+regułę decyzyjną §8 protokołu jest na miejscu. Kolejność uruchomień (D-034 §4): P1, P2a,
+P2b, S1, S3, każdy z zapisem wyniku przed kolejnym krokiem. Blokada `--run-real` pozostaje
+do osobnej, jawnej autoryzacji Etapu C przez autora.

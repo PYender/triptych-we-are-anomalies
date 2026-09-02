@@ -1,0 +1,194 @@
+# {"builder": "test7_build_s1.py v1.0 (D-035)", "epizody_wypadle_n": 34, "diady_dotkniete_n": 28, "diady_dotkniete": ["Austria-Hungary–Italy", "Austria-Hungary–USSR", "Austria-Hungary–Yugoslavia", "Bulgaria–Romania", "China–Japan", "France–Austria-Hungary", "France–China", "France–Germany", "France–Italy", "France–Thailand", "Germany–China", "Germany–Poland", "Germany–USSR", "Greece–Bulgaria", "Greece–Turkey", "Hungary–Romania", "Hungary–Yugoslavia", "Italy–Ethiopia", "Italy–Turkey", "Italy–Yugoslavia", "USSR–Japan", "USSR–Turkey", "United Kingdom–France", "United Kingdom–Germany", "United Kingdom–Japan", "United States of America–Japan", "Yugoslavia–Bulgaria", "Yugoslavia–Turkey"], "epizody_wypadle": [{"diada": "United States of America–Japan", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "United Kingdom–France", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "United Kingdom–Germany", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "United Kingdom–Germany", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "United Kingdom–Japan", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "France–Germany", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "France–Germany", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "France–Austria-Hungary", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "France–Italy", "start": 1939, "end": 1945, "nazwa": "World War II; World War II"}, {"diada": "France–China", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "France–Thailand", "start": 1940, "end": 1941, "nazwa": "Franco-Thai"}, {"diada": "Germany–Poland", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Germany–USSR", "start": 1914, "end": 1920, "nazwa": "World War I; Latvian Liberation"}, {"diada": "Germany–USSR", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Germany–China", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Austria-Hungary–Italy", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Austria-Hungary–Yugoslavia", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Austria-Hungary–USSR", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Hungary–Yugoslavia", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Hungary–Romania", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Italy–Yugoslavia", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Italy–Ethiopia", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Italy–Turkey", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Yugoslavia–Bulgaria", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Yugoslavia–Bulgaria", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Yugoslavia–Turkey", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Greece–Bulgaria", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Greece–Bulgaria", "start": 1939, "end": 1945, "nazwa": "World War II"}, {"diada": "Greece–Turkey", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Bulgaria–Romania", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "Bulgaria–Romania", "start": 1939, "end": 1945, "nazwa": "World War II; World War II"}, {"diada": "USSR–Turkey", "start": 1914, "end": 1918, "nazwa": "World War I"}, {"diada": "USSR–Japan", "start": 1939, "end": 1945, "nazwa": "Nomonhan; World War II"}, {"diada": "China–Japan", "start": 1937, "end": 1945, "nazwa": "Third Sino-Japanese; World War II"}], "diady_okno_calkowicie_pochloniete_przez_wojne": ["France–Thailand"], "test_spojnosci_diady_niedotkniete_identyczne_z_P1": true, "n_diady_niedotkniete_porownane": 92, "P1_model_glowny": {"wiersze": 132, "pelne": 37, "cenzurowane": 95, "diady": 101}, "S1_model_glowny": {"wiersze": 131, "pelne": 23, "cenzurowane": 108, "diady": 109}, "kierunek_zgodny_z_D035_SS3": true}
+diada,ccode_a,ccode_b,typ,rok_start,rok_koniec,ekspozycja,cenzurowany,t0_flag,ucieta
+United States of America–Mexico,2,70,t0,1831,1846,15,0,1,0
+United States of America–Mexico,2,70,cenzurowany,1847,1848,1,1,0,0
+United States of America–United Kingdom,2,200,cenzurowany_bez_epizodow,1816,1904,88,1,0,0
+United States of America–Spain,2,230,cenzurowany_bez_epizodow,1816,1819,3,1,0,0
+United States of America–Japan,2,740,cenzurowany_bez_epizodow,1898,1939,41,1,0,0
+HAI–DOM,41,42,cenzurowany_bez_epizodow,1894,1993,81,1,0,0
+Mexico–Guatemala,70,90,cenzurowany_bez_epizodow,1868,1882,14,1,0,0
+BLZ–Guatemala,80,90,cenzurowany_bez_epizodow,1981,1993,12,1,0,0
+Guatemala–Honduras,90,91,t0,1899,1906,7,0,1,0
+Guatemala–Honduras,90,91,cenzurowany,1906,1930,24,1,0,0
+Honduras–El Salvador,91,92,t0,1899,1969,70,0,1,0
+Honduras–El Salvador,91,92,cenzurowany,1969,1992,23,1,0,0
+Honduras–Nicaragua,91,93,t0,1900,1907,7,0,1,0
+Honduras–Nicaragua,91,93,cenzurowany,1907,1961,54,1,0,0
+Nicaragua–Colombia,93,100,cenzurowany_bez_epizodow,1979,1990,11,1,0,0
+COS–PAN,94,95,cenzurowany_bez_epizodow,1921,1941,20,1,0,0
+Colombia–VEN,100,101,cenzurowany_bez_epizodow,1841,2007,166,1,0,0
+Colombia–Ecuador,100,130,t0,1854,1863,9,0,1,0
+Colombia–Ecuador,100,130,cenzurowany,1863,1919,56,1,0,0
+Colombia–Peru,100,135,cenzurowany_bez_epizodow,1839,1935,96,1,0,0
+VEN–GUY,101,110,cenzurowany_bez_epizodow,1966,2007,41,1,0,0
+Ecuador–Peru,130,135,t0,1854,1995,141,0,1,0
+Ecuador–Peru,130,135,cenzurowany,1995,1998,3,1,0,0
+Peru–Bolivia,135,145,cenzurowany_bez_epizodow,1848,1932,84,1,0,0
+Peru–Chile,135,155,t0,1839,1879,40,0,1,0
+Peru–Chile,135,155,cenzurowany,1883,1929,46,1,0,0
+Brazil–Paraguay,140,150,t0,1860,1864,4,0,1,0
+Brazil–Argentina,140,160,t0,1841,1851,10,0,1,0
+Brazil–Argentina,140,160,cenzurowany,1852,1985,133,1,0,0
+Bolivia–Paraguay,145,150,t0,1887,1932,45,0,1,0
+Bolivia–Paraguay,145,150,cenzurowany,1935,1938,3,1,0,0
+Bolivia–Chile,145,155,t0,1848,1879,31,0,1,0
+Bolivia–Chile,145,155,cenzurowany,1883,2007,124,1,0,0
+Paraguay–Argentina,150,160,t0,1862,1864,2,0,1,0
+Chile–Argentina,155,160,cenzurowany_bez_epizodow,1843,1991,148,1,0,0
+Argentina–United Kingdom,160,200,t0,1965,1982,17,0,1,0
+Argentina–United Kingdom,160,200,cenzurowany,1982,2007,25,1,0,0
+United Kingdom–France,200,220,cenzurowany_bez_epizodow,1816,1904,88,1,0,1
+United Kingdom–Germany,200,255,cenzurowany_bez_epizodow,1896,1914,18,1,0,0
+United Kingdom–USSR,200,365,t0,1816,1853,37,0,1,1
+United Kingdom–USSR,200,365,cenzurowany,1856,1956,100,1,0,1
+United Kingdom–China,200,710,t0,1860,1900,40,0,1,0
+United Kingdom–Japan,200,740,cenzurowany_bez_epizodow,1932,1939,7,1,0,0
+Netherlands–INS,210,850,cenzurowany_bez_epizodow,1951,1962,11,1,0,0
+France–Germany,220,255,t0,1816,1870,54,0,1,1
+France–Germany,220,255,cenzurowany,1871,1955,66,1,0,1
+France–Austria-Hungary,220,300,t0,1816,1859,43,0,1,1
+France–Austria-Hungary,220,300,cenzurowany,1859,1914,55,1,0,1
+France–Italy,220,325,cenzurowany_bez_epizodow,1881,1939,58,1,0,0
+France–China,220,710,t0,1860,1884,24,0,1,0
+France–China,220,710,pelny,1885,1900,15,0,0,0
+Spain–Morocco,230,600,t0,1956,1957,1,0,1,0
+Spain–Morocco,230,600,cenzurowany,1958,1991,33,1,0,0
+Germany–Poland,255,290,cenzurowany_bez_epizodow,1918,1939,21,1,0,0
+Germany–Czechoslovakia,255,315,cenzurowany_bez_epizodow,1933,1938,5,1,0,0
+Germany–USSR,255,365,cenzurowany_bez_epizodow,1890,1939,44,1,0,0
+Germany–China,255,710,cenzurowany_bez_epizodow,1897,1900,3,1,0,0
+GFR–GDR,260,265,cenzurowany_bez_epizodow,1955,1973,18,1,0,0
+Poland–Czechoslovakia,290,315,cenzurowany_bez_epizodow,1920,1938,18,1,0,0
+Poland–USSR,290,365,t0,1918,1919,1,0,1,0
+Poland–USSR,290,365,cenzurowany,1920,1939,19,1,0,0
+Poland–Lithuania,290,368,t0,1919,1920,1,0,1,0
+Poland–Lithuania,290,368,cenzurowany,1920,1939,19,1,0,0
+Austria-Hungary–Italy,300,325,t0,1847,1848,1,0,1,0
+Austria-Hungary–Italy,300,325,pelny,1849,1859,10,0,0,0
+Austria-Hungary–Italy,300,325,pelny,1859,1866,7,0,0,0
+Austria-Hungary–Italy,300,325,cenzurowany,1866,1914,48,1,0,0
+Austria-Hungary–Yugoslavia,300,345,cenzurowany_bez_epizodow,1903,1914,11,1,0,0
+Austria-Hungary–USSR,300,365,cenzurowany_bez_epizodow,1816,1914,98,1,0,1
+Hungary–Czechoslovakia,310,315,cenzurowany_bez_epizodow,1920,1938,18,1,0,0
+Hungary–Yugoslavia,310,345,cenzurowany_bez_epizodow,1918,1939,21,1,0,0
+Hungary–Romania,310,360,t0,1918,1919,1,0,1,0
+Hungary–Romania,310,360,cenzurowany,1919,1948,24,1,0,0
+Italy–Yugoslavia,325,345,cenzurowany_bez_epizodow,1918,1954,31,1,0,0
+Italy–Ethiopia,325,530,t0,1898,1935,37,0,1,0
+Italy–Ethiopia,325,530,cenzurowany,1936,1939,0,1,0,0
+Italy–Turkey,325,640,t0,1884,1911,27,0,1,0
+Italy–Turkey,325,640,cenzurowany,1912,1943,28,1,0,0
+Croatia–Yugoslavia,344,345,t0,1992,1992,0,0,1,0
+Croatia–Yugoslavia,344,345,cenzurowany,1992,2002,10,1,0,0
+Croatia–Bosnia,344,346,cenzurowany_bez_epizodow,1992,2007,15,1,0,0
+Yugoslavia–Bosnia,345,346,t0,1992,1992,0,0,1,0
+Yugoslavia–Bosnia,345,346,cenzurowany,1992,2007,15,1,0,0
+Yugoslavia–Greece,345,350,cenzurowany_bez_epizodow,1879,1953,72,1,0,0
+Yugoslavia–Bulgaria,345,355,t0,1908,1913,5,0,1,0
+Yugoslavia–Bulgaria,345,355,cenzurowany,1913,1955,34,1,0,0
+Yugoslavia–Turkey,345,640,t0,1878,1912,34,0,1,0
+Yugoslavia–Turkey,345,640,cenzurowany,1913,1914,1,1,0,0
+Greece–Bulgaria,350,355,t0,1908,1913,5,0,1,0
+Greece–Bulgaria,350,355,cenzurowany,1913,1947,26,1,0,0
+Greece–Turkey,350,640,t0,1828,1897,69,0,1,0
+Greece–Turkey,350,640,pelny,1897,1912,15,0,0,0
+Greece–Turkey,350,640,pelny,1913,1919,3,0,0,0
+Greece–Turkey,350,640,cenzurowany,1922,2007,61,1,0,0
+Bulgaria–Romania,355,360,t0,1908,1913,5,0,1,0
+Bulgaria–Romania,355,360,cenzurowany,1913,1939,23,1,0,0
+Bulgaria–Turkey,355,640,t0,1908,1912,4,0,1,0
+Bulgaria–Turkey,355,640,cenzurowany,1913,1950,37,1,0,0
+USSR–Turkey,365,640,t0,1816,1828,12,0,1,1
+USSR–Turkey,365,640,pelny,1829,1853,24,0,0,1
+USSR–Turkey,365,640,pelny,1856,1877,21,0,0,1
+USSR–Turkey,365,640,cenzurowany,1878,1914,36,1,0,1
+USSR–China,365,710,t0,1860,1900,40,0,1,0
+USSR–China,365,710,pelny,1900,1929,29,0,0,0
+USSR–China,365,710,cenzurowany,1929,1989,52,1,0,0
+USSR–Japan,365,740,t0,1894,1904,10,0,1,0
+USSR–Japan,365,740,pelny,1905,1938,33,0,0,0
+USSR–Japan,365,740,cenzurowany,1938,1939,1,1,0,0
+Armenia–Azerbaijan,371,373,t0,1991,1993,2,0,1,0
+Armenia–Azerbaijan,371,373,cenzurowany,1994,2007,13,1,0,0
+MLI–BFO,432,439,cenzurowany_bez_epizodow,1960,1986,26,1,0,0
+SEN–MAA,433,435,cenzurowany_bez_epizodow,1989,1995,6,1,0,0
+SEN–GUI,433,438,cenzurowany_bez_epizodow,1989,1993,4,1,0,0
+MAA–Morocco,435,600,cenzurowany_bez_epizodow,1960,1969,9,1,0,0
+CDI–GHA,437,452,cenzurowany_bez_epizodow,1960,1970,10,1,0,0
+GUI–GAB,438,481,cenzurowany_bez_epizodow,1972,2007,35,1,0,0
+GHA–TOG,452,461,cenzurowany_bez_epizodow,1960,1995,35,1,0,0
+CAO–NIG,471,475,cenzurowany_bez_epizodow,1975,2007,32,1,0,0
+Chad–Libya,483,620,t0,1966,1986,20,0,1,0
+Chad–Libya,483,620,cenzurowany,1987,1994,7,1,0,0
+Democratic Republic of the Congo–RWA,490,517,cenzurowany_bez_epizodow,1996,2007,11,1,0,0
+Uganda–Tanzania,500,510,t0,1971,1978,7,0,1,0
+KEN–Somalia,501,520,cenzurowany_bez_epizodow,1963,1981,18,1,0,0
+KEN–SUD,501,625,cenzurowany_bez_epizodow,1989,1994,5,1,0,0
+Somalia–Ethiopia,520,530,t0,1960,1977,17,0,1,0
+Somalia–Ethiopia,520,530,cenzurowany,1978,1991,13,1,0,0
+DJI–Eritrea,522,531,cenzurowany_bez_epizodow,1996,2007,11,1,0,0
+Ethiopia–Eritrea,530,531,t0,1998,1998,0,0,1,0
+Ethiopia–Eritrea,530,531,cenzurowany,2000,2007,7,1,0,0
+Ethiopia–SUD,530,625,cenzurowany_bez_epizodow,1965,2007,42,1,0,0
+ZAM–MAW,551,553,cenzurowany_bez_epizodow,1964,1986,22,1,0,0
+MAW–TUN,553,616,cenzurowany_bez_epizodow,1964,1994,30,1,0,0
+Morocco–ALG,600,615,cenzurowany_bez_epizodow,1962,2007,45,1,0,0
+SUD–Egypt,625,651,cenzurowany_bez_epizodow,1991,2007,16,1,0,0
+Iran–Turkey,630,640,cenzurowany_bez_epizodow,1855,1932,77,1,0,0
+Iran–Iraq,630,645,t0,1932,1980,30,0,1,0
+Iran–Iraq,630,645,cenzurowany,1988,2003,15,1,0,0
+Iran–United Arab Emirates,630,696,cenzurowany_bez_epizodow,1971,2007,36,1,0,0
+Iran–Afghanistan,630,700,cenzurowany_bez_epizodow,1919,2001,24,1,0,0
+Turkey–Syria,640,652,cenzurowany_bez_epizodow,1946,2004,56,1,0,0
+Iraq–Saudi Arabia,645,670,cenzurowany_bez_epizodow,1932,1957,25,1,0,0
+Iraq–Kuwait,645,690,t0,1961,1990,29,0,1,0
+Iraq–Kuwait,645,690,cenzurowany,1991,2007,16,1,0,0
+Egypt–Israel,651,666,t0,1948,1948,0,0,1,0
+Egypt–Israel,651,666,pelny,1949,1956,7,0,0,0
+Egypt–Israel,651,666,pelny,1956,1967,11,0,0,0
+Egypt–Israel,651,666,pelny,1967,1969,2,0,0,0
+Egypt–Israel,651,666,pelny,1970,1973,3,0,0,0
+Egypt–Israel,651,666,cenzurowany,1973,2007,34,1,0,0
+Syria–Jordan,652,663,cenzurowany_bez_epizodow,1946,2007,59,1,0,0
+Syria–Israel,652,666,t0,1948,1948,0,0,1,0
+Syria–Israel,652,666,pelny,1949,1967,16,0,0,0
+Syria–Israel,652,666,pelny,1967,1973,6,0,0,0
+Syria–Israel,652,666,pelny,1973,1982,9,0,0,0
+Syria–Israel,652,666,cenzurowany,1982,2007,25,1,0,0
+Jordan–Israel,663,666,t0,1948,1948,0,0,1,0
+Jordan–Israel,663,666,pelny,1949,1967,18,0,0,0
+Jordan–Israel,663,666,pelny,1967,1973,6,0,0,0
+Jordan–Israel,663,666,cenzurowany,1973,1994,21,1,0,0
+Jordan–Saudi Arabia,663,670,cenzurowany_bez_epizodow,1946,1958,12,1,0,0
+Saudi Arabia–YEM,670,679,cenzurowany_bez_epizodow,1990,2000,10,1,0,0
+Yemen Arab Republic–YPR,678,680,cenzurowany_bez_epizodow,1967,1990,23,1,0,0
+BAH–Qatar,692,694,cenzurowany_bez_epizodow,1986,2001,15,1,0,0
+Afghanistan–Pakistan,700,770,cenzurowany_bez_epizodow,1947,2007,60,1,0,0
+KYR–UZB,703,704,cenzurowany_bez_epizodow,2005,2007,2,1,0,0
+UZB–KZK,704,705,cenzurowany_bez_epizodow,1991,2007,16,1,0,0
+China–Taiwan (ROC),710,713,t0,1949,1954,5,0,1,0
+China–Taiwan (ROC),710,713,pelny,1955,1958,3,0,0,0
+China–Taiwan (ROC),710,713,cenzurowany,1958,2007,49,1,0,0
+China–Japan,710,740,t0,1873,1894,21,0,1,0
+China–Japan,710,740,pelny,1895,1900,5,0,0,0
+China–Japan,710,740,pelny,1900,1931,31,0,0,0
+China–Japan,710,740,cenzurowany,1933,2007,16,1,0,0
+China–India,710,750,t0,1948,1962,14,0,1,0
+China–India,710,750,cenzurowany,1962,2007,45,1,0,0
+China–Vietnam,710,816,t0,1973,1979,6,0,1,0
+China–Vietnam,710,816,pelny,1979,1987,8,0,0,0
+China–Vietnam,710,816,cenzurowany,1987,1991,4,1,0,0
+India–Pakistan,750,770,t0,1947,1947,0,0,1,0
+India–Pakistan,750,770,pelny,1949,1965,16,0,0,0
+India–Pakistan,750,770,pelny,1965,1971,6,0,0,0
+India–Pakistan,750,770,pelny,1971,1999,28,0,0,0
+India–Pakistan,750,770,cenzurowany,1999,2007,8,1,0,0
+Thailand–Cambodia,800,811,cenzurowany_bez_epizodow,2006,2007,1,1,0,0
+Thailand–Laos,800,812,cenzurowany_bez_epizodow,1980,1988,8,1,0,0
+Cambodia–Vietnam,811,816,t0,1975,1977,2,0,1,0
+Cambodia–Vietnam,811,816,cenzurowany,1979,1983,4,1,0,0
+Cambodia–South Vietnam,811,817,cenzurowany_bez_epizodow,1956,1975,19,1,0,0
+Laos–Vietnam,812,816,t0,1954,1968,14,0,1,0
+Laos–Vietnam,812,816,cenzurowany,1973,1975,2,1,0,0
+MAL–SIN,820,830,cenzurowany_bez_epizodow,1965,2007,42,1,0,0
+MAL–INS,820,850,cenzurowany_bez_epizodow,1962,1966,4,1,0,0
