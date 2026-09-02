@@ -2221,3 +2221,52 @@ tą samą stroną konfliktu. Kryterium `WarNum` (ten sam numer wojny w COW) jest
 nie wymaga oceny merytorycznej co do tego, kto reprezentował państwo — dlatego decyzja D-040
 pozostaje bez zmian — ale zastrzeżenie ma zostać widoczne w rejestrze, żeby nie sądzić, że
 nie zostało zauważone.
+
+---
+
+## D-042 · 2026-09-02 · S7 Etap 2: trzy pomiary przed biegiem (TASK_S7.md §5)
+
+**1. Deklaracja mocy — POTWIERDZONA symulacją, nie przyjęta z szacunku autora.** Mechanizm
+`min(T,C)` (D-031, `test7_estimate.simulate_dataset_test7`, reużyty bez zmian — funkcja jest
+ogólna względem tego, co reprezentuje „grupa"), okna = realna suma `ekspozycja` per państwo
+(13 wartości, Σ=1619), `k_true=1,0`, `θ_true=0` (statystyka pierwszorzędna: pulowana, §6
+zadania), `λ_true=14,72` (kalibrowane na Σokien/n_zdarzeń = 1619/110). Sprawdzone: symulowana
+liczba zdarzeń zbiega do 110,3 (mediana 110,0) — kalibracja poprawna. **2000 replik:
+SD(k̂) = 0,0782.** Deklaracja autora (≈0,081) potwierdzona — różnica trzeciego miejsca po
+przecinku. Próg wykluczenia jedynki (przybliżenie normalne, ten sam wzór co P1 Testu 7,
+D-037: 1±1,96·SD): poniżej **0,847** albo powyżej **1,153** (autor: ≈0,84/≈1,16 — zgodne).
+
+**2. Odstępy krótkie — POLICZONE, NIE usuwane.**
+
+| zbiór | n pełnych | zerowe | jednoroczne | razem ≤1 rok |
+|---|---|---|---|---|
+| S7 (próg ≥6) | 110 | 0 (0,0%) | 9 (8,2%) | 9 (8,2%) |
+| Test 6 główny (próg ≥3, diady) | 45 | 0 (0,0%) | 7 (15,6%) | 7 (15,6%) |
+
+Zero odstępów zerowych w obu zbiorach — strukturalnie niemożliwe: scalanie D-013/D-039
+(gap≤0) wchłania każdy odstęp kalendarzowy ≤0 w epizod, więc odstęp między epizodami jest
+zawsze ≥1 rok z konstrukcji. Wynik dla kolumny `dlugosc_kalendarzowa` i `dlugosc_odstepu`
+(ekspozycja) identyczny w obu zbiorach — żaden z tych krótkich odstępów nie traci dodatkowo
+ekspozycji z powodu nieczłonkostwa w systemie. S7 ma NIŻSZY odsetek jednorocznych odstępów
+niż Test 6 główny (8,2% wobec 15,6%) — odwrotnie niż mogłoby sugerować samo przejście na
+częstsze, bardziej „skłócone" jednostki.
+
+**3. Sklejenie próby.**
+
+- Państw z epizodem obejmującym 1914–18: **9/13** (69%) — ccode 2, 200, 220, 255, 325, 350,
+  365, 640, 740.
+- Państw z epizodem obejmującym 1939–45: **9/13** (69%) — ccode 2, 200, 220, 255, 325, 350,
+  365, 710, 740.
+- Państw z KTÓRYMKOLWIEK z dwóch: **10/13 (77%)** — większość, zgodnie z oczekiwaniem autora.
+- Państw z OBOMA: **8/13 (62%)**.
+- Odstępów pełnych zaczynających się dokładnie od końca wojny światowej (1918 albo 1945):
+  **14/110 (12,7%)**.
+
+Sklejenie jest silne na poziomie PAŃSTW (77% miało epizod nakładający się na którąś wojnę
+światową) ale znacznie słabsze na poziomie ODSTĘPÓW (12,7%) — bo przeciętne państwo w
+zbiorze ma około ośmiu epizodów, a tylko jeden lub dwa graniczą z wojną światową. 110
+odstępów nie jest więc liczbą tak imponującą pod względem niezależności, jak sugerowałaby
+sama liczba epizodów, ale zależność koncentruje się w mniejszości obserwacji, nie w
+większości — obie liczby podane obok siebie, bez rozstrzygania która ma być brana pod uwagę.
+
+**STOP po tych trzech pomiarach, przed Etapem 3 (bieg), zgodnie z TASK_S7.md §7.**
