@@ -2176,3 +2176,48 @@ sumy (97 i 98) przy tej samej liczbie państw (12) — źródłem NIE były dupl
 w koniec tego samego wiersza (formuła `endyr` Testu 6 zastosowana per wiersz) — sprawdzone
 bezpośrednio, obie wersje trzymały duplikaty ccode+WarNum jako osobne wpisy identycznie.
 Diagnostyczne wyłącznie — `gap≤1` nie jest regułą obowiązującą (D-039).
+
+---
+
+## D-041 · 2026-09-02 · Uzupełnienie D-040 (trzy punkty + zastrzeżenie merytoryczne)
+
+**Wpisane na żądanie autora, po przyjęciu Etapu 1.** D-040 nie jest zmieniana ani usuwana
+(reguła dziennika, nagłówek pliku) — poniższe to DOPRECYZOWANIE dopisane jako część tego
+samego wątku decyzyjnego, z odwołaniem wprost do D-040.
+
+**1. Kolejność w czasie.** Reguła D-040 (uczestnictwa tej samej wojny scalają się
+niezależnie od odstępu) została zaproponowana przez autora PRZED policzeniem czegokolwiek
+na przebudowanym zbiorze S7 — we wiadomości, która jeszcze pytała o rozbieżność 97 wobec 98
+i zawierała podejrzenie (błędne, patrz wyżej) o duplikatach jako jej źródle. Liczby 13/110
+powstały PO przyjęciu reguły, nie odwrotnie.
+
+**2. Zakres skutku — SPROSTOWANIE własnego wcześniejszego stwierdzenia.** Wpis D-040 mówił
+„jedynym przypadkiem, gdzie D-040 realnie zmienia wynik, jest Francja" — **nieprecyzyjne**,
+sprawdzone teraz na wszystkich 98 państwach, nie tylko na 5 przypadkach duplikatu
+(ccode,WarNum) zgłoszonych przez autora. D-040 zmienia liczbę epizodów dla **siedmiu**
+państw, każde traci DOKŁADNIE JEDEN epizod:
+
+| państwo | epizodów bez D-040 | epizodów z D-040 | próg ≥6 | próg ≥3 |
+|---|---|---|---|---|
+| Francja | 18 | 17 | bez zmian (w zbiorze) | bez zmian (w zbiorze) |
+| Włochy | 12 | 11 | bez zmian (w zbiorze) | bez zmian (w zbiorze) |
+| Niemcy | 8 | 7 | bez zmian (w zbiorze) | bez zmian (w zbiorze) |
+| Austro-Węgry | 6 | 5 | **wypada** (6→5) | bez zmian (w zbiorze) |
+| Jugosławia | 6 | 5 | **wypada** (6→5) | bez zmian (w zbiorze) |
+| Bułgaria | 4 | 3 | poza zbiorem oba razy | bez zmian (w zbiorze) |
+| Dania | 3 | 2 | poza zbiorem oba razy | **wypada** (3→2) |
+
+**3. Kierunek skutku.** We wszystkich siedmiu przypadkach D-040 DZIAŁA PRZECIW liczbie
+zdarzeń — nigdzie nie zwiększa liczby epizodów ani nie wprowadza nowego państwa do zbioru
+przy żadnym progu. Rozbicie różnicy 123→110 (próg ≥6): −3 z redukcji epizodów w państwach,
+które zostają w zbiorze (Francja, Włochy, Niemcy, po jednym odstępie pełnym każde), −10 z
+całkowitego wypadnięcia dwóch państw (Austro-Węgry i Jugosławia, po pięć odstępów pełnych
+każde) = −13, dokładnie 123−110. Reguła nie została więc dobrana pod wynik — działa w
+kierunku ZMNIEJSZAJĄCYM moc testu, nie zwiększającym.
+
+**4. Zastrzeżenie merytoryczne autora (zapisane, decyzja bez zmian).** Przypadek Francji
+jest wątpliwy w drugą stronę: Vichy i Wolna Francja mają ten sam kod COW (220), ale nie są
+tą samą stroną konfliktu. Kryterium `WarNum` (ten sam numer wojny w COW) jest obiektywne i
+nie wymaga oceny merytorycznej co do tego, kto reprezentował państwo — dlatego decyzja D-040
+pozostaje bez zmian — ale zastrzeżenie ma zostać widoczne w rejestrze, żeby nie sądzić, że
+nie zostało zauważone.
