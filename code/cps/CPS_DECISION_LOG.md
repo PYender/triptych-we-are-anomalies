@@ -2006,3 +2006,74 @@ różnicy względnej = 0,0, maksimum ≈ 10,2% (Bahrajn–Katar, ccode 692, lata
 regułę decyzyjną §8 protokołu jest na miejscu. Kolejność uruchomień (D-034 §4): P1, P2a,
 P2b, S1, S3, każdy z zapisem wyniku przed kolejnym krokiem. Blokada `--run-real` pozostaje
 do osobnej, jawnej autoryzacji Etapu C przez autora.
+
+## D-037 · 2026-09-02 · Autoryzacja Etapu C Testu 7
+
+*Wiadomość nazywała ten wpis „D-036" — numer już zajęty (S1/sprostowanie Bahrajnu, wpis
+powyżej, ten sam dzień). Użyty następny wolny numer, D-037, żeby nie nadpisywać ani nie
+przenumerowywać istniejącego wpisu w dzienniku append-only. Odnotowane jawnie, nie
+przemilczane.*
+
+**Rozstrzygnięcie (autor).** Etap C Testu 7 autoryzowany. Blokada `--run-real` zdjęta.
+
+**Zapisane przed jakimkolwiek dopasowaniem na danych rzeczywistych** — autoryzacja zapadła
+bez znajomości jakiegokolwiek wyniku P1/P2a/P2b/S1/S3 na `test7_intervals.csv` i pochodnych
+(żaden z tych biegów nie został wykonany przed tym wpisem).
+
+### Kolejność uruchomień (bez zmian wobec D-034 §4)
+
+1. **P1** — bez zmiennych, 101 diad, model z kruchością — orzeka o H9b.1.
+2. **P2a** — potencjał gospodarczy + status mocarstwowy, pełna populacja — orzeka o H9b.2.
+3. **P2b** — czas trwania + straty poprzedniego epizodu, 46 diad — opisowy.
+4. **S1 i S3** — wymagane przez regułę §8.
+
+Każdy krok kończy się zapisem wyniku, zanim ruszy następny.
+
+### Wymogi obowiązkowe do każdego dopasowania
+
+- Oba przedziały: z profilu wiarygodności i bootstrapowy.
+- Wartość p z modelu zerowego N1, dla OBU statystyk (pulowanej i kruchości), jawnie
+  oznaczona jako diagnostyczna, poza regułą §8 (D-029 pkt 2 / D-026 §5).
+- Odsetek replik bootstrapowych z θ̂ na granicy (D-022) — bez niego przedział dla modelu
+  z kruchością nie jest interpretowalny.
+- `frac_tie` (zabezpieczenie D-026 §7) — obowiązuje nadal.
+
+### Reguła §8 — sprawdzana w obu członach naraz
+
+„H9b.1 uznaje się za wsparte, jeżeli przedział ufności dla k z profilu wiarygodności w P1
+nie obejmuje 1 ORAZ ten sam kierunek utrzymuje się w S1 i S3" (protokół §8, cytat z briefu
+D-029). **Nie wolno zaraportować spełnienia pierwszego członu jako spełnienia reguły.**
+Jeżeli θ̂ osiądzie na granicy w P1, ma to być napisane wprost: model orzekający jest w
+praktyce pulowany (D-022) — poprawność formalna reguły tego nie zmienia.
+
+### Deklaracje sprzed biegu — do przepisania do raportu, nie do wyprowadzenia po fakcie
+
+- Odchylenie `k̂` w P1 ≈ 0,138 (D-031 §3e) — przedział wykluczy 1 dopiero przy wartości
+  poniżej 0,73 albo powyżej 1,27.
+- Pięć parametrów na trzydzieści siedem zdarzeń w P2a (D-034 §3, D-035) — moc niska,
+  najbardziej prawdopodobny wynik to brak rozstrzygnięcia.
+- Czternaście diad typu Troi, których model główny nie widzi (D-030 §6 `test7_estimate.md`).
+- Wersja NMC siódma zamiast szóstej wymienionej w §12 protokołu, maksymalna różnica
+  względna `cinc` = 10,2% (Bahrajn–Katar, ccode 692), w populacji 101 diad Testu 7 (D-033,
+  D-036).
+- **Deklaracja mocy S1 (nowa, przed tym biegiem):** 23 zdarzenia, odchylenie `k̂` rzędu
+  0,175, udział cenzurowania 82% (zweryfikowane bezpośrednio na `test7_s1_intervals.csv`:
+  23/131=17,6% zdarzeń, 82,4% cenzurowania — zgodne). **Przy tej precyzji niespełnienie
+  warunku kierunku w S1 NIE jest świadectwem przeciw hipotezie**: przy prawdziwym k w
+  okolicy 0,778 (efekt Testu 6) prawdopodobieństwo, że sam szum wskaże stronę przeciwną
+  (k̂>1), wynosi ok. 10% (przybliżenie normalne, z=(1−0,778)/0,175=1,269,
+  P(Z>1,269)=0,102 — zweryfikowane bezpośrednio); przy prawdziwym k bliższym 1 (≈0,85)
+  rośnie do ok. 20% (z=0,857, P=0,196). **Odwrotnie: spełnienie warunku jest przy tej
+  precyzji słabym potwierdzeniem**, z tych samych powodów.
+
+### Reguła rozbieżności (D-034 §3) — obowiązuje
+
+Jeżeli P2a i P2b wskażą przeciwne kierunki dla czegokolwiek wspólnego, nie rozstrzygamy na
+korzyść żadnego z nich — raport ma to nazwać wprost, ze wskazaniem podziału populacji jako
+najbardziej prawdopodobnej przyczyny.
+
+### STOP po komplecie, przed raportem
+
+Po wykonaniu wszystkich pięciu kroków: **STOP, surowe liczby przedstawione bez narracji,
+zanim powstanie ich opis.** Powód zapisany przez autora: raport pisany razem z liczbami zbyt
+łatwo staje się ich uzasadnieniem.
