@@ -105,7 +105,15 @@ def ci_p1(diads, t, event, fit_pooled, fit_frailty, B=B_BOOTSTRAP, seed=w.RNG_SE
     bootstrapowy dla modelu z kruchością MUSI być podany razem z odsetkiem replik, w których
     θ̂ osiadło na granicy numerycznej — bez tej liczby nie jest interpretowalny. Pierwsza
     wersja tego kodu wywoływała `bootstrap_ci_k_frailty` (która ten odsetek już zwraca od
-    D-022) i po prostu nie rozpakowywała/etykietowała czwartego elementu — poprawione."""
+    D-022) i po prostu nie rozpakowywała/etykietowała czwartego elementu — poprawione.
+
+    POPRAWKA (znaleziona przy pierwszym rzeczywistym biegu, Etap C/D-037): `w.profile_ci_k`
+    zwraca SŁOWNIK (`lo, hi, lo_bounded, hi_bounded, anchor_lr, anchor_ok, ...` — wersja po
+    poprawkach usterki 1 i usterki 5 z przeglądu Kroku C Testu 6), nie krotkę. Ten kod
+    indeksował `prof_pooled[0]`/`[1]` jak krotkę — `KeyError: 0`, nigdy wcześniej
+    nieuruchomione end-to-end, bo `--run-real` był zablokowany do D-037. Poprawione na dostęp
+    słownikowy, z dodatkowym ujawnieniem `bounded`/`anchor_ok` (bez nich `nan` na granicy
+    przedziału wygląda jak błąd zamiast jak nieosiągnięty próg w siatce)."""
     prof_pooled = w.profile_ci_k(w.negloglik_pooled, (t, event), fit_pooled["k"],
                                  [fit_pooled["loglam"]], fit_pooled["loglik"])
     groups, gidx = np.unique(diads, return_inverse=True)
@@ -115,8 +123,12 @@ def ci_p1(diads, t, event, fit_pooled, fit_frailty, B=B_BOOTSTRAP, seed=w.RNG_SE
     boot_lo_p, boot_hi_p, _ = w.bootstrap_ci_k_pooled(t, event, diads, B=B, seed=seed)
     boot_lo_f, boot_hi_f, _, frac_theta_boundary = w.bootstrap_ci_k_frailty(t, event, diads, B=B, seed=seed)
     return dict(
-        profile_pooled=dict(lo=prof_pooled[0], hi=prof_pooled[1]),
-        profile_frailty=dict(lo=prof_frailty[0], hi=prof_frailty[1]),
+        profile_pooled=dict(lo=prof_pooled["lo"], hi=prof_pooled["hi"],
+                            lo_bounded=prof_pooled["lo_bounded"], hi_bounded=prof_pooled["hi_bounded"],
+                            anchor_ok=prof_pooled["anchor_ok"]),
+        profile_frailty=dict(lo=prof_frailty["lo"], hi=prof_frailty["hi"],
+                             lo_bounded=prof_frailty["lo_bounded"], hi_bounded=prof_frailty["hi_bounded"],
+                             anchor_ok=prof_frailty["anchor_ok"]),
         bootstrap_pooled=dict(lo=boot_lo_p, hi=boot_hi_p),
         bootstrap_frailty=dict(lo=boot_lo_f, hi=boot_hi_f,
                                frac_theta_boundary=frac_theta_boundary,
