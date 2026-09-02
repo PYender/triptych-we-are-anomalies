@@ -1,0 +1,36 @@
+{
+  "n_reps": 1000,
+  "B_inner_bootstrap": 300,
+  "seed": 20260823,
+  "elapsed_s": 1691.1777505874634,
+  "lam_true": 14.718181818181819,
+  "k_true": 1.0,
+  "theta_true": 0.0,
+  "n_windows": 13,
+  "n_full_real": 110,
+  "n_full_sim_mean": 110.122,
+  "n_full_sim_median": 110.0,
+  "k_hat_mean": 1.0093975803209358,
+  "k_hat_median": 1.0068960693494644,
+  "k_hat_sd": 0.07649741486543551,
+  "pokrycie_profil": {
+    "pokrycie": 0.95,
+    "se": 0.006892024376045114,
+    "pokrycie_95pct_CI": [
+      0.9364916322229515,
+      0.9635083677770484
+    ]
+  },
+  "pokrycie_bootstrap": {
+    "pokrycie": 0.901,
+    "se": 0.009444522221901962,
+    "pokrycie_95pct_CI": [
+      0.8824887364450722,
+      0.9195112635549278
+    ]
+  },
+  "srednia_szerokosc_profil": 0.2915854139083039,
+  "srednia_szerokosc_bootstrap": 0.28456021107427787,
+  "stosunek_szerokosci_bootstrap_do_profilu": 0.975906878400182,
+  "hipoteza_Code_potwierdzona_pokrycie_bootstrap_ponizej_95": true
+}

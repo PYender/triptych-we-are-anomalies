@@ -2365,3 +2365,45 @@ par nigdy nie było dość zdarzeń do rozdzielenia zegarów przeciwnik-po-przec
 poziomie państw ten wymiar nie jest w ogóle mierzony (kruchość S7 mierzy inną
 heterogeniczność, punkt 2 wyżej). To jest granica całej rodziny testów 6/7/S7, nie ustalenie
 wynikające z S7 samego w sobie.
+
+---
+
+## D-045 · 2026-09-02 · S7: symulacja pokrycia — hipoteza Code o bootstrapie przy 13 klastrach POTWIERDZONA
+
+**Zlecone w D-044** (autor): symulacja pokrycia obu przedziałów, k_prawdziwe=1, mechanizm
+`min(T,C)` (D-031, `simulate_dataset_test7` reużyty bez zmian), tysiąc replik, struktura S7
+(13 realnych okien administracyjnych, λ skalibrowane na 1619/110≈14,72 — symulowana liczba
+zdarzeń zbiega do 110,1/mediana 110,0, kalibracja poprawna), B=300 replik bootstrapowych
+wewnątrz każdej z tysiąca replik zewnętrznych (kompromis kosztowy, ~1,7s/replika zewnętrzna,
+28 minut łącznie).
+
+**Wynik:**
+
+| przedział | pokrycie (1000 replik) | 95% CI pokrycia |
+|---|---|---|
+| profil wiarygodności | **95,0%** | [93,6%; 96,4%] |
+| bootstrap (poziom państw, B=300) | **90,1%** | [88,2%; 92,0%] |
+
+Profil trafia dokładnie w nominalne 95%. Bootstrap **istotnie poniżej** — górna granica jego
+95% CI pokrycia (92,0%) nie sięga nawet do 95%. **Hipoteza Code (bootstrap blokowy przy
+trzynastu klastrach zaniża niepewność) POTWIERDZONA** — nie jest już podejrzeniem, jest
+ustaleniem zmierzonym na tej strukturze.
+
+**Zastrzeżenie ważne dla odczytu — szerokość NIE jest tym, co zawodzi.** Średnia szerokość
+przedziału bootstrapowego w tysiącu replik (0,2846) jest niemal identyczna ze średnią
+szerokością profilu (0,2916, stosunek 0,976) — **NIE systematycznie węższa** w tym sensie, w
+jakim był węższy przedział zaobserwowany na realnych danych (stosunek 0,611, D-043).
+Zawodzi CENTROWANIE/kształt rozkładu bootstrapowego przy N=13, nie sama szerokość — 0,611 na
+realnych danych jest prawdopodobnie częściowo zbiegiem okoliczności tej konkretnej repliki
+(realny k̂ leży bardzo blisko 1, gdzie przedział bootstrapowy z tej próby akurat wyszedł
+ciaśniejszy), nie ogólną własnością widoczną w każdej replice. Nie nadinterpretować "0,611"
+jako typowej wielkości efektu — typowa wielkość to niedoszacowanie POKRYCIA (90% zamiast
+95%), nie niedoszacowanie SZEROKOŚCI.
+
+**Konsekwencja wsteczna, nazwana, nie wykonana.** Test 6 miał 18 klastrów (diady), Test 7
+101 — S7 z 13 jest przypadkiem skrajnym, ale kierunek ustalenia (bootstrap blokowy zawodzi
+przy małej liczbie klastrów) mógłby dotyczyć też przedziału bootstrapowego Testu 6 (18 diad).
+**Nie przeliczane tutaj** — odnotowane jako możliwe ograniczenie do rozważenia osobno, nie
+jako automatyczna poprawka istniejących wyników Testu 6 (które i tak już wykluczały 1 w obu
+przedziałach, więc nawet zaniżone pokrycie bootstrapu nie zmieniłoby kierunku wniosku —
+zmieniłoby tylko to, jak dosłownie czytać samą liczbę 95%).
