@@ -2313,3 +2313,55 @@ korzystniejszy wynik niż Test 6/7 nie awansuje go na wariant pierwszorzędny.
 
 **STOP po biegu, przed jakąkolwiek narracją** — surowe liczby, jak przy Kroku C Testu 6 i
 Etapie C Testu 7.
+
+---
+
+## D-044 · 2026-09-02 · S7: przyjęcie interpretacji Code w dwóch punktach + errata dwóch przepowiedni autora
+
+**Kontekst.** Po surowych wynikach Etapu 3 (k̂ pulowane=0,9947, oba przedziały obejmują 1)
+Code przedstawił interpretację. Autor przyjął ją w dwóch punktach jako lepszą od własnej
+pierwszej reakcji i cofnął tam swoje wcześniejsze stwierdzenie — odnotowane wprost, zgodnie
+z dyscypliną projektu (błąd raz zauważony nie zostaje przemilczany, niezależnie czyj).
+
+**Punkt 1 — przyjęty.** Autor napisał wcześniej (w wiadomości bezpośrednio poprzedzającej tę
+interpretację), że grupowanie na poziomie par było artefaktem mieszania par o różnych
+tempach — **wniosek za daleko idący, wycofany przez autora**. Hipoteza odwrotna (Code): zegar
+może być własnością PARY, nie aktora; pulowanie wojen jednego państwa z różnymi przeciwnikami
+(Francja z Niemcami, Anglią, Chinami, Tajlandią naraz) rozmywa sygnał zamiast go ujawnić.
+Obie hipotezy są równie zgodne z wynikiem zerowym S7 — **S7 nie unieważnia sygnału
+diadowego (Test 6/7), mówi wyłącznie, że TA KONKRETNA operacjonalizacja (jeden zegar na
+państwo, niezależnie od przeciwnika) go nie widzi.**
+
+**Punkt 2 — przyjęty.** Autor napisał, że zapadnięcie θ̂ do granicy potwierdza brak
+różnorodności temp. Code: kruchość na poziomie S7 mierzy heterogeniczność MIĘDZY
+PAŃSTWAMI, nie MIĘDZY PRZECIWNIKAMI tego samego państwa — to dwa różne pytania, brak
+dowodu na pierwsze nie jest dowodem na drugie. **Zdanie o „braku wykrywalnej różnorodności
+temp" zawężone do heterogeniczności międzypaństwowej — nie rozstrzyga o heterogeniczności
+międzyprzeciwnikowej wewnątrz jednego państwa.**
+
+**Doprecyzowanie terminologii (autor).** Trzecia kategoria wyniku (żaden przedział nie
+wyklucza 1) nazywana odtąd **„zgodność z modelem zerowym przy zadeklarowanej czułości"**,
+NIE „wynik zerowy" — pierwsze opisuje to, co faktycznie mamy (brak odrzucenia przy
+zadeklarowanej mocy do wykrycia efektów wielkości 0,778/0,843); drugie sugerowałoby dowód
+nieistnienia zjawiska, którego nie mamy.
+
+**Errata dwóch przepowiedni autora sprzed biegu (D-043, Deklaracja 3) — obie błędne, zapisane
+wprost:**
+
+1. „Parametr w okolicach 0,75–0,90, odrzucenie jedynki przez przedział z profilu" —
+   **błędne**. k̂=0,9947, profil [0,858; 1,141], jedynka nieodrzucona.
+2. „Przedział bootstrapowy wyraźnie szerszy niż profilowy" — **błędne**. Stosunek
+   bootstrap/profil = 0,611 — bootstrap WĘŻSZY, nie szerszy.
+
+**Otwarte pytanie, przekazane do zmierzenia (nie przyjęte jako ustalone).** Hipoteza Code o
+przyczynie odwróconego rozjazdu (bootstrap blokowy przy trzynastu klastrach zaniża
+niepewność, znany reżim w literaturze) pozostaje PODEJRZENIEM, nie pomiarem. Autor zleca
+symulację pokrycia obu przedziałów (k_prawdziwe=1, mechanizm min(T,C) z D-031, tysiąc
+replik) — wynik poniżej rejestrowany osobno po policzeniu.
+
+**Ograniczenie rodziny dziewiątej, nazwane wprost (nie wniosek z samego S7).** Hipoteza
+zegara bilateralnego (własność pary, nie aktora) pozostaje NIEROZSTRZYGNIĘTA — na poziomie
+par nigdy nie było dość zdarzeń do rozdzielenia zegarów przeciwnik-po-przeciwniku, a na
+poziomie państw ten wymiar nie jest w ogóle mierzony (kruchość S7 mierzy inną
+heterogeniczność, punkt 2 wyżej). To jest granica całej rodziny testów 6/7/S7, nie ustalenie
+wynikające z S7 samego w sobie.
