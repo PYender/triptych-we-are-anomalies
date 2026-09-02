@@ -1,0 +1,64 @@
+{
+  "struktura": {
+    "n_panstw": 13,
+    "n_pelnych": 110,
+    "n_cenzurowanych": 13
+  },
+  "fit_pooled": {
+    "k": 0.9947346078980199,
+    "lam": 14.69415561644043,
+    "loglik": -405.7966401937865
+  },
+  "fit_frailty": {
+    "k": 0.9947229268335529,
+    "lam": 14.6932583579993,
+    "theta": 4.076485474645056e-08,
+    "loglik": -405.7966395411084,
+    "theta_na_granicy": false
+  },
+  "przedzialy_pooled": {
+    "profil": {
+      "lo": 0.858205189530971,
+      "hi": 1.1410300322816629,
+      "lo_bounded": true,
+      "hi_bounded": true,
+      "anchor_ok": true
+    },
+    "bootstrap_panstwa": {
+      "lo": 0.9174020158161029,
+      "hi": 1.0900812646649833
+    }
+  },
+  "przedzialy_frailty": {
+    "profil": {
+      "lo": 0.8582048383585354,
+      "hi": 1.1470958582122972,
+      "lo_bounded": true,
+      "hi_bounded": true,
+      "anchor_ok": true
+    },
+    "bootstrap_panstwa": {
+      "lo": 0.9187514912607707,
+      "hi": 1.1054960551238202,
+      "frac_theta_boundary": 0.2525
+    }
+  },
+  "rozjazd_profil_bootstrap_pooled": {
+    "profil_szerokosc": 0.28282484275069186,
+    "bootstrap_szerokosc": 0.17267924884888042,
+    "stosunek_bootstrap_do_profilu": 0.610551913224596
+  },
+  "n1_diagnostyczny": {
+    "model": "N1",
+    "k_obs": 0.9947346078980199,
+    "p": 0.975512243878061,
+    "B": 2000,
+    "seed": 20260822,
+    "k_sur_mean": 0.9194101982650721,
+    "k_sur_median": 0.9159032917221048,
+    "k_sur_sd": 0.06528657096720447,
+    "frac_tie": 0.0,
+    "poza_regula_decyzyjna_S8": "diagnostyczny (D-029 pkt 2 analogia), nie orzeka"
+  },
+  "n2": "pominiety jednym zdaniem (D-026): zdegenerowany wzgledem k-hat pulowanego, niezaleznie od jednostki analizy - degeneracja jest wlasnoscia statystyki, nie danych."
+}
