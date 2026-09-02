@@ -1,0 +1,370 @@
+{
+  "P1": {
+    "label": "P1",
+    "struktura": {
+      "label": "P1",
+      "n_diady_z_wierszem": 101,
+      "n_pelne": 37,
+      "n_cenzurowane": 95
+    },
+    "fit_pooled": {
+      "k": 0.669760752271616,
+      "lam": 138.74482106871505,
+      "loglik": -197.59684955464564
+    },
+    "fit_frailty": {
+      "k": 0.8427600351441434,
+      "lam": 103.9220819604232,
+      "theta": 2.654575246322222,
+      "loglik": -190.53513886027744,
+      "theta_na_granicy": false
+    },
+    "przedzialy": {
+      "profile_pooled": {
+        "lo": 0.502880725420895,
+        "hi": 0.8593885775136703,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "profile_frailty": {
+        "lo": 0.6234606500454315,
+        "hi": 1.1024399557415765,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap_pooled": {
+        "lo": 0.5601524877156256,
+        "hi": 0.8100565117875197
+      },
+      "bootstrap_frailty": {
+        "lo": 0.6720081274147485,
+        "hi": 1.0850603331301547,
+        "frac_theta_boundary": 0.0,
+        "interpretowalny": true
+      }
+    },
+    "n1_diagnostyczny": {
+      "model": "N1_test7",
+      "poza_regula_decyzyjna_S8": "diagnostyczny (D-029 pkt 2), nie orzeka",
+      "seed": 20260822,
+      "pooled": {
+        "k_obs": 0.669760752271616,
+        "p": 0.0864567716141929,
+        "B": 2000,
+        "k_sur_mean": 0.7733737417739673,
+        "k_sur_median": 0.7709228105273431,
+        "k_sur_sd": 0.07769122811093995,
+        "frac_tie": 0.0
+      },
+      "frailty": {
+        "k_obs": 0.8427600351441434,
+        "p": 0.2654690618762475,
+        "B": 500,
+        "k_sur_mean": 1.0341427304049462,
+        "k_sur_median": 1.0269802684344405,
+        "k_sur_sd": 0.1446908472968794,
+        "frac_tie": 0.0,
+        "uwaga": "statystyka ORZEKAJĄCA (§7 protokołu) — to jest ta wersja, która odpowiada na pytanie postawione w D-029 pkt 2"
+      }
+    }
+  },
+  "P2a_stosunek": {
+    "label": "P2a — wariant log(stosunek CINC) [prowizoryczny, nierozstrzygniety wybor]",
+    "kowariant_cinc": "cinc_stosunek",
+    "n_wierszy": 132,
+    "n_diady": 101,
+    "n_zdarzen": 37,
+    "n_parametrow": 5,
+    "zdarzen_na_parametr": 7.4,
+    "standaryzacja": "X standaryzowane (srednia 0, sd 1) przed dopasowaniem — zwracane wspolczynniki SA na skali standaryzowanej (interpretacja: zmiana o 1 SD zmiennej)",
+    "k": 0.8091223222092416,
+    "lam0": 119.31269242544697,
+    "theta": 1.9652883614917542,
+    "theta_na_granicy": false,
+    "loglik": -189.20129119512129,
+    "converged_same_starts": true,
+    "beta_log_cinc": -0.16298881446559205,
+    "beta_status": 0.3871237136200142,
+    "przedzial_beta_cinc": {
+      "profil": {
+        "lo": [
+          -0.8219571323558224,
+          true
+        ],
+        "hi": [
+          0.4591190396259909,
+          true
+        ]
+      },
+      "bootstrap": {
+        "lo": -1.067650436134907,
+        "hi": 0.5153084678063481,
+        "frac_theta_boundary": 0.015
+      }
+    },
+    "przedzial_beta_status": {
+      "profil": {
+        "lo": [
+          -0.08549445877606178,
+          true
+        ],
+        "hi": [
+          0.9392525727073883,
+          true
+        ]
+      },
+      "bootstrap": {
+        "lo": 0.025896382359056766,
+        "hi": 0.9953698314698287,
+        "frac_theta_boundary": 0.015
+      }
+    }
+  },
+  "P2a_suma": {
+    "label": "P2a — wariant log(suma CINC) [prowizoryczny, nierozstrzygniety wybor]",
+    "kowariant_cinc": "cinc_suma",
+    "n_wierszy": 132,
+    "n_diady": 101,
+    "n_zdarzen": 37,
+    "n_parametrow": 5,
+    "zdarzen_na_parametr": 7.4,
+    "standaryzacja": "X standaryzowane (srednia 0, sd 1) przed dopasowaniem — zwracane wspolczynniki SA na skali standaryzowanej (interpretacja: zmiana o 1 SD zmiennej)",
+    "k": 0.8345448260883913,
+    "lam0": 134.42083369421223,
+    "theta": 1.6764378886604656,
+    "theta_na_granicy": false,
+    "loglik": -184.31050234899715,
+    "converged_same_starts": true,
+    "beta_log_cinc": 1.238900643587158,
+    "beta_status": -0.23855419363021235,
+    "przedzial_beta_cinc": {
+      "profil": {
+        "lo": [
+          0.4636887508890287,
+          true
+        ],
+        "hi": [
+          2.274753458545936,
+          true
+        ]
+      },
+      "bootstrap": {
+        "lo": 0.5859217751989566,
+        "hi": 2.202388664886909,
+        "frac_theta_boundary": 0.0025
+      }
+    },
+    "przedzial_beta_status": {
+      "profil": {
+        "lo": [
+          -0.8828468836049135,
+          true
+        ],
+        "hi": [
+          0.34974876679150424,
+          true
+        ]
+      },
+      "bootstrap": {
+        "lo": -0.9453064009832074,
+        "hi": 0.16213942357762987,
+        "frac_theta_boundary": 0.0025
+      }
+    }
+  },
+  "P2b": {
+    "label": "P2b (opisowy, poza regula decyzyjna SS8, D-034)",
+    "n_wierszy": 77,
+    "n_diady": 46,
+    "n_zdarzen": 37,
+    "n_parametrow": 5,
+    "zdarzen_na_parametr": 7.4,
+    "standaryzacja": "X standaryzowane (srednia 0, sd 1) przed dopasowaniem",
+    "k": 0.805972655540707,
+    "lam0": 47.455901517104365,
+    "theta": 1.1140292126799535e-07,
+    "theta_na_granicy": false,
+    "loglik": -164.4922825121686,
+    "converged_same_starts": false,
+    "beta_czas_trwania": -1.122224681735307,
+    "beta_straty_log": 0.9795183655968528,
+    "przedzial_beta_czas_trwania": {
+      "profil": {
+        "lo": [
+          -2.027432052687659,
+          true
+        ],
+        "hi": [
+          -0.4473566779891335,
+          true
+        ]
+      },
+      "bootstrap": {
+        "lo": -2.3871241512087336,
+        "hi": -0.5318018447648736,
+        "frac_theta_boundary": 0.5425
+      }
+    },
+    "przedzial_beta_straty_log": {
+      "profil": {
+        "lo": [
+          0.43875829107723635,
+          true
+        ],
+        "hi": [
+          1.6685011752058188,
+          true
+        ]
+      },
+      "bootstrap": {
+        "lo": 0.4432535771895797,
+        "hi": 2.175401897124713,
+        "frac_theta_boundary": 0.5425
+      }
+    }
+  },
+  "S1": {
+    "label": "S1",
+    "struktura": {
+      "label": "S1",
+      "n_diady_z_wierszem": 109,
+      "n_pelne": 23,
+      "n_cenzurowane": 108
+    },
+    "fit_pooled": {
+      "k": 0.7613184622791315,
+      "lam": 235.81971560857917,
+      "loglik": -137.18243337999166
+    },
+    "fit_frailty": {
+      "k": 1.0031064118346593,
+      "lam": 157.97972391932382,
+      "theta": 4.5860439529320915,
+      "loglik": -129.66233418929593,
+      "theta_na_granicy": false
+    },
+    "przedzialy": {
+      "profile_pooled": {
+        "lo": 0.5278740953925155,
+        "hi": 1.0358744055232432,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "profile_frailty": {
+        "lo": 0.6829515155983451,
+        "hi": 1.398934103755557,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap_pooled": {
+        "lo": 0.6324393203650567,
+        "hi": 0.9437388066256652
+      },
+      "bootstrap_frailty": {
+        "lo": 0.7765507862608764,
+        "hi": 1.4246294828127775,
+        "frac_theta_boundary": 0.001,
+        "interpretowalny": true
+      }
+    },
+    "n1_diagnostyczny": {
+      "model": "N1_test7",
+      "poza_regula_decyzyjna_S8": "diagnostyczny (D-029 pkt 2), nie orzeka",
+      "seed": 20260822,
+      "pooled": {
+        "k_obs": 0.7613184622791315,
+        "p": 0.17391304347826086,
+        "B": 2000,
+        "k_sur_mean": 0.881313035735553,
+        "k_sur_median": 0.87532070940021,
+        "k_sur_sd": 0.12375392124023832,
+        "frac_tie": 0.0
+      },
+      "frailty": {
+        "k_obs": 1.0031064118346593,
+        "p": 0.9800399201596807,
+        "B": 500,
+        "k_sur_mean": 1.0999922407794407,
+        "k_sur_median": 1.0876587170678773,
+        "k_sur_sd": 0.19938529417324863,
+        "frac_tie": 0.0,
+        "uwaga": "statystyka ORZEKAJĄCA (§7 protokołu) — to jest ta wersja, która odpowiada na pytanie postawione w D-029 pkt 2"
+      }
+    }
+  },
+  "S3": {
+    "label": "S3",
+    "struktura": {
+      "label": "S3",
+      "n_diady_z_wierszem": 120,
+      "n_pelne": 107,
+      "n_cenzurowane": 98
+    },
+    "fit_pooled": {
+      "k": 0.7554932386168127,
+      "lam": 50.189436480927846,
+      "loglik": -511.0425303445596
+    },
+    "fit_frailty": {
+      "k": 0.8132149478187968,
+      "lam": 46.90562119613132,
+      "theta": 0.2564535103373733,
+      "loglik": -509.8897150028323,
+      "theta_na_granicy": false
+    },
+    "przedzialy": {
+      "profile_pooled": {
+        "lo": 0.6449549513985126,
+        "hi": 0.8738336766286935,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "profile_frailty": {
+        "lo": 0.6766168543994343,
+        "hi": 0.9689151412921945,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap_pooled": {
+        "lo": 0.669116123101958,
+        "hi": 0.8661230993486674
+      },
+      "bootstrap_frailty": {
+        "lo": 0.7096037852457248,
+        "hi": 0.9592396720045847,
+        "frac_theta_boundary": 0.0015,
+        "interpretowalny": true
+      }
+    },
+    "n1_diagnostyczny": {
+      "model": "N1_test7",
+      "poza_regula_decyzyjna_S8": "diagnostyczny (D-029 pkt 2), nie orzeka",
+      "seed": 20260822,
+      "pooled": {
+        "k_obs": 0.7554932386168127,
+        "p": 0.3118440779610195,
+        "B": 2000,
+        "k_sur_mean": 0.7794376935368046,
+        "k_sur_median": 0.7778537636370304,
+        "k_sur_sd": 0.04723659109342936,
+        "frac_tie": 0.0
+      },
+      "frailty": {
+        "k_obs": 0.8132149478187968,
+        "p": 0.03992015968063872,
+        "B": 500,
+        "k_sur_mean": 0.9641949057367964,
+        "k_sur_median": 0.9597779613843807,
+        "k_sur_sd": 0.0793372519052638,
+        "frac_tie": 0.0,
+        "uwaga": "statystyka ORZEKAJĄCA (§7 protokołu) — to jest ta wersja, która odpowiada na pytanie postawione w D-029 pkt 2"
+      }
+    }
+  }
+}
