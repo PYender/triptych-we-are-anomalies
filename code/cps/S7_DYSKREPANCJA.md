@@ -1,5 +1,15 @@
 # S7 — rozbieżność liczb kontrolnych (TASK_S7.md §4)
 
+**ROZSTRZYGNIĘTA (D-039 + D-040, 2 września 2026).** Rozbieżność była autora: liczby
+kontrolne `TASK_S7.md` §4 pochodziły z nigdzie niezapisanej reguły `gap≤1`, nie z reguły
+`gap≤0` faktycznie użytej przez kod Testu 6 (`test6_build_intervals.merge_episodes`,
+sprawdzone bezpośrednio w źródle — D-039). Autor dodatkowo zdecydował (D-040), że
+uczestnictwa tej samej wojny (ten sam `WarNum`, rozbite na wiersze lub fazy) scalają się w
+jeden przedział niezależnie od kalendarzowego odstępu. Liczby obowiązujące: **13 państw /
+110 odstępów pełnych przy progu ≥6; 39 państw / 182 przy progu ≥3** (D-040). Autora liczby
+12/98 i 37/168 idą do erraty. Dokument poniżej to zapis dochodzenia sprzed rozstrzygnięcia,
+zachowany do wglądu.
+
 Zgłoszona zgodnie z wprost daną instrukcją zadania: „Twoje liczby mają się zgodzić albo
 rozbieżność ma zostać zgłoszona, nie dopasowana." Poniżej wszystkie warianty sprawdzone
 przed napisaniem tego zgłoszenia — żaden nie został przyjęty jako budowa domyślna wyłącznie

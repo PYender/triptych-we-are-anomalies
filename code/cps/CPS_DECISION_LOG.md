@@ -2103,3 +2103,76 @@ istotnie więcej zdarzeń niż jakakolwiek diada w Teście 6 (≥3 epizody) czy 
 dlatego wariant jest atrakcyjny mocą, i właśnie dlatego próg musi być zdefiniowany na tej samej
 jednostce, którą się potem estymuje, żeby liczba `12 państw / N zdarzeń` znaczyła to, co ma
 znaczyć.
+
+---
+
+## D-039 · 2026-09-02 · Doprecyzowanie D-013: próg scalania epizodów = gap ≤ 0
+
+**Kontekst.** Etap 1 S7 (`test6_build_s7.py` v1.0) dał inne liczby kontrolne niż deklarował
+autor (15 państw/123 odstępy pełne wobec deklarowanych 12/98 przy progu ≥6). Autor przyznał,
+że jego własne liczby pochodziły z reguły `gap ≤ 1`, nigdzie w `TASK_S7.md` niezapisanej, i
+poprosił o sprawdzenie w kodzie, jakiego progu faktycznie użył builder Testu 6, zamiast
+rozstrzygać z góry.
+
+**Sprawdzone wprost w kodzie.** `test6_build_intervals.py:86`, funkcja `merge_episodes`:
+
+```python
+elif s <= cur["end"]:
+```
+
+To jest **gap ≤ 0** (`s_next − end_poprz ≤ 0`, czyli odstęp kalendarzowy zerowy lub ujemny —
+epizody stykające się lub nachodzące). Ta sama funkcja jest reużywana bez zmian dla wariantu
+głównego, S-A i S-B Testu 6 — nigdzie w tym pliku nie ma żadnej innej tolerancji `gap`.
+
+**Rozstrzygnięcie.** D-013 doprecyzowana: próg scalania epizodów (Test 6, wszystkie warianty
+diadowe, oraz S7 poziomu B) to **gap ≤ 0**, bez wyjątków. S7 zmienia wyłącznie jednostkę
+analizy wobec Testu 6 (D-038) — reguła scalania musi być identyczna, inaczej porównanie
+poziomu par z poziomem państw mieszałoby dwie zmiany naraz.
+
+**Errata.** Liczby kontrolne autora z `TASK_S7.md` §4 (12 państw / 98 odstępów pełnych przy
+progu ≥6; 37/168 przy progu ≥3) pochodziły z reguły `gap ≤ 1`, nie `gap ≤ 0` — **błędne**,
+idą do erraty. Właściwe liczby pod gap≤0 + D-040 (poniżej) w D-040 §3.
+
+---
+
+## D-040 · 2026-09-02 · S7: uczestnictwa tej samej wojny scalają się niezależnie od odstępu
+
+**Kontekst.** Pięć przypadków w `InterStateWarData_v4_0.csv`, gdzie państwo ma DWA wpisy dla
+tego samego `WarNum` — zmiana strony lub wznowienie udziału w trakcie tej samej wojny:
+Francja (WWII, faza 1 kończy się 1941, faza 2 „Wolna Francja" zaczyna się 1944), Włochy,
+Bułgaria i Rumunia (WWII, zmiana strony 1943-44), Łotwa (Wyzwolenie Łotewskie, 1919).
+
+**Rozstrzygnięcie (autor).** Uczestnictwa tego samego `WarNum` scalają się w **jeden**
+przedział konfliktu niezależnie od kalendarzowego odstępu między nimi (min. start, maks.
+koniec po wszystkich wierszach/fazach tego `WarNum` dla danego państwa) — PRZED zastosowaniem
+ogólnej reguły D-013/D-039 (gap≤0) MIĘDZY różnymi wojnami. Uzasadnienie: zmiana strony w
+trakcie wojny nie jest przerwą w walce ani w regeneracji — to wciąż ta sama wojna, niezależnie
+od tego, jak COW rozbił ją na wiersze administracyjnie.
+
+**Sprawdzone bezpośrednio, które przypadki to realnie zmienia.** 4 z 5 (Włochy, Bułgaria,
+Rumunia, Łotwa) i tak scalały się już pod samym gap≤0, bo kalendarzowy odstęp między ich
+fazami/wierszami wynosi 0 lat. Jedyny przypadek, gdzie D-040 realnie zmienia wynik: Francja,
+gdzie odstęp 1941→1944 wynosi 3 lata (> 0) — bez D-040 dałoby to 2 osobne epizody WWII,
+z D-040 daje jeden epizod 1939–1945 (wchłaniający też wojnę francusko-tajską 1940–1941,
+osobny `WarNum`, nakładającą się czasowo).
+
+**Liczby kontrolne po gap≤0 (D-039) + D-040 — zastępują liczby z Etapu 1 v1.0 i erratę
+autora (D-039), policzone przez `test6_build_s7.py` v2.0:**
+
+| sprawdzenie | v1.0 (gap≤0, bez D-040) | **v2.0 (gap≤0 + D-040) — obowiązujące** | erraty (autor, gap≤1) |
+|---|---|---|---|
+| państw przy progu ≥6 | 15 | **13** | 12 |
+| odstępów pełnych przy progu ≥6 | 123 | **110** | 98 |
+| państw przy progu ≥3 | 40 | **39** | 37 |
+| odstępów pełnych przy progu ≥3 | 190 | **182** | 168 |
+
+23 (ccode,WarNum) pary w całym pliku miały więcej niż jeden wiersz/fazę scalone przez D-040
+(nie tylko te 5 „zmiany strony" — także zwykłe rozbicia faza1/faza2 bez zmiany strony).
+
+**Osobno wyjaśniona rozbieżność 97 kontra 98 (pytanie autora, `gap≤1`, diagnostyczne, POZA
+regułą obowiązującą powyżej).** Dwa niezależne testy `gap≤1` w toku dochodzenia dały różne
+sumy (97 i 98) przy tej samej liczbie państw (12) — źródłem NIE były duplikaty
+(ccode,WarNum), tylko to, czy faza 2 była osobnym wpisem wejściowym do scalania, czy złożona
+w koniec tego samego wiersza (formuła `endyr` Testu 6 zastosowana per wiersz) — sprawdzone
+bezpośrednio, obie wersje trzymały duplikaty ccode+WarNum jako osobne wpisy identycznie.
+Diagnostyczne wyłącznie — `gap≤1` nie jest regułą obowiązującą (D-039).

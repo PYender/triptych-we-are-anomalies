@@ -7,18 +7,29 @@ Jednostka progu: epizody, D-038 (wpisana przed tą budową).
 Jednostka: pojedyncze ccode. Źródło: InterStateWarData_v4_0.csv WYŁĄCZNIE (S8 z Extra-State
 jest osobnym wariantem, tu nie wchodzi). Okno 1816-2007 (CLOSE=2007, jak w test6_build_intervals).
 
-Fazy drugie (StartYear2/EndYear2) traktowane jako OSOBNE przedziały uczestnictwa (TASK_S7.md
-§3) — czytanie dosłowne: gdy wiersz ma poprawną fazę 2, to DWA wpisy wejściowe do scalania
-epizodów (D-013/D-024 §5 mechanizm), nie jeden span rozciągnięty do końca fazy 2. Duplikaty
-(ccode,WarNum) (5 przypadków w danych — państwo zmieniające stronę w tej samej wojnie, np.
-Włochy/Bułgaria/Rumunia w WWII 1943-44) NIE są sztucznie łączone — to legalnie osobne
-uczestnictwa z osobnymi latami.
+v2.0 — ROZSTRZYGNIĘCIE ROZBIEŻNOŚCI Z v1.0 (autor, wiadomość po S7_DYSKREPANCJA.md):
 
-ROZBIEŻNOŚĆ Z LICZBAMI KONTROLNYMI AUTORA (TASK_S7.md §4) — zgłoszona, NIE dopasowana
-(instrukcja zadania wprost tego zabrania). Zob. `S7_DYSKREPANCJA.md` dla pełnego zapisu
-sprawdzonych wariantów. Ten builder używa reguły gap<=0, zgodnej dosłownie z D-013/D-024 §5
-(cytowanej wprost przez to zadanie) — NIE przyjęto żadnej niezadeklarowanej tolerancji gap,
-mimo że jedna z testowanych (gap<=1) dawała wynik bliższy oczekiwanemu.
+1. **Próg scalania między różnymi wojnami = gap<=0.** Sprawdzone wprost w kodzie Testu 6
+   (`test6_build_intervals.merge_episodes`: `elif s <= cur["end"]`) — jednoznaczne, żadnej
+   innej tolerancji nigdzie w tamtym pliku. S7 zmienia WYŁĄCZNIE jednostkę analizy wobec
+   Testu 6, więc reguła scalania musi być identyczna — używana tu bez zmian.
+
+2. **D-040 (nowa decyzja autora): uczestnictwa TEJ SAMEJ wojny (ten sam WarNum) scalają się
+   w JEDEN przedział niezależnie od kalendarzowego odstępu między nimi** — czy to z powodu
+   rozbicia na fazy (StartYear2/EndYear2), czy z powodu dwóch osobnych wierszy (zmiana
+   strony w trakcie wojny: Francja/Włochy/Bułgaria/Rumunia WWII, Łotwa 1919 — 5 przypadków
+   w danych). Uzasadnienie: zmiana strony w trakcie wojny nie jest przerwą w regeneracji —
+   to wciąż ta sama wojna. W praktyce 4 z 5 przypadków i tak scalały się już pod samym
+   gap<=0 (odstęp między ich fazami = 0 lat) — jedynym przypadkiem, gdzie D-040 realnie
+   zmienia wynik, jest Francja: WWII faza 1 (1939-1941, łącznie z wojną francusko-tajską,
+   osobny WarNum) kończy się 1941, faza 2 („Wolna Francja") zaczyna się 1944 — 3-letni
+   realny odstęp kalendarzowy, teraz scalony w jeden epizod 1939-1945 na mocy D-040, a nie
+   dlatego, że gap<=0 by go i tak scalił (nie scaliłby: 1944-1941=3>0).
+
+Etap 1 v1.0 (gap<=0, brak D-040) dał 15 państw / 123 odstępy pełne przy progu >=6 — te
+liczby ZASTĄPIONE przez policzone poniżej (v2.0, gap<=0 + D-040). Autora liczby 12/98
+(oparte na nierozstrzygniętym wtedy progu, jak się okazało — gap<=1) idą do erraty
+(`S7_DYSKREPANCJA.md` zawiera pełny zapis dochodzenia).
 """
 from __future__ import annotations
 import argparse, hashlib, json, collections
@@ -35,34 +46,51 @@ MIN_EPISODES_MAIN = 6      # próg S7 głowny (TEST6_PROTOCOL.md SS3 poziom B)
 MIN_EPISODES_CHECK = 3     # drugi próg z liczb kontrolnych SS4 (TASK_S7.md), do weryfikacji
 
 
-def endyr(row):
-    ends = []
-    for e in (row.EndYear1, row.EndYear2):
-        if pd.isna(e):
-            continue
-        if e == -7 or e > 0:
-            ends.append(CLOSE if e == -7 else e)
-    return max(ends) if ends else np.nan
+def _endyr_single(e):
+    """Jeden kandydat na koniec (EndYear1 albo EndYear2) po obsłudze sentynela -7 (wciąż
+    trwa w 2007) - None gdy nie dotyczy (-8)."""
+    if pd.isna(e):
+        return None
+    if e == -7:
+        return CLOSE
+    if e > 0:
+        return e
+    return None
 
 
 def state_conflicts(df: pd.DataFrame):
-    """{ccode: [(start,end,wn,name), ...]} - fazy 2 jako OSOBNE wpisy gdy obecne (D-038/
-    czytanie doslowne TASK_S7.md SS3)."""
+    """{ccode: [(start,end,wn,name), ...]}.
+
+    D-040 (2026-09-02, decyzja autora): uczestnictwa tego samego państwa w TEJ SAMEJ wojnie
+    (ten sam WarNum) - czy to z powodu rozbicia na fazy (StartYear2/EndYear2), czy z powodu
+    dwóch osobnych wierszy (zmiana strony w trakcie wojny - 5 przypadków w danych: Francja/
+    Włochy/Bułgaria/Rumunia WWII, Łotwa 1919) - SCALAJĄ SIĘ W JEDEN PRZEDZIAŁ niezależnie od
+    kalendarzowego odstępu między nimi (min start, max end po wszystkich wierszach i fazach
+    tego (ccode,WarNum)). Uzasadnienie autora: zmiana strony w trakcie wojny nie jest przerwą
+    w walce/regeneracji - to WCIĄŻ ta sama wojna. Dopiero PO tym scaleniu działa ogólna reguła
+    D-013/D-024 SS5 (gap<=0) MIĘDZY różnymi wojnami (WarNum)."""
     for c in ("ccode", "WarNum", "StartYear1", "EndYear1", "StartYear2", "EndYear2"):
         df[c] = pd.to_numeric(df[c], errors="coerce")
-    out = collections.defaultdict(list)
-    n_phase2 = 0
+    per_war = collections.defaultdict(lambda: {"starts": [], "ends": [], "name": None})
     for r in df.itertuples():
-        cc = int(r.ccode)
-        e1 = CLOSE if r.EndYear1 == -7 else r.EndYear1
-        if pd.notna(r.StartYear1) and r.StartYear1 > 0 and pd.notna(e1) and e1 > 0:
-            out[cc].append((int(r.StartYear1), int(e1), int(r.WarNum), str(r.WarName)))
-        if pd.notna(r.StartYear2) and r.StartYear2 > 0:
-            e2 = CLOSE if r.EndYear2 == -7 else r.EndYear2
-            if pd.notna(e2) and e2 > 0:
-                out[cc].append((int(r.StartYear2), int(e2), int(r.WarNum), str(r.WarName) + " (faza 2)"))
-                n_phase2 += 1
-    return {k: sorted(v) for k, v in out.items()}, n_phase2
+        key = (int(r.ccode), int(r.WarNum))
+        g = per_war[key]
+        g["name"] = str(r.WarName)
+        if pd.notna(r.StartYear1) and r.StartYear1 > 0:
+            g["starts"].append(int(r.StartYear1))
+        for e in (r.EndYear1, r.EndYear2):
+            v = _endyr_single(e)
+            if v is not None:
+                g["ends"].append(int(v))
+
+    out = collections.defaultdict(list)
+    n_multi_row_war = 0
+    for (cc, wn), g in per_war.items():
+        if not g["starts"] or not g["ends"]:
+            continue
+        out[cc].append((min(g["starts"]), max(g["ends"]), wn, g["name"]))
+    n_multi_row_war = sum(1 for (cc, wn), g in per_war.items() if len(g["starts"]) > 1 or len(g["ends"]) > 1)
+    return {k: sorted(v) for k, v in out.items()}, n_multi_row_war
 
 
 def state_exposure(mem: dict, cc: int, t0: int, t1: int):
@@ -73,9 +101,8 @@ def state_exposure(mem: dict, cc: int, t0: int, t1: int):
 
 
 def build(df, mem, entry, exitr, names, min_episodes):
-    confs_by_state, n_phase2 = state_conflicts(df.copy())
+    confs_by_state, _n_multi_row_war = state_conflicts(df.copy())
     ep_rows, int_rows, dropped = [], [], []
-    n_states_raw = len(confs_by_state)
 
     for cc, confs in sorted(confs_by_state.items()):
         episodes = t6.merge_episodes(confs)
@@ -105,7 +132,7 @@ def build(df, mem, entry, exitr, names, min_episodes):
                          "dlugosc_odstepu": exp, "dlugosc_kalendarzowa": max(cal_gap, 0),
                          "cenzurowany": 1, "ekspozycja_zero": exp == 0})
 
-    return pd.DataFrame(ep_rows), pd.DataFrame(int_rows), dropped, n_states_raw, n_phase2
+    return pd.DataFrame(ep_rows), pd.DataFrame(int_rows), dropped
 
 
 def summarize(int_tab):
@@ -132,28 +159,31 @@ def main():
     entry = {cc: min(ys) for cc, ys in mem.items()}
     exitr = {cc: max(ys) for cc, ys in mem.items()}
 
-    ep6, int6, dropped6, n_states_raw, n_phase2 = build(df, mem, entry, exitr, names, MIN_EPISODES_MAIN)
-    ep3, int3, dropped3, _, _ = build(df, mem, entry, exitr, names, MIN_EPISODES_CHECK)
+    ep6, int6, dropped6 = build(df, mem, entry, exitr, names, MIN_EPISODES_MAIN)
+    ep3, int3, dropped3 = build(df, mem, entry, exitr, names, MIN_EPISODES_CHECK)
 
-    # liczby przed nalozeniem ekspozycji (struktura czysta, D-028) - z build() ponownie
-    # liczac odstepy PRZED sprawdzeniem ekspozycji: to juz sa te same liczby (ekspozycja nie
-    # zmienia LICZBY odstepow, tylko ich DLUGOSC) - jawnie pokazane w podsumowaniu ponizej.
+    # kontrolna liczba "356" (SS4) jest niezalezna od D-040 (scalanie tego samego WarNum) -
+    # to jest surowa liczba przedzialow PRZED jakimkolwiek scalaniem, wylacznie po rozbiciu faz
+    n_rozbicie_faz = len(df) + int(((df.StartYear2 > 0) & (df.EndYear2 > 0)).sum())
+    _, n_multi_row_war = state_conflicts(df.copy())
 
     meta = {
-        "builder": "test6_build_s7.py v1.0 (D-038, TASK_S7.md)",
+        "builder": "test6_build_s7.py v2.0 (D-038 + D-040, TASK_S7.md)",
         "zrodlo_wojny": src.name, "sha256_wojny": hashlib.sha256(src.read_bytes()).hexdigest()[:16],
         "zrodlo_czlonkostwo": mem_src.name,
+        "D040_panstw_wojen_wielowierszowych_scalonych": n_multi_row_war,
         "liczby_kontrolne_SS4": {
             "wierszy_uczestnictw_1816_2007": {"oczekiwane": 337, "policzone": len(df)},
-            "przedzialow_po_rozbiciu_faz": {"oczekiwane": 356, "policzone": n_states_raw and sum(
-                len(v) for v in state_conflicts(df.copy())[0].values())},
+            "przedzialow_po_rozbiciu_faz": {"oczekiwane": 356, "policzone": n_rozbicie_faz},
             "panstw_w_pliku": {"oczekiwane": 98, "policzone": int(pd.to_numeric(df.ccode, errors="coerce").nunique())},
             "panstw_prog_ge6": {"oczekiwane": 12, "policzone": summarize(int6)["panstwa"]},
             "odstepow_pelnych_prog_ge6": {"oczekiwane": 98, "policzone": summarize(int6)["odstepy_pelne"]},
             "panstw_prog_ge3": {"oczekiwane": 37, "policzone": summarize(int3)["panstwa"]},
             "odstepow_pelnych_prog_ge3": {"oczekiwane": 168, "policzone": summarize(int3)["odstepy_pelne"]},
         },
-        "rozbieznosc_odnotowana": "TAK - patrz S7_DYSKREPANCJA.md, nie dopasowywane na sile (TASK_S7.md SS4)",
+        "rozbieznosc_v1_rozstrzygnieta": "gap<=0 potwierdzone kodem Testu 6 + D-040 (scalanie "
+                                        "wewnatrz tego samego WarNum) - patrz S7_DYSKREPANCJA.md "
+                                        "dla historii dochodzenia, autora liczby 12/98 w erracie",
         "podsumowanie_ge6": summarize(int6),
         "podsumowanie_ge3": summarize(int3),
         "panstwa_odrzucone_prog_ge6_liczba": len(dropped6),
