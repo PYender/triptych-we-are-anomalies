@@ -1794,3 +1794,150 @@ rozstrzygnięcie protokołu, do potwierdzenia przy deklaracji kolejności zmienn
 (a) potwierdzenie akceptowalności NMC v7.0, (b) dostarczenie lub rezygnację z
 `majors2016.csv`, (c) deklarację kolejności wprowadzania zmiennych przez autora — dopiero
 wtedy pierwsze dopasowanie modelu ze zmiennymi.
+
+## D-034 · 2026-09-02 · Wariant B: dwa modele ze zmiennymi objaśniającymi, z podziałem populacji i regułami zadeklarowanymi przed biegiem
+
+*Wpis przekazany przez autora w całości, wklejony bez skrótów — dokument źródłowy
+`D034.md`. Realizuje wybór autora spośród trzech możliwości z D-033 §4. Zastępuje
+nierozstrzygniętą deklarację kolejności zmiennych z D-032 §4.*
+
+### 1. Podział na dwa modele
+
+| id | zmienne | populacja | pytanie |
+|---|---|---|---|
+| **P2a** | potencjał gospodarczy (`cinc`), status mocarstwowy | **132 wiersze, 101 diad** — pełna, wraz z parami, które nigdy nie walczyły | czy ryzyko wojny zależy od siły i pozycji stron |
+| **P2b** | czas trwania poprzedniego epizodu, straty w poprzednim epizodzie | **77 wierszy, 46 diad** — wyłącznie pary, które już walczyły | czy poprzednia wojna wydłuża regenerację |
+
+Podział wynika z dostępności zmiennych, nie z wyboru. Dwie górne zmienne są określone dla
+każdej pary i każdego roku. Dwie dolne wymagają poprzedniego epizodu i dla par, które nigdy
+nie walczyły, po prostu nie istnieją.
+
+### 2. Który model orzeka — deklaracja przed biegiem
+
+§7 protokołu ustanawia P2 jako orzekające dla **H9b.2**. Po podziale trzeba wskazać, który
+z dwóch przejmuje tę rolę, i wskazanie musi paść teraz.
+
+**Orzeka P2a.** Powód: zachowuje populację, dla której zbudowano Test 7, w tym pięćdziesiąt
+sześć par bez ani jednej wojny. Model, który je usuwa, nie może orzekać o hipotezie
+sformułowanej dla populacji dobranej po stawce.
+
+**P2b jest wariantem opisowym.** Odpowiada na pytanie węższe, o pary, które już walczyły,
+i jego wynik nie wchodzi do żadnej reguły decyzyjnej. Ma być tak oznaczony w raporcie,
+w tytule tabeli, a nie tylko w przypisie.
+
+### 3. Trzy zakazy, konieczne właśnie przy dwóch modelach
+
+**Zakaz wyboru po fakcie.** Nie wolno po zobaczeniu wyników uznać P2b za orzekające ani
+przedstawić go jako „model właściwy". Role są rozdane w §2 i nie zmieniają się.
+
+**Zakaz doboru zmiennych.** W każdym modelu **obie zmienne wchodzą naraz**. Nie ma selekcji
+krokowej, nie ma usuwania zmiennej nieistotnej, nie ma modelu z jedną zmienną prezentowanego
+jako główny. Przy trzydziestu siedmiu zdarzeniach i pięciu parametrach łącznie mamy około
+siedmiu zdarzeń na parametr, co jest na granicy dopuszczalności i nie zniesie żadnego
+majstrowania.
+
+**Reguła rozbieżności, zadeklarowana zanim ją zobaczymy.** Jeżeli P2a i P2b wskażą przeciwne
+kierunki dla czegokolwiek wspólnego, **nie rozstrzygamy tego na korzyść żadnego z nich**.
+Raport ma stwierdzić, że modele na różnych populacjach dały różne odpowiedzi, i wskazać
+podział populacji jako najbardziej prawdopodobną przyczynę.
+
+### 4. Kolejność uruchomień
+
+**P1 idzie pierwsze.** H9b.1 jest hipotezą pierwszorzędną i to dla niej zbudowano populację
+stu jeden diad. Odkładanie go za modele ze zmiennymi odwracałoby kolejność ważności,
+na co zwróciłem uwagę w D-033 §4.
+
+1. **P1** bez zmiennych, sto jeden diad, model z kruchością — **orzeka o H9b.1**
+2. **P2a** — **orzeka o H9b.2**
+3. **P2b** — opisowy
+4. Warianty S1 i S3 z §8 protokołu, bo reguła decyzyjna wymaga utrzymania kierunku w obu
+
+Każdy krok kończy się zapisem wyniku, zanim ruszy następny. Nie wolno oglądać wszystkich
+naraz i dopiero potem opisywać.
+
+### 5. Ograniczenia do zapisania teraz
+
+**Moc.** Pięć parametrów na trzydzieści siedem zdarzeń w P2a. Przedziały ufności dla
+współczynników będą szerokie i najbardziej prawdopodobnym wynikiem jest brak rozstrzygnięcia.
+To zdanie ma stać w raporcie przed wynikiem.
+
+**Zapadanie się kruchości.** Nadal obowiązuje D-022: jeżeli `θ̂` osiądzie na granicy, model
+orzekający jest w praktyce pulowany. Odsetek replik bootstrapowych z `θ̂` na granicy podawany
+obok każdego przedziału.
+
+**Wersja NMC.** Używamy v7.0 zamiast v6.0 wymienionej w §12 protokołu, zgodnie z D-033 §2.
+Różnica wartości `cinc` względem v6.0 pozostaje niezmierzona, chyba że próba pobrania
+starszego wydania się powiedzie.
+
+**P2b nie zastępuje P1.** Jego populacja jest zawężona przez kryterium, które Test 7 miał
+usunąć, czyli przez to, czy para w ogóle walczyła. To ma być powiedziane wprost w raporcie,
+nie pozostawione czytelnikowi do wywnioskowania.
+
+## D-035 · 2026-09-02 · Wykonanie D-034: majors podmienione (bez rozbieżności treści), P2a/P2b zbudowane, NMC v6.0 odnalezione i zmierzone
+
+**Kontekst.** Wykonanie zleceń „Dla Code" z D-034: status mocarstwowy przez `cow_majors.rda`,
+budowa P2a/P2b z rozbiorem i pokryciem, próba pobrania NMC v6.0 z pomiarem różnicy. Żadna
+estymacja nie uruchomiona.
+
+### Status mocarstwowy — źródło podmienione, TREŚĆ zgodna
+
+`cow_majors.rda` skopiowane z tego samego commitu `svmiller/peacesciencer` co NMC i
+rywalizacje. Suma kontrolna `673cb752c2d1af045ea8e2c602b45bc037b84dda9537bfb060142ff255c7f2b6`
+— zgadza się z podaną. Zawartość zweryfikowana bezpośrednio: **14 wierszy, pole `version`
+równe 2016 na wszystkich** — potwierdza, że to ta sama wersja co nazwany w protokole
+`majors2016.csv` (§12), plik którego fizycznie nie ma w repozytorium (D-033). **Niezgodność
+z §12 dotyczy wyłącznie nazwy/ścieżki źródła, nie treści** — odnotowana tym samym trybem co
+przy NMC, nie podmieniona po cichu.
+
+### NMC v6.0 — ODNALEZIONE i zmierzone (próba się powiodła)
+
+Historia `svmiller/peacesciencer` (fetch do 491 commitów, poza domyślną płytką kopią)
+pokazuje commit `4b2a02d` („update cow_nmc to v. 7.0"), którego rodzic `28cb294` ma
+`data-raw/cow_nmc.R` wskazujące dosłownie na `NMC-60-abridged.csv` — **genuinie NMC v6.0**.
+Wyodrębniony `data/cow_nmc.rda` z tego commitu: 15951 wierszy (nie 17121), zakres lat
+**1816–2016** (nie 2022) — zgodne co do joty z oczekiwaniem „kończy się ok. 2016".
+
+**Pomiar różnicy `cinc` na oknie do 2007, dla 101 ccode Testu 7** (8732 dopasowane pary
+ccode-rok): **mediana różnicy względnej = 0,0** (dosłowne zero — zdecydowana większość
+wartości identyczna między wersjami), **maksimum różnicy względnej ≈ 10,2%** (ccode 692,
+Bahrajn, lata 2001–2006 — mały kraj, mały mianownik, różnica bezwzględna rzędu 4-5
+dziesięciotysięcznych). Tylko 216 z 8732 par (2,5%) ma różnicę względną powyżej 1%.
+
+**Wniosek: podmiana v7.0→v6.0 (D-033) ma znikomą konsekwencję praktyczną dla okna do 2007.**
+Rewizje między wersjami są rzadkie, małe, i skupione na małych państwach o marginalnym
+wpływie na `cinc_suma`/`cinc_stosunek` diad Testu 7. `cow_nmc_v6_weryfikacja.rda` zachowane
+w repo jako dowód tej weryfikacji, NIE jako źródło używane do budowy zmiennych (P2a nadal
+liczy z v7.0, zgodnie z D-033/D-034 §5 — sama różnica jest teraz zmierzona, nie tylko
+domniemana).
+
+### P2a/P2b — zbudowane (`test7_build_p2ab_variables.py`)
+
+| | P2a | P2b |
+|---|---|---|
+| wiersze | 132 | 77 |
+| diady | 101 | 46 |
+
+**Rozbiór 132→77 (zadanie z D-034):** P2b zachowuje **37 wierszy `pelny` + 40 wierszy
+`cenzurowany`** = 77. **Wszystkie 37 zdarzeń pełnych modelu głównego przetrwały** —
+potwierdzone wprost (żadne nie odpadło przy dopasowaniu do poprzedniego epizodu: 77 na 77
+kandydujących wierszy dopasowanych, zero bez dopasowania, zgodnie z wcześniejszym pomiarem
+D-033).
+
+**Pokrycie (pełne pokrycie diady = wszystkie jej wiersze modelu mają wartość):**
+
+| zmienna | model | pełne pokrycie |
+|---|---|---|
+| `cinc_suma` (+ stosunek) | P2a | **101 / 101** |
+| status mocarstwowy | P2a | **101 / 101** |
+| czas trwania poprzedniego epizodu | P2b | **46 / 46** |
+| straty (BatDeath, log) | P2b | **46 / 46** |
+
+Zero braków w żadnej z czterech zmiennych, w obu populacjach.
+
+### STOP
+
+Żadna estymacja nie uruchomiona. Kolejność uruchomień z D-034 §4 (P1 → P2a → P2b → S1/S3,
+zapis wyniku po każdym kroku) przyjęta do wykonania, gdy padnie osobna autoryzacja Etapu C —
+blokada `--run-real` pozostaje aktywna, zgodnie z D-034 §4. S1 (wykluczenie epizodów
+1914–18/1939–45, wymaga przebudowy sekwencji zdarzeń) nadal niezbudowane — zgłoszone już w
+`test7_estimate.md` §5, poza zakresem tego wpisu.
