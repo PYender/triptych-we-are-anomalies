@@ -2530,3 +2530,39 @@ efekt tej wielkości, gdyby tam był (czego kontrola negatywna nie oczekuje). Te
 **Autoryzacja biegu.** Należy do autora, nie do rozmowy z Claude. Nie podjęta w tym wpisie —
 `--run-real` pozostaje zablokowany. Po autoryzacji: S7b orzekający, S7c kontrola negatywna,
 bez odstępstw od §5–§8 protokołu Testu 6, surowe liczby bez narracji, STOP.
+
+---
+
+## D-048 · 2026-09-02 · S7b/S7c: kontrola negatywna czulsza od testu orzekającego — cztery układy wyniku, zapisane przed biegiem
+
+**Uzupełnienie D-047, zlecone przez autora po przeglądzie przez Claude.**
+
+**Obserwacja.** SD(k̂): S7c=0,0846, S7b=0,1203 (D-047). **Kontrola negatywna jest czulsza od
+testu orzekającego** — o połowę precyzyjniejsza. To odwraca zwykłą logikę kontroli
+negatywnej: brak wykrycia w S7c NIE będzie świadectwem, że rytm siedzi wyłącznie w
+inicjacjach, bo S7c jest narzędziem MOCNIEJSZYM, nie słabszym, od S7b.
+
+**Cztery układy wyniku i ich odczyt — zapisane TERAZ, przed biegiem, żeby po wyniku żaden z
+nich nie dał się opowiedzieć dowolnie na korzyść hipotezy:**
+
+1. **S7b odrzuca jedynkę, S7c nie odrzuca.** Jedyny układ wspierający hipotezę zegara
+   inicjacji. Zarazem MAŁO PRAWDOPODOBNY — wymagałby efektu silniejszego niż próg S7b
+   (>1,236 albo <0,764) przy jednoczesnym milczeniu narzędzia czulszego (S7c, próg
+   <0,834/>1,166) — silny efekt w S7b praktycznie musiałby być widoczny też w S7c, chyba że
+   efekt naprawdę siedzi wyłącznie w inicjacjach.
+2. **Oba odrzucają jedynkę.** Mierzymy coś dotyczącego WSZYSTKICH wojen, nie decyzji o
+   ataku — hipoteza zegara inicjacji NIEWSPARTA, niezależnie od kierunku obu efektów.
+3. **Żaden nie odrzuca jedynki.** Najbardziej prawdopodobny układ. Dla S7c — wynik
+   PRZYPISYWALNY DANYM (czułość na efekt wielkości Testu 6, 0,778, mieści się w zakresie
+   wykrywalności). Dla S7b — NIEROZSTRZYGNIĘCIE Z BRAKU MOCY (D-047: próg S7b nie sięga
+   efektu wielkości Testu 6).
+4. **S7c odrzuca, S7b nie.** Rytm siedzi w wojnach, których państwo NIE zaczęło — kierunek
+   PRZECIWNY do mechanizmu autora ("państwo kończy wojnę i rusza dalej").
+
+**Role bez zmian (autor).** S7b pozostaje orzekający, S7c pozostaje kontrolą negatywną —
+ustalone przed liczeniem (D-046), nie zmieniane po zobaczeniu różnicy mocy. Ale **raport ma
+powiedzieć wprost, że w tej parze narzędziem mocniejszym jest kontrola, nie test orzekający**
+— nie zostawiać czytelnikowi wrażenia, że formalnie orzekający wariant jest też
+najbardziej wiarygodny.
+
+**STOP, jak w D-046/D-047 — autoryzacja biegu należy do autora, nie podjęta tutaj.**
