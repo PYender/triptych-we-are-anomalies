@@ -2566,3 +2566,21 @@ powiedzieć wprost, że w tej parze narzędziem mocniejszym jest kontrola, nie t
 najbardziej wiarygodny.
 
 **STOP, jak w D-046/D-047 — autoryzacja biegu należy do autora, nie podjęta tutaj.**
+
+---
+
+## D-049 · 2026-09-02 · S7b/S7c: autoryzacja biegu
+
+**Autor autoryzuje bieg S7b/S7c.** Blokada `--run-real` zdjęta. Zapisane PRZED jakimkolwiek
+dopasowaniem na danych rzeczywistych — żaden bieg na `test6_s7b_prog3_intervals.csv` ani
+`test6_s7c_prog3_intervals.csv` nie został wykonany przed tym wpisem.
+
+**Specyfikacja biegu, bez zmian względem D-046/D-047/D-048.** S7b (13 państw, 50 zdarzeń) —
+orzekający. S7c (29 państw, 95 zdarzeń) — kontrola negatywna, MOCNIEJSZA niż S7b (D-048,
+SD=0,0846 wobec 0,1203) — asymetria mocy i cztery układy wyniku (D-048) obowiązują przy
+odczycie. Statystyka pierwszorzędna k̂ pulowane (§5 protokołu Testu 6), kruchość drugorzędna,
+N1 (ziarno 20260822, B=2000, zabezpieczenie przed remisem D-026 §7), N2 pominięty jednym
+zdaniem (D-026). Oba przedziały (profil + bootstrap na poziomie państw) dla obu wariantów.
+Bez odstępstw od §5–§8 protokołu Testu 6.
+
+**STOP po biegu, przed jakąkolwiek narracją — surowe liczby, jak przy S7 (D-043).**
