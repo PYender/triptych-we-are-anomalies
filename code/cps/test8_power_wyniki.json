@@ -1,0 +1,77 @@
+{
+  "n_outer": 150,
+  "B_perm": 200,
+  "seed": 20260823,
+  "n_panstw_przed": 12,
+  "n_panstw_po": 13,
+  "suma_okna_przed": 718,
+  "suma_okna_po": 901,
+  "n_zdarzen_realnych_przed": 48,
+  "n_zdarzen_realnych_po": 62,
+  "lam_przed": 14.958333333333334,
+  "lam_po": 14.53225806451613,
+  "warianty": {
+    "0.0": {
+      "delta_true": 0.0,
+      "moc_p_lt_0_05": 0.06666666666666667,
+      "moc_95pct_CI": [
+        0.02674734061282913,
+        0.1065859927205042
+      ],
+      "delta_obs_mean": 0.008884332398718865,
+      "delta_obs_median": 0.012695612634524123,
+      "delta_obs_sd": 0.17427903130965164,
+      "frac_tie_mean": 0.0,
+      "frac_tie_max": 0.0,
+      "n_przed_sim_mean": 59.72,
+      "n_po_sim_mean": 76.13333333333334
+    },
+    "0.15": {
+      "delta_true": 0.15,
+      "moc_p_lt_0_05": 0.29333333333333333,
+      "moc_95pct_CI": [
+        0.22047177531377793,
+        0.36619489135288874
+      ],
+      "delta_obs_mean": -0.17331598299371123,
+      "delta_obs_median": -0.17246768598854517,
+      "delta_obs_sd": 0.1503479425512672,
+      "frac_tie_mean": 0.0,
+      "frac_tie_max": 0.0,
+      "n_przed_sim_mean": 59.14666666666667,
+      "n_po_sim_mean": 74.08
+    },
+    "0.25": {
+      "delta_true": 0.25,
+      "moc_p_lt_0_05": 0.5933333333333334,
+      "moc_95pct_CI": [
+        0.514723096699014,
+        0.6719435699676528
+      ],
+      "delta_obs_mean": -0.2683781163885583,
+      "delta_obs_median": -0.2714631128279587,
+      "delta_obs_sd": 0.141570321395687,
+      "frac_tie_mean": 0.0,
+      "frac_tie_max": 0.0,
+      "n_przed_sim_mean": 59.88,
+      "n_po_sim_mean": 69.48666666666666
+    },
+    "0.4": {
+      "delta_true": 0.4,
+      "moc_p_lt_0_05": 0.92,
+      "moc_95pct_CI": [
+        0.8765840459431482,
+        0.9634159540568519
+      ],
+      "delta_obs_mean": -0.42606615777548146,
+      "delta_obs_median": -0.41528790993006737,
+      "delta_obs_sd": 0.14190614731358653,
+      "frac_tie_mean": 0.0,
+      "frac_tie_max": 0.0,
+      "n_przed_sim_mean": 60.29333333333334,
+      "n_po_sim_mean": 64.74
+    }
+  },
+  "elapsed_s": 2400.1041164398193,
+  "UWAGA_zakres": "Moc liczona WYLACZNIE wg kryterium p<0.05 permutacyjnego (SS7 czlon pierwszy). Drugi czlon reguly SS7 (nienakladajace sie przedzialy ufnosci) NIE jest tu liczony z powodow kosztowych - podana moc jest wiec GORNYM OGRANICZENIEM mocy pod pelna regula SS7, nie jej dokladna wartoscia."
+}

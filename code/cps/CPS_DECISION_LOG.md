@@ -2584,3 +2584,69 @@ zdaniem (D-026). Oba przedziały (profil + bootstrap na poziomie państw) dla ob
 Bez odstępstw od §5–§8 protokołu Testu 6.
 
 **STOP po biegu, przed jakąkolwiek narracją — surowe liczby, jak przy S7 (D-043).**
+
+---
+
+## D-050 · 2026-09-02 · Test 10 (kontrast epok, H8.1): zamrożenie protokołu + symulacja mocy §8
+
+**Zamrożenie.** `TEST10_PROTOCOL_kontrast_epok.md` v1.0, zamrożony. Numer testu: **10**, nie
+8 — kolizja z roboczą nazwą „Test 8" zarezerwowaną w D-018 dla testu wyprzedzenia retoryki
+COLOR, odnotowana wprost. „Test 9" pominięty celowo, żeby uniknąć mylenia z opisową nazwą
+„rodzina dziewiąta" używaną w tym projekcie dla Testu 6/7/S7 — druga kolizja, też nazwana,
+nie tylko pierwsza. Ziarno modelu zerowego: **20260822**, spójne z N1/N2 w całym projekcie.
+
+**Kierunek autora (§4 protokołu), wpisany przed zamrożeniem.** Kierunkowa: po 1914 wartość
+NIŻSZA niż przed. Cena zapisana razem z deklaracją: wynik odwrotny, choćby wyraźny, oznacza
+brak wsparcia dla H8.1, bez możliwości przeliczenia na wariant dwustronny.
+
+**Wzór (§5) skorygowany.** Szkic 0.1 zapisywał wzór dla kierunku „większa"; obowiązuje teraz
+`p = (1 + #{Δ_sur ≤ Δ_obs})/(B+1)` (surogaty NIE WIĘKSZE od obserwacji), zgodnie z
+zadeklarowanym kierunkiem. Wariant dwustronny liczony i podawany obok, jawnie oznaczony
+nieorzekający.
+
+**§3 zweryfikowane niezależnie — ZGODNE, bez rozbieżności.** Podział 1914: 48 odstępów
+pełnych przed, 62 po (plus 13 cenzurowanych, wszystkie w epoce „po" z konstrukcji). Podział
+1945: 69 przed, 41 po. Dokładne dopasowanie do liczb autora — pierwszy raz w tej rodzinie
+liczby kontrolne autora zgadzają się bez potrzeby diagnozy rozbieżności.
+
+**§9 punkt 2 — zmierzone.** Z 62 odstępów pełnych po 1914: **7 (11,3%) zaczyna się dokładnie
+w 1918** (koniec I wojny światowej), kolejne **7 (11,3%) dokładnie w 1945** (koniec II
+wojny) — razem **14/62 (22,6%)** zaczyna się od zakończenia jednej z dwóch wojen światowych.
+**To NIE jest większość** — sklejenie początku drugiej epoki jest realne i warte nazwania
+(§9.1 protokołu), ale słabsze niż sugerowałaby sama liczba państw z epizodem obejmującym
+wojnę światową (9/13 w całej rodzinie, D-042/D-048).
+
+**Symulacja mocy §8 — WYKONANA, mechanizm min(T,C) (D-031), 150 replik zewnętrznych ×
+B=200 permutacji wewnętrznych na każdy z czterech poziomów Δ, ziarno 20260823 (RNG estymatora,
+nie mylić z ziarnem 20260822 modelu zerowego docelowego biegu). Okna administracyjne per
+państwo/epoka: 12 państw przed 1914 (Σ=718), 13 po (Σ=901); λ kalibrowane osobno na
+Σokno/n_zdarzeń realnych każdej epoki (48, 62).**
+
+| Δ prawdziwe | moc (p<0,05, 150 replik) | 95% CI mocy | Δ̂ średnie (symulowane) |
+|---|---|---|---|
+| 0,00 (fałszywe odrzucenia) | **6,7%** | [2,7%; 10,7%] | +0,009 |
+| 0,15 | 29,3% | [22,0%; 36,6%] | −0,173 |
+| **0,25** | **59,3%** | [51,5%; 67,2%] | −0,268 |
+| 0,40 | 92,0% | [87,7%; 96,3%] | −0,426 |
+
+**Odpowiedź na pytanie z §8: test wykrywa różnicę w co najmniej połowie biegów już przy
+Δ≈0,25** (interpolacja liniowa między 0,15 i 0,25 daje próg mocy 50% przy Δ≈0,22) — NIE
+dopiero przy 0,40. To NIE jest scenariusz „testu nie warto uruchamiać" przewidziany w §8
+protokołu jako możliwy wynik.
+
+**Fałszywe odrzucenia (Δ=0) = 6,7%, 95%CI obejmuje nominalne 5%** — zgodne z oczekiwaniem,
+brak sygnału degeneracji w tym wymiarze.
+
+**frac_tie = 0,0 we wszystkich 600 replikach (4 warunki × 150), maksimum zaobserwowane =
+0,0.** Permutacja etykiet epoki jest NIEZDEGENEROWANA — potwierdzone pomiarem na strukturze
+syntetycznej (nigdy nie dotykając realnych wartości `t`), zgodnie z wymogiem protokołu
+„ma to być pomiar, nie założenie". Wyraźnie poniżej progu zatrzymania 0,01.
+
+**Zastrzeżenie o zakresie tej symulacji, zapisane wprost.** Moc policzona WYŁĄCZNIE wg
+pierwszego członu reguły §7 (p<0,05 permutacyjne). Drugi człon (nienakładające się przedziały
+ufności) NIE jest tu liczony z powodów kosztowych — podana moc jest więc GÓRNYM
+OGRANICZENIEM mocy pod pełną regułą §7, nie jej dokładną wartością. Rzeczywista moc pod
+pełną regułą będzie NIŻSZA niż liczby w tabeli.
+
+**STOP, zgodnie z Etapem 1 protokołu (§11). Decyzja, czy uruchamiać, należy do autora.
+`--run-real` pozostaje zablokowany.**
