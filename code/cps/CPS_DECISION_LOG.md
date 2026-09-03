@@ -2746,3 +2746,99 @@ osiągnął nawet PIERWSZEGO członu reguły (p=0,068>0,05, D-023/Krok C), więc
 poziom całej koniunkcji jest tu akademickie, nie decydujące. Ale ma to trafić do rozdziału
 metodologicznego jako ustalenie o konstrukcji reguł tego typu w całym projekcie, niezależnie
 od tego, że akurat w Teście 6 nie zmienia konkluzji.
+
+---
+
+## D-054 · 2026-09-02 · Test 11 (kształt hazardu, H11.1): zamrożenie + symulacja mocy §8 — REKOMENDACJA NIEURUCHAMIANIA
+
+**Zamrożenie.** `TEST11_PROTOCOL_ksztalt_hazardu.md` v1.0, zamrożony. Numer testu: **11**
+(Test 10 zajęty przez kontrast epok, D-050). Ziarno modelu zerowego: **20260822**, spójne z
+resztą projektu. §0 (ujawnienie: protokół powstał po zobaczeniu wyników rodziny dziewiątej,
+w tym 0,9947 dla zbioru S7) i §4 (kierunek: garb/maksimum wewnętrzne, zamknięty przez autora)
+przeniesione bez zmian z dostarczonego dokumentu.
+
+**Specyfikacja implementacyjna, dopisana przy zamrożeniu.** Rodzina uogólnionej gammy
+zaimplementowana parametryzacją **Stacy'ego** (`scipy.stats.gengamma`), nie algebrą
+Prentice'a od zera — ta sama rodzina rozkładów (Weibull zagnieżdżony identycznie przy `a=1`),
+mniejsze ryzyko błędu numerycznego. Sprawdzone wprost (siatka po `(a,c)`): oba kształty
+niemonotoniczne — maksimum wewnętrzne i minimum wewnętrzne — istnieją w tej parametryzacji,
+zgodnie z twierdzeniem protokołu §3.
+
+**Ustalenie 1 (napotkane przy budowie, nie w protokole autora): słaba identyfikowalność
+rodziny uogólnionej gammy.** Bez ograniczenia przestrzeni parametrów optymalizator na
+CZYSTYCH danych Weibulla (bez żadnego garbu) czasem znajdował zdegenerowane rozwiązania
+(skala rzędu milionów) dające POZORNY garb — znany, udokumentowany problem tej rodziny
+rozkładów (grzbiet w wiarygodności), nie błąd implementacji. Naprawione częściowo (granice
+parametrów fizycznie sensowne dla skali realnych danych), ale nawet po ograniczeniu
+pozostaje SZUM: na czystych danych Weibulla dopasowanie gengamma czasem (nie zawsze) wskazuje
+niewielki, ale niezerowy zysk wiarygodności i niemonotoniczny kształt — to jest DOKŁADNIE to,
+przed czym ma chronić symulacyjna wartość p z §3 protokołu (surogaty przechodzą przez ten sam
+estymator, więc ten sam szum jest obecny po obu stronach porównania).
+
+**Ustalenie 2 (napotkane przy budowie symulacji mocy): bezpośrednie próbkowanie garbu z
+rodziny Stacy'ego przy `c<0` ma katastrofalnie ciężki ogon** — mediana próbek rzędu
+10²–10⁵ „lat" mimo hazardu wyglądającego rozsądnie na siatce obserwowanego zakresu (0–55 lat).
+Niezdatne do symulacji realistycznych danych. Zastąpione jądrem gamma
+`h(t)=A·t^(κ-1)·exp(-t/θ)` (κ=3, pojedynczy garb przy `t=2θ`, lekki ogon wykładniczy) — NIE
+członkiem testowanej rodziny, celowo: analiza mocy sprawdza wykrywalność REALISTYCZNEGO
+garbu, nie tylko garbu dokładnie matematycznej postaci dopasowywanej rodziny. `A`
+skalibrowane bezpośrednio na mechanizmie wyścigu min(T,C) do realnej liczby zdarzeń (110).
+Trzy warianty: szczyt przy ok. 5, 10, 15 lat (wewnątrz obserwowanego zakresu 1–51 lat,
+mediana 8).
+
+**Symulacja mocy §8 — WYKONANA, koszt silnie ograniczony (zmierzony ~1s/dopasowanie pary
+Weibull+uogólniona gamma na pełnej strukturze S7, znacznie drożej niż Test 10 ze względu na
+trzeci parametr i słabą identyfikowalność).** N_OUTER=6, B_null=15 — **rząd wielkości, nie
+precyzja ostatecznego biegu, słabsza precyzja niż przy Teście 10** z powodu kosztu, odnotowane
+wprost.
+
+| warunek | p<0,05 (człon 1) | kształt=maksimum (człon 2) | **PEŁNA REGUŁA (3 człony)** |
+|---|---|---|---|
+| zerowy (Weibull k=0,99) | 0/6 | 0/6 | **0/6** |
+| wczesny szczyt (~5 lat) | 0/6 | **6/6** | **0/6** |
+| środkowy szczyt (~10 lat) | 0/6 | **6/6** | **0/6** |
+| późny szczyt (~15 lat) | 0/6 | 3/6 | **0/6** |
+
+**Ustalenie 3 (najważniejsze z tej symulacji): CZŁON 2 działa bardzo dobrze (klasyfikacja
+kształtu poprawnie wykrywa garb w 6/6 i 6/6 replik przy wczesnym i środkowym szczycie), ale
+CZŁON 1 (wartość p testu ilorazu wiarygodności) nie odrzucił jedynki ANI RAZU w 24 replikach z
+prawdziwym garbem.** Prawdopodobny mechanizm (Ustalenie 1 wyżej): surogaty modelu zerowego są
+dopasowywane Weibullem DO TEJ SAMEJ repliki (SS3 protokołu, dosłownie), więc gdy obserwacja ma
+silny garb, dopasowany Weibull jest sam w sobie skompromitowany, a surogaty z niego generowane
+i ponownie dopasowywane gengammą dziedziczą PODOBNY szum słabej identyfikowalności co
+obserwacja — obie strony porównania (obserwacja i surogaty) są podniesione tym samym
+mechanizmem, więc różnica między nimi (wartość p) nie rośnie tak, jak rosłaby, gdyby surogaty
+pochodziły z „czystszego" zerowego wzorca. To NIE jest błąd konstrukcji reguły w duchu D-053
+(koniunkcja obniżająca poziom) — to jest coś dodatkowego: CZŁON 1 sam z siebie ma bardzo
+niską moc na tej strukturze, niezależnie od koniunkcji.
+
+**Odpowiedź na pytanie z §8.** Moc pełnej reguły przy umiarkowanej niemonotoniczności (szczyt
+środkowy, najbliższy deklarowanemu mechanizmowi regeneracyjnemu) = **0/6 (0%)**, znacznie
+poniżej progu 30% z instrukcji autora, przy WSZYSTKICH trzech sprawdzonych lokalizacjach
+szczytu, nie tylko jednej. Odsetek fałszywych odrzuceń pełnej reguły pod prawdą zerową = 0/6.
+Odsetek kierunku przeciwnego (minimum zamiast maksimum) pod prawdą zerową = 1/6 (16,7%) —
+sam szum słabej identyfikowalności, zgodny z Ustaleniem 1.
+
+**REKOMENDACJA: NIE URUCHAMIAĆ Testu 11 w obecnej postaci**, zgodnie z regułą z instrukcji
+autora („jeżeli moc pełnej reguły... spadnie poniżej mniej więcej trzydziestu procent,
+zgłoś rekomendację nieuruchamiania"). Powodem jest głównie CZŁON 1 (test ilorazu
+wiarygodności), nie człon 2 (klasyfikacja kształtu, który działa dobrze) — to rozróżnienie
+ma znaczenie dla ewentualnej naprawy protokołu w przyszłości (np. model zerowy z innym
+źródłem parametrów Weibulla, niezależnym od obserwacji, zamiast dopasowanego do niej wprost).
+
+**Zastrzeżenie o precyzji.** N=6 replik na warunek to bardzo mało — górna granica 95% CI dla
+0/6 sięga rzędu 30-40%, więc „0%" nie jest ustalone z dużą pewnością liczbową. Ale wzorzec
+(człon 2 działa, człon 1 nie odrzuca ANI RAZU w 24 replikach z prawdziwym, poprawnie
+zaklasyfikowanym garbem, przy trzech różnych lokalizacjach szczytu) jest spójny i silny
+jakościowo, niezależnie od dokładnej wartości procentowej — nie jest to przypadek jednej
+nieszczęśliwej repliki.
+
+**Kontrola zafałszowania §7 — spełniona przez REUŻYCIE istniejącego wyniku, bez nowego
+dopasowania na danych rzeczywistych.** θ̂ Testu S7 (D-043, `test6_s7_wyniki.json`) =
+4,08×10⁻⁸, na granicy numerycznej (`theta_na_granicy=True`), `frac_theta_boundary`
+(bootstrap) = 0,2525. Kruchość zapadła na granicy, dokładnie warunek wymagany przez §7
+protokołu, żeby P1 w ogóle mógł orzekać — zmierzone na danych, nie założone, choć nie jest to
+NOWY bieg (S7 był już autoryzowany i wykonany, D-043/D-049).
+
+**STOP, zgodnie z Etapem 1 protokołu (§11). Decyzja, czy uruchamiać mimo tej liczby, należy
+do autora. `--run-real` pozostaje zablokowany.**

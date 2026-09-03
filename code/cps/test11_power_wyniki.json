@@ -1,0 +1,133 @@
+{
+  "n_outer": 6,
+  "B_null": 15,
+  "seed": 20260823,
+  "n_windows": 13,
+  "n_full_real": 110,
+  "hump_specs": {
+    "wczesny_szczyt_t5": [
+      3.0,
+      2.5
+    ],
+    "srodkowy_szczyt_t10": [
+      3.0,
+      5.0
+    ],
+    "pozny_szczyt_t15": [
+      3.0,
+      7.5
+    ]
+  },
+  "hump_A": {
+    "wczesny_szczyt_t5": 0.06682559268044742,
+    "srodkowy_szczyt_t10": 0.01190328662296865,
+    "pozny_szczyt_t15": 0.004405638710183245
+  },
+  "warianty": {
+    "0_null_weibull_k099": {
+      "n": 6,
+      "moc_p_lt_0_05": 0.0,
+      "frakcja_ksztalt_maksimum": 0.0,
+      "moc_PELNA_regula": 0.0,
+      "moc_PELNA_95CI": [
+        0.0,
+        0.0
+      ],
+      "frakcja_kierunek_przeciwny_minimum": 0.16666666666666666,
+      "max_frac_tie": 0.0,
+      "turning_points": [
+        3.4213145860596064
+      ],
+      "shapes": [
+        "malejacy",
+        "rosnacy",
+        "rosnacy",
+        "minimum_wewnetrzne",
+        "malejacy",
+        "rosnacy"
+      ]
+    },
+    "wczesny_szczyt_t5": {
+      "n": 6,
+      "moc_p_lt_0_05": 0.0,
+      "frakcja_ksztalt_maksimum": 1.0,
+      "moc_PELNA_regula": 0.0,
+      "moc_PELNA_95CI": [
+        0.0,
+        0.0
+      ],
+      "frakcja_kierunek_przeciwny_minimum": 0.0,
+      "max_frac_tie": 0.0,
+      "turning_points": [
+        3.230375127622791,
+        2.4077531811778274,
+        2.05335714348191,
+        2.4070037789495533,
+        1.7321232473424009,
+        2.43992974398902
+      ],
+      "shapes": [
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne"
+      ]
+    },
+    "srodkowy_szczyt_t10": {
+      "n": 6,
+      "moc_p_lt_0_05": 0.0,
+      "frakcja_ksztalt_maksimum": 1.0,
+      "moc_PELNA_regula": 0.0,
+      "moc_PELNA_95CI": [
+        0.0,
+        0.0
+      ],
+      "frakcja_kierunek_przeciwny_minimum": 0.0,
+      "max_frac_tie": 0.0,
+      "turning_points": [
+        5.742802093221895,
+        5.737134005232914,
+        7.104465803458574,
+        6.181804735391836,
+        5.568775418126897,
+        6.36783404127275
+      ],
+      "shapes": [
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne"
+      ]
+    },
+    "pozny_szczyt_t15": {
+      "n": 6,
+      "moc_p_lt_0_05": 0.0,
+      "frakcja_ksztalt_maksimum": 0.5,
+      "moc_PELNA_regula": 0.0,
+      "moc_PELNA_95CI": [
+        0.0,
+        0.0
+      ],
+      "frakcja_kierunek_przeciwny_minimum": 0.0,
+      "max_frac_tie": 0.0,
+      "turning_points": [
+        12.080863271879547,
+        9.66168220283934,
+        11.036540391810322
+      ],
+      "shapes": [
+        "maksimum_wewnetrzne",
+        "rosnacy",
+        "maksimum_wewnetrzne",
+        "maksimum_wewnetrzne",
+        "rosnacy",
+        "rosnacy"
+      ]
+    }
+  },
+  "elapsed_s": 368.0783586502075
+}
