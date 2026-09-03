@@ -1,0 +1,132 @@
+{
+  "S7b": {
+    "label": "S7b (zegar inicjacji, orzekajacy)",
+    "struktura": {
+      "n_panstw": 13,
+      "n_pelnych": 50,
+      "n_cenzurowanych": 13
+    },
+    "fit_pooled": {
+      "k": 0.9298907425136768,
+      "lam": 31.11112191258527,
+      "loglik": -222.54820442533477
+    },
+    "fit_frailty": {
+      "k": 0.9299008345045234,
+      "lam": 31.11971677680855,
+      "theta": 1e-10,
+      "loglik": -222.54785116139718,
+      "theta_na_granicy": true
+    },
+    "przedzialy_pooled": {
+      "profil": {
+        "lo": 0.744325655302386,
+        "hi": 1.1343005593074957,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap_panstwa": {
+        "lo": 0.8063139562620766,
+        "hi": 1.105274557910103
+      }
+    },
+    "przedzialy_frailty": {
+      "profil": {
+        "lo": 0.7443264007162753,
+        "hi": 1.1342986861272457,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap_panstwa": {
+        "lo": 0.8060720666880254,
+        "hi": 1.1054422295678854,
+        "frac_theta_boundary": 0.6865
+      }
+    },
+    "rozjazd_profil_bootstrap_pooled": {
+      "profil_szerokosc": 0.3899749040051097,
+      "bootstrap_szerokosc": 0.2989606016480265,
+      "stosunek_bootstrap_do_profilu": 0.7666149759321675
+    },
+    "n1_diagnostyczny": {
+      "model": "N1",
+      "k_obs": 0.9298907425136768,
+      "p": 0.6271864067966016,
+      "B": 2000,
+      "seed": 20260822,
+      "k_sur_mean": 0.9221670672133265,
+      "k_sur_median": 0.9161226100864345,
+      "k_sur_sd": 0.09413513730851246,
+      "frac_tie": 0.0,
+      "poza_regula_decyzyjna_S8": "diagnostyczny, nie orzeka"
+    },
+    "n2": "pominiety jednym zdaniem (D-026): zdegenerowany wzgledem k-hat pulowanego."
+  },
+  "S7c": {
+    "label": "S7c (kontrola negatywna)",
+    "struktura": {
+      "n_panstw": 29,
+      "n_pelnych": 95,
+      "n_cenzurowanych": 29
+    },
+    "fit_pooled": {
+      "k": 0.9002714460977316,
+      "lam": 28.326849636637153,
+      "loglik": -413.16917984148535
+    },
+    "fit_frailty": {
+      "k": 0.9000750588056156,
+      "lam": 28.35125566294404,
+      "theta": 1e-10,
+      "loglik": -413.16867638036666,
+      "theta_na_granicy": true
+    },
+    "przedzialy_pooled": {
+      "profil": {
+        "lo": 0.7619636499986714,
+        "hi": 1.0490800909807776,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap_panstwa": {
+        "lo": 0.8054238257149472,
+        "hi": 1.0327860565389155
+      }
+    },
+    "przedzialy_frailty": {
+      "profil": {
+        "lo": 0.761991611414138,
+        "hi": 1.0490928914284616,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap_panstwa": {
+        "lo": 0.8053265633711809,
+        "hi": 1.0334089287393697,
+        "frac_theta_boundary": 0.8075
+      }
+    },
+    "rozjazd_profil_bootstrap_pooled": {
+      "profil_szerokosc": 0.2871164409821062,
+      "bootstrap_szerokosc": 0.22736223082396834,
+      "stosunek_bootstrap_do_profilu": 0.7918816144636528
+    },
+    "n1_diagnostyczny": {
+      "model": "N1",
+      "k_obs": 0.9002714460977316,
+      "p": 0.4587706146926537,
+      "B": 2000,
+      "seed": 20260822,
+      "k_sur_mean": 0.9119589788690241,
+      "k_sur_median": 0.9088701831877666,
+      "k_sur_sd": 0.07012896839749662,
+      "frac_tie": 0.0,
+      "poza_regula_decyzyjna_S8": "diagnostyczny, nie orzeka"
+    },
+    "n2": "pominiety jednym zdaniem (D-026): zdegenerowany wzgledem k-hat pulowanego."
+  }
+}
