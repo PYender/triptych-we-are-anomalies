@@ -2489,3 +2489,44 @@ duplikatów. Zgłoszone, nie dopasowane.
 
 **STOP po budowie i symulacji mocy, zgodnie z żądaniem. `--run-real` zablokowany do
 autoryzacji autora. Wnioskowanie bez odstępstw od §5–§8 protokołu Testu 6.**
+
+---
+
+## D-047 · 2026-09-02 · S7b/S7c: rozstrzygnięcie D-040, errata inicjacji, asymetria mocy, moc S7c
+
+**Rozstrzygnięcie liczb kontrolnych S7b.** Obowiązuje wersja z D-040: **13 państw, 50
+zdarzeń pełnych**. Autor: rozbieżność własna, skrypt liczył scalanie wyłącznie po
+nachodzeniu, bez reguły WarNum (D-040). Ta sama zasada co przy S7: liczy metoda AKTUALNIE
+obowiązująca, nie ta, która daje więcej. **Autora 14 państw/54 zdarzenia idą do erraty.**
+
+**Kierunek, odnotowany wprost.** Wybór D-040 odbiera CZTERY zdarzenia (54→50) — działa
+przeciw mocy testu, nie na jej korzyść. Reguła D-040 (przyjęta przy S7, dla innego powodu —
+zmiana strony w trakcie tej samej wojny nie jest przerwą w regeneracji) nie została więc
+dobrana pod S7b post factum.
+
+**Rozstrzygnięcie liczb inicjacji.** Obowiązują liczby Code'a: **Rosja 10, Francja 8, USA 7,
+Japonia 7, Włochy 6, Niemcy 5.** Autor: własna rozbieżność zdiagnozowana — liczył
+UCZESTNICTWA (wiersze), nie EPIZODY, więc dwie fazy tej samej wojny (Niemcy, WWII) i zmiana
+strony w trakcie wojny (Włochy, 1943) liczyły się podwójnie. Po scaleniu wychodzi mniej.
+Rosja pozostaje na pierwszym miejscu — bez zmian.
+
+**Deklaracja asymetrii mocy — do raportu, nie do przypisu (autor).** SD(k̂)=0,1203 (z D-040,
+13/50) daje próg wykluczenia jedynki poniżej **0,764** albo powyżej 1,236. Test 6 dał
+k̂=0,778 — **powyżej progu 0,764**. Efekt DOKŁADNIE tej wielkości, ten sam, który już raz
+odrzucił jedynkę w tym projekcie, **nie zostałby wykryty przez S7b**. Wykryty zostałby
+dopiero efekt silniejszy niż zaobserwowany dotąd w rodzinie.
+
+**Konsekwencja wprost: S7b jest testem słabszym niż S7 i nie może zamknąć sprawy w drugą
+stronę.** Jeżeli S7b nie odrzuci jedynki, NIE będzie to wynik przypisywalny danym (jak S7,
+D-043) — będzie to nierozstrzygnięcie z braku mocy. Ta asymetria ma stać w ciele raportu.
+
+**Moc S7c (kontrola negatywna), zlecona i policzona.** 29 państw, 95 zdarzeń, mechanizm
+min(T,C), 2000 replik: **SD(k̂)=0,0846**, próg wykluczenia jedynki poniżej **0,834** albo
+powyżej **1,166**. Czułość zbliżona do S7 (SD=0,0782, próg 0,847/1,153) — nieco gorsza, ale
+w tym samym rejestrze. Test 6 (0,778) leży poniżej progu 0,834 — S7c MIAŁOBY moc wykryć
+efekt tej wielkości, gdyby tam był (czego kontrola negatywna nie oczekuje). Test 7 P1
+(0,843) leży TUŻ powyżej progu 0,834 — na granicy wykrywalności.
+
+**Autoryzacja biegu.** Należy do autora, nie do rozmowy z Claude. Nie podjęta w tym wpisie —
+`--run-real` pozostaje zablokowany. Po autoryzacji: S7b orzekający, S7c kontrola negatywna,
+bez odstępstw od §5–§8 protokołu Testu 6, surowe liczby bez narracji, STOP.
