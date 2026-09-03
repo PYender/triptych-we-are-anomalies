@@ -2650,3 +2650,41 @@ pełną regułą będzie NIŻSZA niż liczby w tabeli.
 
 **STOP, zgodnie z Etapem 1 protokołu (§11). Decyzja, czy uruchamiać, należy do autora.
 `--run-real` pozostaje zablokowany.**
+
+---
+
+## D-051 · 2026-09-02 · Test 10: moc wg PEŁNEJ reguły §7 — podejrzenie autora POTWIERDZONE, rekomendacja nieuruchamiania
+
+**Zlecone po D-050** (autor): zastrzeżenie, że podana wcześniej moc jest górnym ograniczeniem
+(liczonym wyłącznie wg pierwszego członu §7, p<0,05), nie mocą pod pełną regułą. Drugi
+człon — przedziały profilowe (D-045) obu epok nienakładające się — zmierzony teraz osobno,
+nie zgadywany. 150 replik zewnętrznych, B=150 permutacji wewnętrznych, mechanizm min(T,C)
+(D-031), ta sama struktura/kalibracja co D-050.
+
+| Δ prawdziwe | p<0,05 (człon 1) | brak nakładania CI (człon 2) | **PEŁNA REGUŁA §7** | 95% CI pełnej mocy |
+|---|---|---|---|---|
+| 0,00 (fałszywe odrzucenia) | 8,0% | 0,7% | **0,7%** | [0,0%; 2,0%] |
+| 0,15 | 32,7% | 6,0% | **6,0%** | [2,2%; 9,8%] |
+| **0,25** | 50,0% | 16,7% | **16,7%** | [10,7%; 22,6%] |
+| 0,40 | 98,0% | 70,7% | **70,7%** | [63,4%; 78,0%] |
+
+**Podejrzenie autora POTWIERDZONE.** Przy Δ=0,25 pełna moc wynosi **16,7%**, nie 59,3% jak
+sugerował sam pierwszy człon (D-050) — spadek dokładnie w podejrzewanym kierunku i rzędzie
+wielkości. Drugi człon reguły jest przy podpróbach rzędu pięćdziesięciu-sześćdziesięciu
+zdarzeń zdecydowanie ostrzejszym warunkiem niż wartość p.
+
+**Próg autora („poniżej mniej więcej trzydziestu procent")** — 16,7% < 30%. **Zgodnie z
+instrukcją: REKOMENDACJA NIEURUCHAMIANIA testu w obecnej postaci przy Δ=0,25.**
+
+**Przy jakiej różnicy pełna reguła osiąga połowę (interpolacja liniowa między Δ=0,25 i
+Δ=0,40, jedyne dwa punkty simulowane po obu stronach 50%):** Δ≈**0,34**. Wartość
+interpolowana, nie symulowana bezpośrednio — podana z tym zastrzeżeniem.
+
+**Fałszywe odrzucenia pod pełną regułą (Δ=0) = 0,7%**, wyraźnie poniżej nominalnych 5% —
+oczekiwane, bo koniunkcja dwóch warunków jest z konstrukcji bardziej konserwatywna niż
+którykolwiek osobno; nie jest to sygnał błędu.
+
+**STOP, zgodnie z Etapem 1 protokołu. Rekomendacja niniejszego pomiaru: NIE URUCHAMIAĆ przy
+obecnej strukturze (12/13 państw, podział 48/62), chyba że autor zdecyduje inaczej mimo tej
+liczby. Decyzja końcowa, jak zawsze, należy do autora — `--run-real` pozostaje
+zablokowany.**
