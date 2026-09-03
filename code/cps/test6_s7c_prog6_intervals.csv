@@ -1,0 +1,44 @@
+# {"builder": "test6_build_s7bc.py v1.0 (D-046)", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "top10_inicjatorow_cala_baza_bez_progu": [{"ccode": 365, "panstwo": "USSR", "n_wojen_zainicjowanych": 10}, {"ccode": 220, "panstwo": "France", "n_wojen_zainicjowanych": 8}, {"ccode": 2, "panstwo": "United States of America", "n_wojen_zainicjowanych": 7}, {"ccode": 740, "panstwo": "Japan", "n_wojen_zainicjowanych": 7}, {"ccode": 325, "panstwo": "Italy", "n_wojen_zainicjowanych": 6}, {"ccode": 200, "panstwo": "United Kingdom", "n_wojen_zainicjowanych": 6}, {"ccode": 255, "panstwo": "Germany", "n_wojen_zainicjowanych": 5}, {"ccode": 710, "panstwo": "China", "n_wojen_zainicjowanych": 5}, {"ccode": 770, "panstwo": "Pakistan", "n_wojen_zainicjowanych": 3}, {"ccode": 666, "panstwo": "Israel", "n_wojen_zainicjowanych": 3}], "fakt_autora_do_weryfikacji": {"twierdzenie": "Rosja 10, Francja 8, USA/Japonia/Wlochy/Niemcy po 7", "policzone": "Rosja(365)=10, Francja(220)=8, USA(2)=7, Japonia(740)=7, Wlochy(325)=6 (NIE 7), Niemcy(255)=5 (NIE 7)", "rozbieznosc": "TAK dla Wloch i Niemiec - zgloszona, nie dopasowana, patrz raport"}, "S7b": {"prog3_decyduje": {"panstwa": 13, "odstepy_pelne": 50, "odstepy_cenzurowane": 13, "pelne_ekspozycja_zero": 0}, "prog6_alternatywny": {"panstwa": 4, "odstepy_pelne": 24, "odstepy_cenzurowane": 4, "pelne_ekspozycja_zero": 0}}, "S7c": {"prog3_decyduje": {"panstwa": 29, "odstepy_pelne": 95, "odstepy_cenzurowane": 29, "pelne_ekspozycja_zero": 0}, "prog6_alternatywny": {"panstwa": 6, "odstepy_pelne": 36, "odstepy_cenzurowane": 6, "pelne_ekspozycja_zero": 0}}}
+ccode,panstwo,rok_konca_poprz,rok_poczatku_nast,dlugosc_odstepu,dlugosc_kalendarzowa,cenzurowany,ekspozycja_zero
+200,United Kingdom,1856,1914,58,58,0,False
+200,United Kingdom,1918,1939,21,21,0,False
+200,United Kingdom,1945,1950,5,5,0,False
+200,United Kingdom,1953,1956,3,3,0,False
+200,United Kingdom,1956,1982,26,26,0,False
+200,United Kingdom,1982,1991,9,9,0,False
+200,United Kingdom,1991,2007,16,16,1,False
+220,France,1856,1859,3,3,0,False
+220,France,1859,1914,55,55,0,False
+220,France,1918,1939,21,21,0,False
+220,France,1945,1951,6,6,0,False
+220,France,1953,1956,3,3,0,False
+220,France,1956,1958,2,2,0,False
+220,France,1958,1991,33,33,0,False
+220,France,1991,2001,10,10,0,False
+220,France,2001,2007,6,6,1,False
+325,Italy,1856,1859,3,3,0,False
+325,Italy,1859,1866,7,7,0,False
+325,Italy,1866,1915,49,49,0,False
+325,Italy,1918,1940,22,22,0,False
+325,Italy,1945,1991,46,46,0,False
+325,Italy,1991,2007,16,16,1,False
+365,USSR,1856,1904,48,48,0,False
+365,USSR,1905,1914,9,9,0,False
+365,USSR,1917,1938,21,21,0,False
+365,USSR,1938,1939,1,1,0,False
+365,USSR,1939,1941,2,2,0,False
+365,USSR,1945,2007,62,62,1,False
+640,Turkey,1829,1877,48,48,0,False
+640,Turkey,1878,1897,19,19,0,False
+640,Turkey,1897,1911,14,14,0,False
+640,Turkey,1913,1914,1,1,0,False
+640,Turkey,1918,1919,1,1,0,False
+640,Turkey,1922,1950,28,28,0,False
+640,Turkey,1953,2007,54,54,1,False
+710,China,1885,1894,9,9,0,False
+710,China,1895,1900,5,5,0,False
+710,China,1900,1929,29,29,0,False
+710,China,1929,1931,2,2,0,False
+710,China,1933,1937,4,4,0,False
+710,China,1945,1950,5,5,0,False
+710,China,1953,2007,54,54,1,False

@@ -1,0 +1,65 @@
+# {"builder": "test6_build_s7bc.py v1.0 (D-046)", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "top10_inicjatorow_cala_baza_bez_progu": [{"ccode": 365, "panstwo": "USSR", "n_wojen_zainicjowanych": 10}, {"ccode": 220, "panstwo": "France", "n_wojen_zainicjowanych": 8}, {"ccode": 2, "panstwo": "United States of America", "n_wojen_zainicjowanych": 7}, {"ccode": 740, "panstwo": "Japan", "n_wojen_zainicjowanych": 7}, {"ccode": 325, "panstwo": "Italy", "n_wojen_zainicjowanych": 6}, {"ccode": 200, "panstwo": "United Kingdom", "n_wojen_zainicjowanych": 6}, {"ccode": 255, "panstwo": "Germany", "n_wojen_zainicjowanych": 5}, {"ccode": 710, "panstwo": "China", "n_wojen_zainicjowanych": 5}, {"ccode": 770, "panstwo": "Pakistan", "n_wojen_zainicjowanych": 3}, {"ccode": 666, "panstwo": "Israel", "n_wojen_zainicjowanych": 3}], "fakt_autora_do_weryfikacji": {"twierdzenie": "Rosja 10, Francja 8, USA/Japonia/Wlochy/Niemcy po 7", "policzone": "Rosja(365)=10, Francja(220)=8, USA(2)=7, Japonia(740)=7, Wlochy(325)=6 (NIE 7), Niemcy(255)=5 (NIE 7)", "rozbieznosc": "TAK dla Wloch i Niemiec - zgloszona, nie dopasowana, patrz raport"}, "S7b": {"prog3_decyduje": {"panstwa": 13, "odstepy_pelne": 50, "odstepy_cenzurowane": 13, "pelne_ekspozycja_zero": 0}, "prog6_alternatywny": {"panstwa": 4, "odstepy_pelne": 24, "odstepy_cenzurowane": 4, "pelne_ekspozycja_zero": 0}}, "S7c": {"prog3_decyduje": {"panstwa": 29, "odstepy_pelne": 95, "odstepy_cenzurowane": 29, "pelne_ekspozycja_zero": 0}, "prog6_alternatywny": {"panstwa": 6, "odstepy_pelne": 36, "odstepy_cenzurowane": 6, "pelne_ekspozycja_zero": 0}}}
+ccode,panstwo,rok_konca_poprz,rok_poczatku_nast,dlugosc_odstepu,dlugosc_kalendarzowa,cenzurowany,ekspozycja_zero
+2,United States of America,1847,1898,51,51,0,False
+2,United States of America,1898,1900,2,2,0,False
+2,United States of America,1900,1965,65,65,0,False
+2,United States of America,1973,1999,26,26,0,False
+2,United States of America,1999,2001,2,2,0,False
+2,United States of America,2001,2003,2,2,0,False
+2,United States of America,2003,2007,4,4,1,False
+90,Guatemala,1876,1885,9,9,0,False
+90,Guatemala,1885,1906,21,21,0,False
+90,Guatemala,1906,2007,101,101,1,False
+200,United Kingdom,1857,1882,25,25,0,False
+200,United Kingdom,1882,1900,18,18,0,False
+200,United Kingdom,1900,1999,99,99,0,False
+200,United Kingdom,1999,2001,2,2,0,False
+200,United Kingdom,2001,2003,2,2,0,False
+200,United Kingdom,2003,2007,4,4,1,False
+220,France,1823,1849,26,26,0,False
+220,France,1849,1862,13,13,0,False
+220,France,1867,1870,3,3,0,False
+220,France,1871,1884,13,13,0,False
+220,France,1885,1900,15,15,0,False
+220,France,1900,1919,19,19,0,False
+220,France,1921,1999,77,78,0,False
+220,France,1999,2007,8,8,1,False
+230,Spain,1860,1865,5,5,0,False
+230,Spain,1866,1909,43,43,0,False
+230,Spain,1910,2007,97,97,1,False
+255,Germany,1849,1864,15,15,0,False
+255,Germany,1864,1866,2,2,0,False
+255,Germany,1866,1939,73,73,0,False
+255,Germany,1945,1999,10,54,0,False
+255,Germany,1999,2007,8,8,1,False
+325,Italy,1849,1860,11,11,0,False
+325,Italy,1861,1911,50,50,0,False
+325,Italy,1912,1935,23,23,0,False
+325,Italy,1936,1999,63,63,0,False
+325,Italy,1999,2007,8,8,1,False
+365,USSR,1829,1877,48,48,0,False
+365,USSR,1878,1900,22,22,0,False
+365,USSR,1900,1918,18,18,0,False
+365,USSR,1920,1929,9,9,0,False
+365,USSR,1929,1939,10,10,0,False
+365,USSR,1940,1956,16,16,0,False
+365,USSR,1956,2007,51,51,1,False
+640,Turkey,1856,1974,118,118,0,False
+640,Turkey,1974,1999,25,25,0,False
+640,Turkey,1999,2007,8,8,1,False
+666,Israel,1956,1967,11,11,0,False
+666,Israel,1967,1982,15,15,0,False
+666,Israel,1982,2007,25,25,1,False
+710,China,1955,1958,3,3,0,False
+710,China,1958,1962,4,4,0,False
+710,China,1962,1979,17,17,0,False
+710,China,1979,1987,8,8,0,False
+710,China,1987,2007,20,20,1,False
+740,Japan,1895,1900,5,5,0,False
+740,Japan,1900,1904,4,4,0,False
+740,Japan,1905,1931,26,26,0,False
+740,Japan,1933,1937,4,4,0,False
+740,Japan,1941,2007,60,66,1,False
+770,Pakistan,1965,1971,6,6,0,False
+770,Pakistan,1971,1999,28,28,0,False
+770,Pakistan,1999,2007,8,8,1,False

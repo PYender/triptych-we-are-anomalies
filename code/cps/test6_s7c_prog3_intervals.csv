@@ -1,0 +1,126 @@
+# {"builder": "test6_build_s7bc.py v1.0 (D-046)", "zrodlo_wojny": "Inter-StateWarData_v4.0.csv", "sha256_wojny": "2535e30b145141c3", "top10_inicjatorow_cala_baza_bez_progu": [{"ccode": 365, "panstwo": "USSR", "n_wojen_zainicjowanych": 10}, {"ccode": 220, "panstwo": "France", "n_wojen_zainicjowanych": 8}, {"ccode": 2, "panstwo": "United States of America", "n_wojen_zainicjowanych": 7}, {"ccode": 740, "panstwo": "Japan", "n_wojen_zainicjowanych": 7}, {"ccode": 325, "panstwo": "Italy", "n_wojen_zainicjowanych": 6}, {"ccode": 200, "panstwo": "United Kingdom", "n_wojen_zainicjowanych": 6}, {"ccode": 255, "panstwo": "Germany", "n_wojen_zainicjowanych": 5}, {"ccode": 710, "panstwo": "China", "n_wojen_zainicjowanych": 5}, {"ccode": 770, "panstwo": "Pakistan", "n_wojen_zainicjowanych": 3}, {"ccode": 666, "panstwo": "Israel", "n_wojen_zainicjowanych": 3}], "fakt_autora_do_weryfikacji": {"twierdzenie": "Rosja 10, Francja 8, USA/Japonia/Wlochy/Niemcy po 7", "policzone": "Rosja(365)=10, Francja(220)=8, USA(2)=7, Japonia(740)=7, Wlochy(325)=6 (NIE 7), Niemcy(255)=5 (NIE 7)", "rozbieznosc": "TAK dla Wloch i Niemiec - zgloszona, nie dopasowana, patrz raport"}, "S7b": {"prog3_decyduje": {"panstwa": 13, "odstepy_pelne": 50, "odstepy_cenzurowane": 13, "pelne_ekspozycja_zero": 0}, "prog6_alternatywny": {"panstwa": 4, "odstepy_pelne": 24, "odstepy_cenzurowane": 4, "pelne_ekspozycja_zero": 0}}, "S7c": {"prog3_decyduje": {"panstwa": 29, "odstepy_pelne": 95, "odstepy_cenzurowane": 29, "pelne_ekspozycja_zero": 0}, "prog6_alternatywny": {"panstwa": 6, "odstepy_pelne": 36, "odstepy_cenzurowane": 6, "pelne_ekspozycja_zero": 0}}}
+ccode,panstwo,rok_konca_poprz,rok_poczatku_nast,dlugosc_odstepu,dlugosc_kalendarzowa,cenzurowany,ekspozycja_zero
+2,United States of America,1918,1941,23,23,0,False
+2,United States of America,1945,1950,5,5,0,False
+2,United States of America,1953,1968,15,15,0,False
+2,United States of America,1973,1991,18,18,0,False
+2,United States of America,1991,2007,16,16,1,False
+20,Canada,1945,1950,5,5,0,False
+20,Canada,1953,1991,38,38,0,False
+20,Canada,1991,2001,10,10,0,False
+20,Canada,2001,2007,6,6,1,False
+91,Honduras,1906,1907,1,1,0,False
+91,Honduras,1907,1969,62,62,0,False
+91,Honduras,1969,2007,38,38,1,False
+92,El Salvador,1876,1885,9,9,0,False
+92,El Salvador,1885,1906,21,21,0,False
+92,El Salvador,1906,1907,1,1,0,False
+92,El Salvador,1907,2007,100,100,1,False
+135,Peru,1866,1879,13,13,0,False
+135,Peru,1883,1995,112,112,0,False
+135,Peru,1995,2007,12,12,1,False
+200,United Kingdom,1856,1914,58,58,0,False
+200,United Kingdom,1918,1939,21,21,0,False
+200,United Kingdom,1945,1950,5,5,0,False
+200,United Kingdom,1953,1956,3,3,0,False
+200,United Kingdom,1956,1982,26,26,0,False
+200,United Kingdom,1982,1991,9,9,0,False
+200,United Kingdom,1991,2007,16,16,1,False
+211,Belgium,1918,1940,22,22,0,False
+211,Belgium,1940,1951,7,11,0,False
+211,Belgium,1953,2007,54,54,1,False
+220,France,1856,1859,3,3,0,False
+220,France,1859,1914,55,55,0,False
+220,France,1918,1939,21,21,0,False
+220,France,1945,1951,6,6,0,False
+220,France,1953,1956,3,3,0,False
+220,France,1956,1958,2,2,0,False
+220,France,1958,1991,33,33,0,False
+220,France,1991,2001,10,10,0,False
+220,France,2001,2007,6,6,1,False
+230,Spain,1823,1898,75,75,0,False
+230,Spain,1898,1957,59,59,0,False
+230,Spain,1958,2007,49,49,1,False
+300,Austria-Hungary,1849,1864,15,15,0,False
+300,Austria-Hungary,1864,1866,2,2,0,False
+300,Austria-Hungary,1866,1918,52,52,1,False
+310,Hungary,1919,1941,22,22,0,False
+310,Hungary,1945,1956,11,11,0,False
+310,Hungary,1956,2007,51,51,1,False
+325,Italy,1856,1859,3,3,0,False
+325,Italy,1859,1866,7,7,0,False
+325,Italy,1866,1915,49,49,0,False
+325,Italy,1918,1940,22,22,0,False
+325,Italy,1945,1991,46,46,0,False
+325,Italy,1991,2007,16,16,1,False
+345,Yugoslavia,1913,1914,1,1,0,False
+345,Yugoslavia,1918,1941,23,23,0,False
+345,Yugoslavia,1941,1999,56,58,0,False
+345,Yugoslavia,1999,2007,8,8,1,False
+350,Greece,1913,1917,4,4,0,False
+350,Greece,1918,1940,22,22,0,False
+350,Greece,1941,1951,8,10,0,False
+350,Greece,1953,2007,54,54,1,False
+355,Bulgaria,1913,1915,2,2,0,False
+355,Bulgaria,1918,1941,23,23,0,False
+355,Bulgaria,1945,2007,62,62,1,False
+360,Romania,1913,1916,3,3,0,False
+360,Romania,1917,1941,24,24,0,False
+360,Romania,1945,2007,62,62,1,False
+365,USSR,1856,1904,48,48,0,False
+365,USSR,1905,1914,9,9,0,False
+365,USSR,1917,1938,21,21,0,False
+365,USSR,1938,1939,1,1,0,False
+365,USSR,1939,1941,2,2,0,False
+365,USSR,1945,2007,62,62,1,False
+375,Finland,1920,1939,19,19,0,False
+375,Finland,1940,1941,1,1,0,False
+375,Finland,1944,2007,63,63,1,False
+530,Ethiopia,1936,1941,1,5,0,False
+530,Ethiopia,1941,1951,10,10,0,False
+530,Ethiopia,1953,1977,24,24,0,False
+530,Ethiopia,1978,1998,20,20,0,False
+530,Ethiopia,2000,2007,7,7,1,False
+600,Morocco,1860,1909,49,49,0,False
+600,Morocco,1910,1991,38,81,0,False
+600,Morocco,1991,2007,16,16,1,False
+640,Turkey,1829,1877,48,48,0,False
+640,Turkey,1878,1897,19,19,0,False
+640,Turkey,1897,1911,14,14,0,False
+640,Turkey,1913,1914,1,1,0,False
+640,Turkey,1918,1919,1,1,0,False
+640,Turkey,1922,1950,28,28,0,False
+640,Turkey,1953,2007,54,54,1,False
+645,Iraq,1948,1973,25,25,0,False
+645,Iraq,1973,2003,30,30,0,False
+645,Iraq,2003,2007,4,4,1,False
+651,Egypt,1882,1948,12,66,0,False
+651,Egypt,1949,1956,7,7,0,False
+651,Egypt,1956,1967,11,11,0,False
+651,Egypt,1967,1991,24,24,0,False
+651,Egypt,1991,2007,16,16,1,False
+652,Syria,1948,1967,17,19,0,False
+652,Syria,1967,1982,15,15,0,False
+652,Syria,1982,1991,9,9,0,False
+652,Syria,1991,2007,16,16,1,False
+666,Israel,1949,1969,20,20,0,False
+666,Israel,1970,1973,3,3,0,False
+666,Israel,1973,2007,34,34,1,False
+710,China,1885,1894,9,9,0,False
+710,China,1895,1900,5,5,0,False
+710,China,1900,1929,29,29,0,False
+710,China,1929,1931,2,2,0,False
+710,China,1933,1937,4,4,0,False
+710,China,1945,1950,5,5,0,False
+710,China,1953,2007,54,54,1,False
+750,India,1962,1965,3,3,0,False
+750,India,1965,1971,6,6,0,False
+750,India,1971,1999,28,28,0,False
+750,India,1999,2007,8,8,1,False
+816,Vietnam,1975,1977,2,2,0,False
+816,Vietnam,1979,1987,8,8,0,False
+816,Vietnam,1987,2007,20,20,1,False
+900,Australia,1945,1950,5,5,0,False
+900,Australia,1953,1965,12,12,0,False
+900,Australia,1972,2001,29,29,0,False
+900,Australia,2001,2007,6,6,1,False

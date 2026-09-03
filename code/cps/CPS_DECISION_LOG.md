@@ -2407,3 +2407,85 @@ przy małej liczbie klastrów) mógłby dotyczyć też przedziału bootstrapoweg
 jako automatyczna poprawka istniejących wyników Testu 6 (które i tak już wykluczały 1 w obu
 przedziałach, więc nawet zaniżone pokrycie bootstrapu nie zmieniłoby kierunku wniosku —
 zmieniłoby tylko to, jak dosłownie czytać samą liczbę 95%).
+
+---
+
+## D-046 · 2026-09-02 · S7b (zegar inicjacji) + S7c (kontrola negatywna): budowa i moc
+
+**UJAWNIENIE, na początku, jak zażądano.** S7b powstał PO zobaczeniu wyniku S7 (k̂=0,9947,
+oba przedziały objęły 1). NIE jest pre-rejestrowany. Zapisane wprost, nie przemilczane.
+
+**Argument za (nie jest dobieraniem narzędzia pod tezę).** Mechanizm autora ("państwo kończy
+wojnę i rusza dalej") dotyczy zegara DECYZJI O ATAKU. S7 policzył odstępy między WSZYSTKIMI
+wojnami państwa, także tymi, w których zostało napadnięte — wojna, w której ktoś został
+zaatakowany, nie mówi nic o jego rytmie inicjowania. Niezgodność między hipotezą a
+operacjonalizacją S7 da się wskazać niezależnie od wyniku — to błąd projektowy widoczny "na
+sucho", nie tylko post factum.
+
+**Argument przeciw.** Nikt tej niezgodności nie wskazał, dopóki S7 nie wyszedł zerowy. Fakt,
+że argument DAŁOBY się postawić wcześniej, nie znaczy, że został postawiony wcześniej.
+
+Oba argumenty zapisane obok siebie, żaden nie rozstrzyga sam z siebie, czy S7b jest
+uprawnioną korektą, czy post-hoc poszukiwaniem wyniku — to ocena zostawiona czytelnikowi
+raportu, nie rozstrzygana tutaj.
+
+**Konstrukcja.** Identyczna z S7 (`test6_build_s7.py`: `state_conflicts` z D-040, scalanie
+gap≤0 z D-039, ekspozycja D-014, cenzurowanie do 2007 — WSZYSTKO reużyte bez zmian), z JEDNĄ
+zmianą: do sekwencji epizodów wchodzą wyłącznie wiersze `InterStateWarData_v4_0.csv` o
+`Initiator==1` (S7b) albo `Initiator==2` (S7c, kontrola negatywna) — sprawdzone bezpośrednio
+w danych, że `Initiator` jest kodowany PER UCZESTNIK (nie per strona/wojna: w Wojnie
+Austro-Sardyńskiej Włochy mają Initiator=1 a Austria Initiator=2, mimo że to dwie różne
+strony tej samej wojny) — filtr stosuje się poprawnie na poziomie pojedynczego wiersza.
+
+**Odstępstwo od progu (własny wpis, jak wymaga zadanie).** Próg S7b/S7c = **trzy epizody**,
+nie sześć (poziom B protokołu Testu 6). Uzasadnienie: przy progu sześciu moc gorsza niż Test
+7 (patrz tabela niżej), przy progu trzech porównywalna z Testem 6. Oba progi policzone,
+próg trzech orzeka.
+
+**Liczby kontrolne — ROZBIEŻNOŚĆ z liczbami autora, zgłoszona, zdiagnozowana, nie
+dopasowana:**
+
+| | S7b prog≥3 | S7b prog≥6 | S7c prog≥3 | S7c prog≥6 |
+|---|---|---|---|---|
+| autor (deklarowane) | 14 państw / 54 pełnych | 6 państw / 34 pełnych | 30 państw / 100 pełnych | — |
+| **z D-040 (obowiązująca metoda S7, oficjalna)** | **13 / 50** | **4 / 24** | **29 / 95** | 6 / 36 |
+| bez D-040 (dla porównania) | 14 / 54 | 6 / 34 | 30 / 100 | 6 / 37 |
+
+**Zdiagnozowane dokładnie:** liczby autora odtwarzają się co do jedności, gdy D-040
+(scalanie uczestnictw tej samej wojny niezależnie od odstępu) jest WYŁĄCZONE — sprawdzone
+bezpośrednio, dokładne dopasowanie (14/54, 6/34, 30/100) pod konstrukcją S7 v1.0 (sprzed
+D-040). Wygląda na to, że deklarowane liczby S7b/S7c policzone zostały metodą sprzed
+rozstrzygnięcia D-040, nie metodą aktualnie obowiązującą. Zgodnie z zasadą „jedna zmiana
+naraz" (S7b ma się różnić od S7 WYŁĄCZNIE filtrem Initiator) przyjęto tu METODĘ AKTUALNIE
+OBOWIĄZUJĄCĄ (D-039+D-040) jako podstawę — **13 państw/50 zdarzeń dla S7b, decyduje próg 3**
+— ale nie rozstrzygnięto tego jednostronnie bez zgłoszenia: obie liczby podane, wybór do
+potwierdzenia.
+
+**Deklaracja mocy — POTWIERDZONA symulacją (mechanizm min(T,C), D-031), dla OBU wariantów
+konstrukcji:**
+
+| konstrukcja | n grup | n zdarzeń | SD(k̂), 2000 replik | próg wykluczenia 1 |
+|---|---|---|---|---|
+| z D-040 (obowiązująca) | 13 | 50 | **0,1203** | poniżej 0,764 albo powyżej 1,236 |
+| bez D-040 (jak deklaracja autora) | 14 | 54 | **0,1165** | poniżej 0,772 albo powyżej 1,228 |
+
+Deklaracja autora (≈0,112, próg ≈0,78/≈1,22) potwierdzona dla konstrukcji BEZ D-040 (różnica
+trzeciego miejsca po przecinku). Dla konstrukcji obowiązującej (Z D-040, 13/50) czułość jest
+nieco gorsza (SD=0,1203 zamiast 0,1165) — nadal wyraźna czułość na efekt wielkości Testu 6
+(0,778), NIE na efekt słabszy (Test 7: 0,843 mieści się blisko granicy 0,764, ale bliżej niż
+przy progu 6).
+
+**S7c — kontrola negatywna, zbudowana, moc niepoliczona (nie żądana w tym wpisie).**
+29 państw / 95 pełnych zdarzeń (z D-040) przy progu 3 — populacja większa niż S7b, zgodnie z
+oczekiwaniem (więcej wojen jako cel niż jako inicjator w tym zbiorze).
+
+**Fakt do raportu (D-046, niezależnie od wyniku) — ROZBIEŻNOŚĆ zgłoszona.** Autor: "Rosja
+najwięcej inicjacji, dziesięć, przed Francją z ośmioma oraz USA/Japonią/Włochami/Niemcami po
+siedem." Policzone bezpośrednio (unikalne pary ccode+WarNum z `Initiator==1`, cała baza,
+bez progu): **Rosja/USSR(365)=10, Francja(220)=8, USA(2)=7, Japonia(740)=7 — zgodne.
+Włochy(325)=6 (NIE 7), Niemcy(255)=5 (NIE 7) — NIEZGODNE.** Sprawdzone dwoma metodami
+(surowe wiersze i unikalne pary ccode+WarNum) — identyczny wynik, nie artefakt liczenia
+duplikatów. Zgłoszone, nie dopasowane.
+
+**STOP po budowie i symulacji mocy, zgodnie z żądaniem. `--run-real` zablokowany do
+autoryzacji autora. Wnioskowanie bez odstępstw od §5–§8 protokołu Testu 6.**
