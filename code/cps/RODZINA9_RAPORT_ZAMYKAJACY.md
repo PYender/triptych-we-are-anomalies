@@ -137,9 +137,17 @@ jednego państwa z różnymi przeciwnikami rozmywa realny sygnał diadowy zamias
   potem malejący). Ta rodzina testów nie mogła więc wyrazić ani wykluczyć hipotezy
   narastania-i-opadania ryzyka konfliktu — pytanie pozostaje otwarte niezależnie od wyniku
   liczbowego, bo narzędzie nie było w stanie go zadać.
-- **Kontrast epok (H6.2) nierozstrzygnięty z braku reguły.** Protokół (`TEST6_PROTOCOL.md`)
-  nie zawiera reguły decyzyjnej dla porównania okresów przed/po granicznej dacie —
-  nierozstrzygnięcie tutaj wynika z braku kryterium, nie z jego niespełnienia.
+- **Kontrast epok (H6.2/H8.1) nierozstrzygnięty — od braku reguły do braku mocy.** Protokół
+  Testu 6 nie zawierał reguły decyzyjnej dla porównania epok (D-024 §7). Reguła została
+  napisana i zamrożona osobno jako `TEST10_PROTOCOL_kontrast_epok.md` (D-050), z symulacją
+  mocy WYKONANĄ przed jakimkolwiek biegiem: pełna reguła §7 tego protokołu (koniunkcja
+  dwóch warunków) osiąga zaledwie 16,7% mocy przy różnicy parametru 0,25 i połowę dopiero
+  przy ok. 0,34 (D-051) — powyżej największego rozstępu zaobserwowanego w całej rodzinie
+  dziewiątej (0,2167, między S7 i Testem 6, między jednostkami analizy, nie epokami). Autor
+  zdecydował NIE URUCHAMIAĆ Testu 10 (D-052) — protokół zamrożony, niewykonany, z powodu
+  braku mocy, nie zmiany zdania co do H8.1. H8.1/H6.2 pozostaje nierozstrzygnięta, teraz z
+  innego powodu niż na początku: nie brak kryterium, tylko brak mocy narzędzia zbudowanego
+  do jego zastosowania na tej strukturze.
 - **Poziom regionalny nigdy niezdefiniowany.** Żaden wariant tej rodziny nie operacjonalizował
   jednostki regionalnej (między parą a całym systemem) — nie testowany, nie odrzucony.
 
@@ -176,6 +184,18 @@ narzędziach, ważnych niezależnie od tego, co ostatecznie powie się o hipotez
    Obserwacja węższego bootstrapu w konkretnej realnej replice (S7: 0,611; S7b: 0,767;
    S7c: 0,792) nie jest dowodem większej precyzji — dotyczy potencjalnie także Testu 6
    (18 grup), nieprzeliczone wstecz.
+6. **Reguła złożona z koniunkcji warunków nie ma nominalnego poziomu istotności (D-053).**
+   Zmierzone na regule §7 Testu 10 (dwa warunki, każdy nominalnie ok. 0,05): faktyczny
+   odsetek fałszywych odrzuceń pod prawdą zerową wyniósł **0,7%, nie 5%** — siedmiokrotnie
+   ostrzejszy. Ten sam mechanizm dotyczy §8 protokołu Testu 6 (TRZY warunki naraz — jeszcze
+   bardziej konserwatywna) i §8 protokołu Testu 7 (dwa warunki) — **faktyczny poziom
+   żadnej z tych dwóch reguł nigdy nie został policzony**, nazwane tu wprost, nie
+   przeliczone wstecz z powodów kosztowych. Konsekwencja dla Testu 6: możliwe, że P1 nie
+   osiągnął progu protokołu nie dlatego, że efekt był słaby, tylko dlatego, że reguła w
+   praktyce była surowsza niż deklarowany nominalny poziom — **nie zmienia to wyniku Testu
+   6** (P1/N1 nie osiągnął nawet pierwszego, pojedynczego członu: p=0,068>0,05), ale jest
+   ustaleniem tej samej klasy co degeneracja N2 (1) — o konstrukcji reguł tego typu w całym
+   projekcie, nie tylko o tym jednym wyniku.
 
 ## 7. Errata zbiorcza
 
@@ -221,6 +241,14 @@ nierozstrzygnięte z innych, niezależnych powodów (§5).
 Wariant S7 (i pochodne S7b/S7c) pozostają, zgodnie z ustaleniem sprzed pierwszego biegu
 (`TASK_S7.md` §8), wariantami wrażliwości — nie awansują na wariant pierwszorzędny
 niezależnie od wyniku.
+
+**Test 10 (kontrast epok, H8.1) zamrożony i NIEWYKONANY (D-050–D-052).** Reguła decyzyjna
+napisana i zamrożona po raz pierwszy (protokół Testu 6 nigdy jej nie miał). Symulacja mocy
+wykonana przed jakimkolwiek biegiem: pełna reguła osiąga 16,7% mocy przy różnicy 0,25,
+połowę dopiero przy ok. 0,34 — powyżej największego rozstępu zaobserwowanego w całej rodzinie
+(0,2167). Autor zdecydował nie uruchamiać — powodem jest brak mocy, nie zmiana zdania co do
+H8.1. Protokół pozostaje zamrożonym dokumentem na przyszłość, gdyby struktura danych się
+zmieniła (np. więcej państw spełniających próg).
 
 Możliwy dalszy krok, wspomniany wcześniej (D-032), nie podjęty w ramach tej rodziny:
 "protokół 9c" (test lokalizacji szczytu hazardu) — osobna, nowa rodzina testów, poza

@@ -2688,3 +2688,61 @@ którykolwiek osobno; nie jest to sygnał błędu.
 obecnej strukturze (12/13 państw, podział 48/62), chyba że autor zdecyduje inaczej mimo tej
 liczby. Decyzja końcowa, jak zawsze, należy do autora — `--run-real` pozostaje
 zablokowany.**
+
+---
+
+## D-052 · 2026-09-02 · Test 10: rekomendacja D-051 przyjęta — protokół zamrożony, NIEWYKONANY
+
+**Rozstrzygnięcie autora: Test 10 nie zostaje uruchomiony.** `--run-real` pozostaje
+zablokowany na stałe dla tego protokołu w obecnej postaci (nie tylko do dalszej
+autoryzacji — decyzja o niewykonaniu jest ostateczna, chyba że struktura danych się zmieni).
+
+**Uzasadnienie, z liczbami.** Pełna moc reguły §7 przy różnicy Δ=0,25 wynosi 16,7%
+(D-051); połowę osiąga dopiero przy Δ≈0,34 (interpolowane). **Wszystkie różnice
+zaobserwowane dotąd w rodzinie dziewiątej są mniejsze niż ten próg** — największy rozstęp
+w całej rodzinie to **0,2167** (między S7, k̂=0,9947, i Testem 6, k̂=0,7780) — sprawdzone
+bezpośrednio, sortowanie pięciu wartości: 0,778 / 0,843 / 0,900 / 0,930 / 0,995. **Ten
+rozstęp jest między skrajnie różnymi JEDNOSTKAMI ANALIZY (pary kontra państwo, wszystkie
+wojny), nie między epokami** — nie ma więc nawet pośredniego świadectwa, że różnica epokowa
+tej wielkości (0,34) jest prawdopodobna.
+
+**Powodem niewykonania jest BRAK MOCY, nie zmiana zdania co do hipotezy H8.1.** Zapisane
+wprost, zgodnie z zakazem 4 §10 protokołu (ujawnienie/status nie może zostać usunięty z
+żadnej wersji): H8.1 pozostaje merytorycznie otwarta, tylko narzędzie zbudowane do jej
+sprawdzenia na tej strukturze (13 państw, podział 48/62) nie ma dostatecznej mocy, żeby
+odpowiedzieć.
+
+**Status protokołu:** `TEST10_PROTOCOL_kontrast_epok.md` v1.0 pozostaje zamrożony jako
+dokument — NIEWYKONANY. Etapy 3–5 (§11) nie rozpoczęte.
+
+---
+
+## D-053 · 2026-09-02 · Ustalenie metodologiczne: reguła złożona z koniunkcji warunków nie ma nominalnego poziomu istotności
+
+**Klasa ustalenia: ta sama co degeneracja N2 (D-026)** — własność KONSTRUKCJI reguły
+decyzyjnej, nie konkretnego zbioru danych. Do rozdziału metodologicznego raportu
+zamykającego, nie do przypisu.
+
+**Zmierzone (D-051, nie zgadywane).** Reguła §7 protokołu Testu 10 wymaga DWÓCH warunków
+naraz (p<0,05 permutacyjne ORAZ przedziały profilowe nienakładające się), każdy nominalnie
+na poziomie nieformalnie kojarzonym z 0,05. Pod prawdą zerową (Δ=0, brak różnicy) **faktyczny
+odsetek fałszywych odrzuceń koniunkcji wyniósł 0,7% (0,007), nie 5%** — siedmiokrotnie
+ostrzejszy niż nominalny poziom pojedynczego członu.
+
+**Konsekwencja ogólna, nazwana, NIE przeliczona wstecz (zbyt kosztowne, poza zakresem tego
+wpisu — nazwanie problemu wystarcza).** Ten sam mechanizm dotyczy:
+- **§8 protokołu Testu 6** — reguła TRZYCZŁONOWA (P1(N1) p<0,05 I P2(N2) p<0,10 I S2 bez
+  cenzurowania nie jest jedynym istotnym wariantem) — jeszcze bardziej konserwatywna niż
+  koniunkcja dwuczłonowa zmierzona tutaj. **Faktyczny poziom tej reguły nigdy nie został
+  policzony.**
+- **§8 protokołu Testu 7** — reguła DWUCZŁONOWA (profil P1 wyklucza 1 ORAZ ten sam kierunek
+  w S1 i S3) — struktura koniunkcji analogiczna do zmierzonej tutaj, choć na innych
+  statystykach. **Faktyczny poziom również nigdy nie został policzony.**
+
+**Konsekwencja dla odczytu Testu 6, zapisana wprost.** Możliwe, że Test 6 nie osiągnął progu
+protokołu nie dlatego, że efekt był słaby, tylko dlatego, że reguła w praktyce była znacznie
+surowsza niż deklarowany nominalny poziom. **To NIE zmienia wyniku Testu 6** — P1 (N1) nie
+osiągnął nawet PIERWSZEGO członu reguły (p=0,068>0,05, D-023/Krok C), więc pytanie o faktyczny
+poziom całej koniunkcji jest tu akademickie, nie decydujące. Ale ma to trafić do rozdziału
+metodologicznego jako ustalenie o konstrukcji reguł tego typu w całym projekcie, niezależnie
+od tego, że akurat w Teście 6 nie zmienia konkluzji.
