@@ -2906,3 +2906,71 @@ wyżej NIE wykluczają jeszcze pary 406 z niczego, czekają na decyzję.
 
 **STOP po Etapie 1 (§10 protokołu). Przechodzę do Etapu 2 zgodnie z tym samym poleceniem
 autora, które objęło obie części naraz — patrz D-056.**
+
+---
+
+## D-056 · 2026-09-02 · Test 12: Etap 2 — symulacja mocy, kalibracji i obciążenia z zaokrąglenia
+
+**Wszystkie cztery pomiary z §8 protokołu, mechanizm min(T,C) (D-031), na realnej strukturze
+74 par / 221 zdarzeń pełnych / 25% cenzurowania (`λ` skalibrowane na Σokno/221=7,90).**
+
+**1. Odchylenie k̂ pod prawdą k=1 (2000 replik).** **SD=0,0546** — potwierdza deklarację
+autora (≈0,055) niemal dokładnie. Próg wykluczenia jedynki: **poniżej 0,893 albo powyżej
+1,107**.
+
+**2/3. Pokrycie obu przedziałów + faktyczny poziom pełnej reguły (150 replik zewnętrznych,
+B=300 dla N1 i bootstrapu, jedna wspólna symulacja).**
+
+| | wartość |
+|---|---|
+| pokrycie profilu | **93,3%** |
+| pokrycie bootstrapu | **94,0%** |
+| **faktyczny poziom pełnej reguły** (N1 p<0,05 ORAZ profil wyklucza 1) | **1,3%** |
+| 95% CI poziomu | [0,0%; 3,2%] |
+
+Oba przedziały bliżej nominalnych 95% niż przy S7 (13 grup, D-045: 90,1% dla bootstrapu) —
+zastrzeżenie D-045 rzeczywiście łagodniejsze przy 74 grupach, ale WCIĄŻ nie dokładnie
+nominalne, i **zmierzone, nie założone**, zgodnie z żądaniem. Faktyczny poziom pełnej reguły
+(1,3%) jest ok. 3,8× ostrzejszy niż nominalne 5% pojedynczego członu — spójne z ustaleniem
+D-053 (koniunkcja obniża faktyczny poziom), zmierzone tutaj dla INNEJ reguły (N1+profil,
+nie permutacja+CI jak w Teście 10) i INNEJ struktury (74 grupy, nie 13) — ten sam mechanizm,
+inna liczba, potwierdzona ponownie niezależnie.
+
+**4. NAJWAŻNIEJSZY POMIAR: obciążenie k̂ z zaokrąglenia odstępów do pełnych lat (400
+replik), na strukturze o medianie dwóch lat.** Mechanizm dyskretyzacji: epizod kończy się w
+czasie ciągłym `E+φ` (φ~U(0,1), faza w roku), następny zaczyna się w `E+φ+T`
+(T~Weibull(k,λ) ciągłe); obserwowana całkowita przerwa (wariant A) = `floor(φ+T)−1`,
+z odrzuceniem losowań `φ+T<1` (niezgodne z definicją epizodu — nie byłby to osobny epizod
+z choć jednym pełnym rokiem przerwy).
+
+| | średnia k̂ |
+|---|---|
+| dane ciągłe (bez zaokrąglenia) | 1,0025 |
+| dane zaokrąglone do pełnych lat | **0,9672** |
+| **obciążenie (zaokrąglone − ciągłe)** | **−0,0353** |
+| obciążenie względem prawdziwego k=1 | −0,0328 |
+
+**Odczyt względem progu zapowiedzianego przez autora.** Obciążenie (0,033–0,035) jest
+MNIEJSZE niż zapowiedziany próg niepokoju „rzędu 0,05" — nie osiąga dokładnie tej
+wielkości. Ale stanowi **ok. 60% samego odchylenia (SD=0,0546)** — nie jest to
+zaniedbywalne. **Kierunek jest systematyczny i jednoznaczny: zaokrąglenie ciągnie k̂ W DÓŁ**
+(w stronę pozornego grupowania), niezależnie od tego, czy prawdziwy proces ma jakąkolwiek
+pamięć. Konsekwencja dla odczytu przyszłego wyniku rzeczywistego: jeżeli P1 pokaże k̂<1,
+część tego efektu — rzędu jednej trzeciej do dwóch trzecich SD — może pochodzić z samej
+dyskretyzacji rocznej, nie z prawdziwej struktury odstępów. **Nie jest to powód do
+niewiarygodności testu w sensie Testu 10/11 (obciążenie nie przekroczyło zapowiedzianego
+progu), ale jest powodem, żeby NIE czytać przyszłego k̂ dosłownie bez tej poprawki w tle** —
+zgłoszone wprost, zgodnie z żądaniem, niezależnie od tego, że próg formalnie nieprzekroczony.
+
+**Podsumowanie dla decyzji o uruchomieniu.** W przeciwieństwie do Testu 10 (moc pełnej
+reguły poniżej 30% przy realistycznych wielkościach efektu) i Testu 11 (moc pełnej reguły
+≈0% z powodu zepsutego pierwszego członu), **Test 12 NIE ma podobnego defektu strukturalnego
+mocy** — SD zgodne z deklaracją, pokrycie obu przedziałów bliskie nominalnemu, faktyczny
+poziom pełnej reguły niski ale nie zerowy i mierzalny. Jedyne zastrzeżenie z tego etapu to
+obciążenie z zaokrąglenia (−0,033), poniżej zapowiedzianego progu niepokoju, ale warte
+trzymania w pamięci przy odczycie.
+
+**STOP po symulacji, zgodnie z §10 protokołu. `--run-real` pozostaje zablokowany — decyzja o
+uruchomieniu I o lewostronnym ucięciu (D-055) należy do autora. Wnioskowanie bez odstępstw
+od §5–§8 protokołu Testu 6; N2 pominięty jednym zdaniem (D-026): zdegenerowany względem
+statystyki pulowanej, niezależnie od zbioru czy jednostki.**

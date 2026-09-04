@@ -1,0 +1,43 @@
+{
+  "n_grup": 74,
+  "n_full_real": 221,
+  "n_cens_real": 74,
+  "lam_true": 7.900452488687783,
+  "pomiar1_odchylenie": {
+    "estimator": "pooled",
+    "k_true": 1.0,
+    "lam_true": 7.900452488687783,
+    "n_reps": 2000,
+    "n_groups": 74,
+    "mean_k_hat": 1.0041473406419443,
+    "median_k_hat": 1.00357950517994,
+    "sd_k_hat": 0.054624024202884924
+  },
+  "pomiar2_3_kalibracja": {
+    "n_outer": 150,
+    "B_n1": 300,
+    "B_boot": 300,
+    "pokrycie_profil": 0.9333333333333333,
+    "pokrycie_bootstrap": 0.94,
+    "faktyczny_poziom_pelnej_reguly": 0.013333333333333334,
+    "faktyczny_poziom_95CI": [
+      0.0,
+      0.03168878342719233
+    ]
+  },
+  "pomiar4_obciazenie_zaokraglenia": {
+    "k_true": 1.0,
+    "n_reps": 400,
+    "k_hat_rounded_mean": 0.967150907220732,
+    "k_hat_rounded_median": 0.967019888036923,
+    "k_hat_rounded_sd": 0.038193204763114726,
+    "k_hat_continuous_mean": 1.0024742554396504,
+    "k_hat_continuous_median": 1.0005670852363737,
+    "obciazenie_mean": -0.03532334821891836,
+    "obciazenie_vs_k_true": -0.03284909277926795
+  },
+  "prog_wykluczenia_1": [
+    0.8929369125623455,
+    1.1070630874376544
+  ]
+}
