@@ -2842,3 +2842,67 @@ NOWY bieg (S7 był już autoryzowany i wykonany, D-043/D-049).
 
 **STOP, zgodnie z Etapem 1 protokołu (§11). Decyzja, czy uruchamiać mimo tej liczby, należy
 do autora. `--run-real` pozostaje zablokowany.**
+
+---
+
+## D-055 · 2026-09-02 · Test 12 (rodzina 10, UCDP): Etap 1 — budowa zbioru, ZGODNE bez rozbieżności + propozycja lewostronnego ucięcia
+
+**Numer:** 12 (przydzielony przez autora w dokumencie źródłowym, nie przez implementatora).
+**Ziarno modelu zerowego N1:** **20260822**, spójne z resztą projektu (protokół zostawiał to
+implementatorowi do zadeklarowania).
+
+**§0 ujawnienie, zapisane bez zmian.** Protokół powstaje po zamknięciu rodziny dziewiątej,
+której wszystkie wyniki są znane (pięć wartości parametru kształtu od 0,778 do 0,995).
+Powodem przejścia na UCDP jest WYŁĄCZNIE liczba zdarzeń: trzy kolejne symulacje mocy w
+rodzinie dziewiątej (Test 10 — kontrast epok, D-051; Test 11 — kształt hazardu, D-054;
+hipoteza zegara bilateralnego — D-044 §4/D-053) wykazały niemierzalność przy dostępnych tam
+liczebnościach. **Powód niezależny od kierunku tamtych wyników** — żaden z trzech był
+wynikiem negatywnym przypisywalnym danym (S7/S7c), nie brakiem mocy narzędzia samego w
+sobie; przejście na UCDP nie jest więc ucieczką od niewygodnego wyniku, tylko od
+niewystarczającej liczby zdarzeń. **Wyników Testu 12 nie wolno zestawiać z rodziną dziewiątą
+jako ciągu** (§0 protokołu) — inny zbiór, inna definicja zdarzenia, inna jednostka, inne
+okno.
+
+**Etap 1 — liczby kontrolne zweryfikowane niezależnie: ZGODNE, bez rozbieżności, po raz
+drugi z rzędu (po Teście 10).** Źródło `Dyadic_v25_1.csv`: 3432 diado-lata, 684 diad,
+1946–2024 — dokładne dopasowanie do §3 protokołu. Po przycięciu do 2023 i zastosowaniu
+wariantu A (SS4):
+
+| | próg ≥3 (orzeka) | próg ≥2 (wrażliwość) |
+|---|---|---|
+| pary | 74 | 156 |
+| odstępy pełne | 221 | 303 |
+| cenzurowane | 74 | 156 |
+| mediana pełny | 2 | 2 |
+| średnia pełny | 3,85 | 3,86 |
+| zakres | 1–52 | 1–52 |
+| jednoroczne | 98 (44,3%) | 131 (43,2%) |
+| mediana cenzurowany | 7 | 13 |
+
+Wszystkie liczby dokładnie zgodne z deklaracją autora (44%/43%, 3,9/3,9 po zaokrągleniu,
+7/13) — mechanizm budowy (epizod = maksymalny ciąg kolejnych lat aktywności; odstęp pełny =
+S−E−1; odstęp cenzurowany = 2023−E, bez odejmowania jedynki, bo okno domyka się na stałym
+roku kalendarzowym, nie na kolejnym epizodzie) potwierdzony jako właściwy przez pełną
+zgodność, nie założony.
+
+**Propozycja w sprawie lewostronnego ucięcia (§7 pkt 3) — DO ROZSTRZYGNIĘCIA PRZEZ AUTORA,
+nie rozstrzygana tutaj.** Sprawdzone bezpośrednio: **wyłącznie JEDNA para** ma pierwszy
+epizod zaczynający się dokładnie w 1946 (pierwszy rok okna) — dyad_id 406, Iran–KDPI
+(Kurdistan Democratic Party of Iran), aktywna od 1946 (epizod Republiki Mahabadzkiej), z
+przerwą do 1966, po czym kolejnych siedem epizodów aż do 2018. Dotyczy 1,4% par przy progu
+≥3 (1/74), 0,6% przy progu ≥2 (1/156).
+
+Analogia do §3 protokołu Testu 7 (D-021/D-029): diady, których rywalizacja była już w toku
+w chwili otwarcia okna, wchodziły do wariantu z `t0` (S3), nie do modelu głównego, bo
+pierwszy odstęp takiej diady mierzy czas od NIEZNANEGO prawdziwego początku, nie od
+zaobserwowanego. **Propozycja implementatora, mirror Testu 7:** oznaczyć PIERWSZY odstęp
+pary 406 (interwał między jej epizodem 1946 a epizodem 1966, długość 19 lat) flagą `t0_flag`
+i wykluczyć WYŁĄCZNIE ten jeden wiersz z modelu głównego P1/S1 — reszta odstępów tej pary
+(siedem kolejnych) zostaje w modelu głównym bez zmian, więc para NIE wypada z analizy,
+zmienia się tylko liczba jej odstępów pełnych wnoszonych do P1 (z ośmiu do siedmiu).
+Kolumna `t0_flag` już obecna w zbudowanym pliku (`test12_intervals_prog3.csv`), gotowa do
+zastosowania tego filtra, gdy autor potwierdzi. **Nie zastosowano jeszcze** — liczby w tabeli
+wyżej NIE wykluczają jeszcze pary 406 z niczego, czekają na decyzję.
+
+**STOP po Etapie 1 (§10 protokołu). Przechodzę do Etapu 2 zgodnie z tym samym poleceniem
+autora, które objęło obie części naraz — patrz D-056.**
