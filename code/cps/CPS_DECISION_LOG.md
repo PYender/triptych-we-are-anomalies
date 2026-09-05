@@ -3044,3 +3044,43 @@ zapowiedziany przez autora), żeby N1 dało niską wartość p, bo sam null już
 
 **STOP przed biegiem — to ustalenie miało zapaść przed zobaczeniem P1, i zapadło: żaden
 bieg P1/S1/S2/S3 nie został jeszcze wykonany w chwili zapisania tego wpisu.**
+
+---
+
+## D-059 · 2026-09-05 · Zmiana sposobu raportowania (wsteczna): wielkość efektu z przedziałem, punkt odniesienia zamiast jedynki
+
+**Zmiana raportowania, NIE zmiana reguł decyzyjnych.** Żadna klasyfikacja ani konkluzja
+żadnego zamkniętego testu nie zmienia się. Reguły decyzyjne (w tym te z koniunkcją, D-053)
+NIE są przeliczane wstecz na jednoczłonowe ani w żaden inny sposób — byłaby to zmiana
+kryterium po zobaczeniu wyników.
+
+**Dodane: kolumna „wielkość efektu z przedziałem" w tabeli głównej raportu zamykającego
+rodziny dziewiątej.** Punkt odniesienia: dla wariantu z modelem zerowym — średnia parametru
+na surogatach (`k̂_sur`), NIE jedynka; dla wariantu bez modelu zerowego — jedynka, oznaczona
+jako nominalna (w tej rodzinie wszystkie pięć wariantów tabeli głównej miało N1, więc ten
+drugi przypadek się nie pojawia tutaj). Liczona bezpośrednio z oszacowań i przedziałów już
+policzonych — bez żadnego nowego biegu:
+
+| wariant | k̂ | odniesienie (k̂_sur) | **efekt** | przedział przesunięty |
+|---|---|---|---|---|
+| Test 6 | 0,7780 | 0,9147 | **−0,1367** | [−0,3118; +0,0644] |
+| Test 7 P1 | 0,8428 | 1,0341 | **−0,1913** | [−0,4106; +0,0683] |
+| S7 | 0,9947 | 0,9194 | **+0,0753** | [−0,0612; +0,2216] |
+| S7b | 0,9299 | 0,9222 | **+0,0077** | [−0,1779; +0,2121] |
+| S7c | 0,9003 | 0,9120 | **−0,0117** | [−0,1500; +0,1371] |
+
+**Obserwacja, którą ta kolumna ujawnia (nie klasyfikacja — obserwacja).** Test 7 P1,
+sklasyfikowany „nierozstrzygnięcie z braku mocy", ma efekt (−0,191) PORÓWNYWALNY co do
+wielkości z Testem 6 (−0,137, klasyfikacja pozytywna) — różnica w klasyfikacji między nimi
+wynika z precyzji narzędzia, nie z wielkości samego efektu. Odwrotnie: S7b i S7c, oba
+sklasyfikowane bez odrzucenia jedynki, mają efekty bliskie zeru WZGLĘDEM WŁASNEGO punktu
+odniesienia (+0,008 i −0,012) — tam brak odrzucenia odzwierciedla naprawdę mały efekt, nie
+tylko brak mocy. Rozróżnienie to wcześniej ginęło pod wspólną etykietą „niewsparty".
+
+**Zastrzeżenie odnotowane wprost.** Dla Testu 6 przedział pochodzi z analizy uzupełniającej
+D-023 (profil/bootstrap), NIE z metody decydującej (N1, która ma tylko wartość p, nie
+własny przedział) — punkt odniesienia (k̂_sur) i źródło przedziału pochodzą z dwóch różnych
+metod. Odnotowane w tabeli, nie ukryte.
+
+Zastosowane w `RODZINA9_RAPORT_ZAMYKAJACY.md` §3 jako kolumna dodana OBOK istniejących,
+niczego nie zastępująca.

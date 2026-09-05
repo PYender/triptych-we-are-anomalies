@@ -73,6 +73,7 @@ to jest najtrwalszy wynik całej rodziny i zasługuje na własny rozdział, nie 
 | N1 p | **0,068 — ORZEKAJĄCY, próg <0,05 protokołu NIEOSIĄGNIĘTY** | 0,2655 (diagnostyczny) | 0,9755 (diagnostyczny) | 0,6272 (diagnostyczny) | 0,4588 (diagnostyczny) |
 | CI profil¹ | [0,6029; 0,9791] — wyklucza 1 | [0,6235; 1,1024] — nie wyklucza | [0,8582; 1,1410] — nie wyklucza | [0,7443; 1,1343] — nie wyklucza | [0,7620; 1,0491] — nie wyklucza |
 | CI bootstrap (grupy)¹ | [0,6471; 0,9649] — wyklucza 1 | [0,6720; 1,0851] — nie wyklucza | [0,9174; 1,0901] — nie wyklucza | [0,8063; 1,1053] — nie wyklucza | [0,8054; 1,0328] — nie wyklucza |
+| **wielkość efektu z przedziałem⁴** (odległość od punktu odniesienia) | **−0,1367** [−0,3118; +0,0644] (odniesienie: k̂_sur N1=0,9147) | **−0,1913** [−0,4106; +0,0683] (odniesienie: k̂_sur N1 kruchość=1,0341) | **+0,0753** [−0,0612; +0,2216] (odniesienie: k̂_sur N1=0,9194) | **+0,0077** [−0,1779; +0,2121] (odniesienie: k̂_sur N1=0,9222) | **−0,0117** [−0,1500; +0,1371] (odniesienie: k̂_sur N1=0,9120) |
 | θ̂ (kruchość, drugorzędna) | nie liczone w Kroku C | 2,655 (nie na granicy) | 4,08×10⁻⁸ (na granicy) | 1×10⁻¹⁰ (na granicy) | 1×10⁻¹⁰ (na granicy) |
 | SD(k̂) zadeklarowane przed biegiem | 0,127² | 0,138 | 0,0782 | 0,1203 | 0,0846 |
 | próg wykluczenia 1 (deklarowany) | <0,751 / >1,249² | <0,730 / >1,270 | <0,847 / >1,153 | <0,764 / >1,236 | <0,834 / >1,166 |
@@ -94,6 +95,20 @@ biegiem Kroku C, który poprzedzał tę konwencję.
 
 ³ Nie nowe ustalenie — zapisane już w D-032 jako powód odłożenia biegu Etapu C: próg Testu 7
 P1 (0,730) nie sięga efektu Testu 6 (0,778). Zastosowane tu konsekwentnie do klasyfikacji.
+
+⁴ **Zmiana sposobu raportowania (autor), NIE zmiana reguł decyzyjnych ani żadnej
+klasyfikacji poniżej — dodane retroaktywnie, obok istniejących wyników, z oszacowań i
+przedziałów już policzonych, bez przeliczania czegokolwiek.** Punkt odniesienia: dla
+wariantów z modelem zerowym (wszystkie pięć w tej tabeli mają N1) — średnia parametru na
+surogatach `k̂_sur` tej statystyki, NIE jedynka. Wielkość efektu = k̂ − k̂_sur; przedział
+przesunięty o tę samą wartość, żeby było widać, czy przedział obejmuje WŁAŚCIWE zero (punkt
+odniesienia), nie tylko literalną jedynkę. Powód: klasyfikacja „niewsparty"/
+„nierozstrzygnięcie" sama z siebie nie mówi, czy efekt wynosił jedną setną czy jedną
+trzecią — ta kolumna to pokazuje. Dla Testu 6 przedział pochodzi z analizy uzupełniającej
+D-023 (nie z metody decydującej N1, która nie ma własnego przedziału, tylko p) — mieszanie
+źródła przedziału i źródła punktu odniesienia odnotowane wprost, nie ukryte. **Reguły
+decyzyjne pozostają dokładnie takie, jak w kolumnie „klasyfikacja wyniku" wyżej — ta kolumna
+dochodzi obok, nic nie zastępuje ani nie przelicza wstecz.**
 
 **Kruchość zapadnięta w S7/S7b/S7c (D-022).** We wszystkich trzech wariantach państwowych
 θ̂ osiada na numerycznej granicy, z odsetkiem replik bootstrapowych na granicy 25–81%. Model
