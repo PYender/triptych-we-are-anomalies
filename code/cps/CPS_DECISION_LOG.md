@@ -2974,3 +2974,73 @@ trzymania w pamięci przy odczycie.
 uruchomieniu I o lewostronnym ucięciu (D-055) należy do autora. Wnioskowanie bez odstępstw
 od §5–§8 protokołu Testu 6; N2 pominięty jednym zdaniem (D-026): zdegenerowany względem
 statystyki pulowanej, niezależnie od zbioru czy jednostki.**
+
+---
+
+## D-057 · 2026-09-02 · Test 12: rozstrzygnięcie lewostronnego ucięcia (§7 pkt 3)
+
+**Propozycja D-055 przyjęta przez autora.** Pierwszy odstęp pary dyad_id 406 (Iran–KDPI,
+19 lat, 1946→1966) wykluczony z modelu głównego (P1 i S1). Reszta pary (siedem kolejnych
+odstępów) zostaje bez zmian — para nie wypada z analizy.
+
+**Kierunek, zapisany przed biegiem (autor).** Usunięcie odstępu dziewiętnastoletniego z
+rozkładu o medianie dwóch lat odbiera masę z GÓRNEGO końca rozkładu — podnosi k̂ w stronę
+jedynki. **Działa przeciw hipotezie H12.1** (rytm/grupowanie różne od procesu bez pamięci) —
+decyzja nie została podjęta pod wynik, bo działa w kierunku zacierającym efekt, nie
+wzmacniającym go.
+
+---
+
+## D-058 · 2026-09-02 · Test 12: deklaracja przed biegiem — obciążenie z zaokrąglenia ORAZ znacznie większy efekt mieszania tempa
+
+**Zlecone: potwierdzić w kodzie, że surogaty N1 przechodzą przez to samo zaokrąglenie do
+pełnych lat, i podać średnie k̂ surogatów.** Sprawdzone bezpośrednio, wynik **ODMIENNY od
+oczekiwania autora (~0,966) — nie z powodu błędu, tylko z powodu efektu, który dominuje nad
+samym zaokrągleniem.**
+
+**Ustalenie właściwe.** Zmierzone TRZY warianty modelu zerowego N1 na realnej strukturze
+74 par:
+
+| wariant N1 | średnie k̂ surogatów |
+|---|---|
+| bez zaokrąglenia (surogaty ciągłe) | **0,699** |
+| **z zaokrągleniem (właściwy, użyty do biegu)** | **0,671** |
+| (dla porównania: sama symulacja odchylenia z D-056, jeden wspólny `λ`) | 1,002 (ciągłe) / 0,967 (zaokrąglone) |
+
+**Rozbicie na dwa źródła, analogicznie do D-023 §5 (Krok C Testu 6), tym razem z ODWRÓCONĄ
+proporcją.** W Teście 6 (18 diad) `k̂_sur`≈0,9147 — odchylenie ok. 8,5%, przypisane głównie
+mieszance wykładniczych o różnych `λ̂` per diada. Tutaj (74 pary) TEN SAM mechanizm
+(mieszanka `λ̂` bardzo różnych między parami — zakres 0,028–1,0, trzydziestopięciokrotny,
+przy medianie zaledwie DWÓCH zdarzeń pełnych na parę) daje odchylenie **znacznie większe:
+sam efekt mieszania to ok. 30 punktów procentowych (0,699 wobec 1,0)**, zaokrąglenie
+dokłada dodatkowe ok. 3 punkty (0,671 wobec 0,699). **Efekt mieszania tempa jest tu
+dziesięciokrotnie silniejszy niż w Teście 6** — bo N1 wyznacza `λ̂` OSOBNO dla każdej pary z
+bardzo małej liczby zdarzeń (mediana dwa), więc heterogeniczność między parami wchodzi do
+modelu zerowego w znacznie większym stopniu niż przy 45 zdarzeniach rozłożonych na 18 diad
+w Teście 6.
+
+**Konsekwencja dla odczytu, poprawiona względem oczekiwania autora.** Efektywna hipoteza
+zerowa modelu N1 nie leży w okolicy 0,966 (sam skutek zaokrąglenia), tylko w okolicy
+**0,67** — dominuje mieszanka tempa, nie dyskretyzacja roczna. Mechanizm „N1 obsłuży to
+automatycznie" DZIAŁA (surogaty przechodzą przez to samo zaokrąglenie, ten sam estymator),
+ale skala automatycznej korekty jest znacznie większa, niż zapowiedziano — **N1 jest tu
+narzędziem BARDZO pobłażliwym**: k̂ musiałoby spaść dużo niżej niż 0,89–0,97 (zakres
+zapowiedziany przez autora), żeby N1 dało niską wartość p, bo sam null już siedzi w okolicy
+0,67.
+
+**Trzy konsekwencje, zapisane przed biegiem:**
+1. **N1 obsługuje zaokrąglenie automatycznie** — potwierdzone pomiarem (surogaty
+   dyskretyzowane tym samym mechanizmem `floor(φ+T)−1`), nie założone.
+2. **Przedział ufności porównywany z jedynką jest systematycznie za łagodny w stronę
+   grupowania** — potwierdzone, ale skala jest większa niż zapowiedziana (efektywne zero
+   bliżej 0,67 niż 0,966 dla samego N1; przedział wciąż porównuje się dosłownie z 1, więc
+   jego własna łagodność dotyczy innego mechanizmu niż N1-owa).
+3. **Jeżeli wynik wypadnie między ok. 0,89 a 0,97, oczekujemy rozjazdu: przedział wyklucza
+   1, N1 nie** — TO POZOSTAJE PRAWDZIWE, a wobec zmierzonego efektywnego zera N1 (≈0,67)
+   ten rozjazd będzie jeszcze WYRAŹNIEJSZY niż zapowiedziano: N1 nie odrzuci nawet przy k̂
+   wyraźnie poniżej 0,89, dopóki nie zbliży się do ok. 0,67. **Rozstrzyga model zerowy N1,
+   tak jak w Kroku C Testu 6** — ale czytelnik ma wiedzieć, że tym razem N1 jest
+   wyjątkowo pobłażliwy, nie tylko „ostrożny".
+
+**STOP przed biegiem — to ustalenie miało zapaść przed zobaczeniem P1, i zapadło: żaden
+bieg P1/S1/S2/S3 nie został jeszcze wykonany w chwili zapisania tego wpisu.**
