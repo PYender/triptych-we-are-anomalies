@@ -1,0 +1,196 @@
+{
+  "P1": {
+    "fit_pooled": {
+      "k": 0.709627841916826,
+      "lam": 6.803499630219307,
+      "loglik": -644.3564172384783
+    },
+    "przedzialy_pooled": {
+      "profil": {
+        "lo": 0.6438015443689393,
+        "hi": 0.7771990590216749,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap": {
+        "lo": 0.6593214165866531,
+        "hi": 0.7714699506090829
+      }
+    },
+    "fit_frailty": {
+      "k": 0.7220129905500478,
+      "lam": 6.673066019003403,
+      "theta": 0.03175046242200601,
+      "loglik": -644.2212621560843,
+      "theta_na_granicy": false
+    },
+    "przedzialy_frailty": {
+      "profil": {
+        "lo": 0.6439887931276811,
+        "hi": 0.8098171129579913,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap": {
+        "lo": 0.6636550705286245,
+        "hi": 0.8073010231624527,
+        "frac_theta_boundary": 0.011
+      }
+    },
+    "label": "P1 (prog>=3, orzekajacy)",
+    "struktura": {
+      "n_pary": 74,
+      "n_pelnych": 220,
+      "n_cenzurowanych": 74
+    },
+    "n1_diagnostyczny": {
+      "k_obs": 0.709627841916826,
+      "p": 0.95952023988006,
+      "B": 2000,
+      "seed": 20260822,
+      "k_sur_mean": 0.6700897258054443,
+      "k_sur_median": 0.6695930306433644,
+      "k_sur_sd": 0.022549421265259,
+      "frac_tie": 0.0,
+      "faktyczny_poziom_pelnej_reguly_D058": "1.3% (D-056), nie nominalne 5% - podac obok"
+    },
+    "n2": "pominiety jednym zdaniem (D-026): zdegenerowany wzgledem k-hat pulowanego."
+  },
+  "S1": {
+    "fit_pooled": {
+      "k": 0.6091520891862827,
+      "lam": 12.055111710375824,
+      "loglik": -1004.2144937134494
+    },
+    "przedzialy_pooled": {
+      "profil": {
+        "lo": 0.5588232332801952,
+        "hi": 0.6612668407258241,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap": {
+        "lo": 0.5769495757824593,
+        "hi": 0.6462849493792235
+      }
+    },
+    "fit_frailty": {
+      "k": 0.6154861893738671,
+      "lam": 11.948863708476816,
+      "theta": 0.024312981704209247,
+      "loglik": -1004.1165695033287,
+      "theta_na_granicy": false
+    },
+    "przedzialy_frailty": {
+      "profil": {
+        "lo": 0.5599970650899695,
+        "hi": 0.6765958257180681,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap": {
+        "lo": 0.5780448115981399,
+        "hi": 0.6735051337427189,
+        "frac_theta_boundary": 0.01
+      }
+    },
+    "label": "S1 (prog>=2, wrazliwosc)",
+    "struktura": {
+      "n_pary": 156,
+      "n_pelnych": 302,
+      "n_cenzurowanych": 156
+    },
+    "n1_diagnostyczny": {
+      "k_obs": 0.6091520891862827,
+      "p": 0.18990504747626186,
+      "B": 2000,
+      "seed": 20260822,
+      "k_sur_mean": 0.6248757293957069,
+      "k_sur_median": 0.6242326563315481,
+      "k_sur_sd": 0.01743215513900068,
+      "frac_tie": 0.0,
+      "faktyczny_poziom_pelnej_reguly_D058": "1.3% (D-056), nie nominalne 5% - podac obok"
+    },
+    "n2": "pominiety jednym zdaniem (D-026): zdegenerowany wzgledem k-hat pulowanego."
+  },
+  "S2_kruchosc_z_P1": [
+    {
+      "k": 0.7220129905500478,
+      "lam": 6.673066019003403,
+      "theta": 0.03175046242200601,
+      "loglik": -644.2212621560843,
+      "theta_na_granicy": false
+    },
+    {
+      "profil": {
+        "lo": 0.6439887931276811,
+        "hi": 0.8098171129579913,
+        "lo_bounded": true,
+        "hi_bounded": true,
+        "anchor_ok": true
+      },
+      "bootstrap": {
+        "lo": 0.6636550705286245,
+        "hi": 0.8073010231624527,
+        "frac_theta_boundary": 0.011
+      }
+    }
+  ],
+  "S3": {
+    "label": "S3 (opisowy, podzial 1989, bez reguly decyzyjnej, bez N1)",
+    "przed": {
+      "fit_pooled": {
+        "k": 0.6246168141141744,
+        "lam": 10.025786651778722,
+        "loglik": -186.52455941336274
+      },
+      "przedzialy_pooled": {
+        "profil": {
+          "lo": 0.5062573672427951,
+          "hi": 0.7545972858134156,
+          "lo_bounded": true,
+          "hi_bounded": true,
+          "anchor_ok": true
+        },
+        "bootstrap": {
+          "lo": 0.5594363488849325,
+          "hi": 0.715190583638241
+        }
+      },
+      "struktura": {
+        "n_wierszy": 64,
+        "n_pelnych": 56,
+        "n_cenzurowanych": 8
+      }
+    },
+    "po": {
+      "fit_pooled": {
+        "k": 0.7932604593187371,
+        "lam": 5.701103129360415,
+        "loglik": -450.7459577408459
+      },
+      "przedzialy_pooled": {
+        "profil": {
+          "lo": 0.7043074766663068,
+          "hi": 0.886661868580266,
+          "lo_bounded": true,
+          "hi_bounded": true,
+          "anchor_ok": true
+        },
+        "bootstrap": {
+          "lo": 0.7319862621688004,
+          "hi": 0.8698080967720523
+        }
+      },
+      "struktura": {
+        "n_wierszy": 230,
+        "n_pelnych": 164,
+        "n_cenzurowanych": 66
+      }
+    }
+  }
+}
