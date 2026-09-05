@@ -110,6 +110,25 @@ D-023 (nie z metody decydującej N1, która nie ma własnego przedziału, tylko 
 decyzyjne pozostają dokładnie takie, jak w kolumnie „klasyfikacja wyniku" wyżej — ta kolumna
 dochodzi obok, nic nie zastępuje ani nie przelicza wstecz.**
 
+**Trzy obserwacje wynikające z kolumny wielkości efektu (autor), nie z nowych obliczeń.**
+
+1. **Efekt w Teście 7 P1 jest większy niż w Teście 6** — minus 0,191 wobec minus 0,137 —
+   mimo że pierwszy sklasyfikowano jako nierozstrzygnięcie, a drugi jako test o kierunku
+   wspierającym. Różnica leżała w precyzji narzędzia, nie w wielkości zjawiska. Klasyfikacja
+   ukrywała tę informację — to jest wada dotychczasowego sposobu raportowania, nie wynik.
+2. **S7b i S7c mają efekty rzędu jednej setnej** wobec własnych punktów odniesienia (+0,008
+   i −0,012). Klasyfikacja S7b jako nierozstrzygnięcia z braku mocy pozostaje formalnie
+   poprawna — dopisane OBOK niej, nie zamiast: ta liczba mówi, że nawet przy nieskończonej
+   mocy nie byłoby tam czego wykrywać.
+3. **S7 ma jedyny w tabeli efekt dodatni** — plus 0,075, w stronę rytmu, nie grupowania.
+   Obserwacja podana bez interpretacji: nie została zauważona wcześniej, bo patrzyliśmy na
+   odległość od jedynki, nie od modelu zerowego.
+
+**Co ta kolumna NIE zmienia.** Kierunek wniosku stoi: wszystkie pięć efektów mieści się w
+granicach dwóch odchyleń swoich rozkładów zerowych (Test 6: 1,08×SD; Test 7 P1: 1,39×SD;
+S7: 0,96×SD; S7b: 0,06×SD; S7c: 0,14×SD). Zmienia się opis, nie kierunek: zamiast „nie
+znaleźliśmy niczego" prawdziwsze jest zdanie w §8 (Status końcowy) niżej.
+
 **Kruchość zapadnięta w S7/S7b/S7c (D-022).** We wszystkich trzech wariantach państwowych
 θ̂ osiada na numerycznej granicy, z odsetkiem replik bootstrapowych na granicy 25–81%. Model
 orzekający jest w tych trzech wariantach de facto pulowany — przedziały dla kruchości nie są
@@ -233,6 +252,13 @@ nie sugerować jednostronności, której nie było.
 **Rodzina dziewiąta jest zamknięta (autor, 2 września 2026).**
 
 **Rodzina dziewiąta nie ma ani jednego wyniku pozytywnego pod regułą pre-rejestrowaną.**
+Opis prawdziwszy niż „nie znaleźliśmy niczego" (autor, z kolumny wielkości efektu §3):
+**rodzina dziewiąta znalazła konsekwentne odchylenie w stronę grupowania na poziomie par,
+rzędu 0,14 do 0,19 wobec modeli zerowych, którego przy dostępnej liczbie zdarzeń nie da się
+odróżnić od szumu; wszystkie pięć efektów mieści się w granicach dwóch odchyleń swoich
+rozkładów zerowych.** To jest dodatkowy, prawdziwszy opis obok formalnej klasyfikacji
+wyżej — nie zastępuje jej i nie zmienia żadnej reguły decyzyjnej.
+
 Test 6 — metoda protokołu (N1) nie osiągnęła progu istotności (p=0,068 wobec <0,05), a
 reguła §8 jest niespełnialna z powodu degeneracji N2; analiza uzupełniająca (profil/
 bootstrap) wskazuje kierunek zgodny z hipotezą, ale nie orzeka (D-023). Dwa warianty dały
