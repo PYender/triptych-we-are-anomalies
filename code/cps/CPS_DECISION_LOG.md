@@ -3084,3 +3084,76 @@ metod. Odnotowane w tabeli, nie ukryte.
 
 Zastosowane w `RODZINA9_RAPORT_ZAMYKAJACY.md` §3 jako kolumna dodana OBOK istniejących,
 niczego nie zastępująca.
+
+---
+
+## D-060 · 2026-09-05 · Test 13 (trend, UCDP): Etap 1 — trzy wyjaśnienia konkurencyjne, §7 protokołu (SZKIC v0.1)
+
+**Estymator zbudowany i zwalidowany przed pomiarami.** `test13_trend.py`: Weibull z
+cenzurowaniem, `log k(rok) = a + b·(rok−1985)/10`, skala wspólna. Sprawdzone na danych
+syntetycznych ze znanym `(a,b,λ)` — odtwarza parametry poprawnie (np. b_prawdziwe=0,5 →
+b̂=0,505). Kontrola dodatkowa: symulacja BEZ żadnego ograniczenia administracyjnego
+(admin_max=∞) daje `b̂` średnio 0,004 (SD=0,048) — estymator sam z siebie nie jest
+obciążony; każde odchylenie od zera w pomiarze A niżej pochodzi z mechanizmu, nie z
+estymatora.
+
+**A. Ucinanie przez koniec okna 2023 — ZMIERZONE, WYNIK NIEOCZEKIWANY, PRZECIWNY
+KIERUNKOWI ZASYGNALIZOWANEMU PRZEZ AUTORA.** Mechanizm: dla każdej z 294 realnych obserwacji
+(220 pełnych + 74 cenzurowanych, po wykluczeniu t0 pary 406, D-055) użyty REALNY rok
+rozpoczęcia (`ep_end`, fakt egzogeniczny) i policzone `admin_max = 2023 − rok_startu` per
+obserwacja. Symulacja pod PRAWDZIWIE STAŁYM `k=0,7096` (obserwowane k̂ P1 Testu 12, jako
+reprezentatywna stała referencyjna), 400 replik, `λ` skalibrowane (=10) tak, żeby udział
+pełnych zbiegał do realnych 74,8% (zbiegło do 74,1%):
+
+| | wartość |
+|---|---|
+| b̂ średnie | **−0,1252** |
+| b̂ mediana | −0,1200 |
+| SD | 0,0563 |
+| 95% CI | [−0,2390; −0,0283] |
+| odsetek replik z b̂ dodatnim | **0,5%** |
+
+**Kierunek jest UJEMNY, nie dodatni** — dokładnie przeciwny do obserwowanego trendu
+(rosnący k z rokiem) i przeciwny do intuicji zasygnalizowanej przez autora przed pomiarem
+("krótsze obserwowane odstępy w późniejszych latach dają wyższy parametr kształtu, czyli
+dokładnie ten trend, który widzimy"). Prawdopodobne wyjaśnienie rozbieżności: intuicja
+autora opisuje poprawnie, co stałoby się przy NAIWNEJ analizie (patrzeniu tylko na
+zaobserwowane pełne odstępy, ignorując, że część została ucięta) — ale właściwy szacowanie
+wiarygodnościowe z cenzurowaniem (którego używa ten estymator, tak jak wszystkie poprzednie
+w tym projekcie) WŁĄCZA ucięte obserwacje do dopasowania przez ich funkcję przeżycia, nie
+tylko odrzuca je — to jest różnica między "ignorować cenzurowanie" a "modelować
+cenzurowanie", i poprawny model idzie w INNĄ stronę niż naiwne pomijanie.
+
+**Konsekwencja dla oceny wyjaśnienia A: NIE tłumaczy obserwowanego trendu — działa
+PRZECIWKO niemu.** Gdyby cokolwiek, prawdziwy trend (po usunięciu tego artefaktu) byłby
+NIECO SILNIEJSZY dodatni niż surowa obserwacja, nie słabszy. Wyjaśnienie A **odrzucone jako
+kandydat na artefakt tłumaczący kierunek obserwowanego zjawiska** (choć samo w sobie
+pozostaje realnym mechanizmem statystycznym, tylko o niewłaściwym znaku do wyjaśnienia tego
+konkretnego trendu).
+
+**B. Gęstość kodowania — zmierzone, częściowo potwierdza przesłankę, nie rozstrzyga
+całości.** Liczba diado-lat na rok kalendarzowy: 14–24 w końcu lat czterdziestych, 63–70
+obecnie — ok. trzykrotny wzrost. Mediana odstępu pełnego w okresach pięcioletnich: spada z
+rzędu 15 (1945–1960) do rzędu 1 (2000–2023), **ogólnie silnie malejąco, ale NIE ściśle
+monotonicznie** (kilka wzrostów w okresach o małej liczebności, np. 1955: mediana 15,5 przy
+n=2) — `mediana_generalnie_malejaca=False` przy ścisłym kryterium, ale kierunek ogólny
+jednoznaczny. **Nie zmierzono tutaj, w jakim stopniu ten opisowy wzorzec przekłada się na
+konkretną wielkość obciążenia `b̂`** — w odróżnieniu od A, nie zbudowano dla B osobnej
+symulacji izolującej efekt; pozostaje to opisowe, zgodnie z dosłownym zakresem żądanego
+pomiaru w protokole ("liczba epizodów... oraz mediana odstępu... ").
+
+**C. Zmiana składu par — zmierzone, różnica niewielka.** Pary zaczynające po 1985: średnio
+3,77 epizodu (SD=1,19, max=7). Pary zaczynające przed 1985: średnio 4,29 (SD=1,95, max=10).
+Różnica istnieje (starsze pary mają nieco więcej epizodów, więcej okazji do zaobserwowania
+krótkich odstępów), ale niewielka wobec różnicy k̂ (0,7 wobec 0,83) — nie wygląda na
+wystarczającą do samodzielnego wyjaśnienia trendu.
+
+**Wniosek Etapu 1: żadne z trzech wyjaśnień nie tłumaczy obserwowanego trendu w
+CAŁOŚCI — A idzie w przeciwną stronę, B i C są realne, ale nie zmierzone jako
+wystarczające same z siebie.** Zgodnie z protokołem („jeżeli którekolwiek wyjaśnia
+obserwowany trend w całości, test nie orzeka") — **test orzeka, Etap 1 nie blokuje przejścia
+do Etapu 2.**
+
+**STOP zgodnie z §11 protokołu — ocena, czy test w ogóle orzeka, wykonana. Protokół nadal
+w wersji 0.1 (szkic), nie zamrożony. Przechodzę do Etapu 2 dopiero po potwierdzeniu przez
+autora, że ten wniosek jest przyjęty.**
