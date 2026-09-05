@@ -3157,3 +3157,97 @@ do Etapu 2.**
 **STOP zgodnie z §11 protokołu — ocena, czy test w ogóle orzeka, wykonana. Protokół nadal
 w wersji 0.1 (szkic), nie zamrożony. Przechodzę do Etapu 2 dopiero po potwierdzeniu przez
 autora, że ten wniosek jest przyjęty.**
+
+---
+
+## D-061 — Test 13, diagnoza rozbieżności znaku pomiaru A (niezależna replikacja autora)
+
+Autor zgłosił niezależną replikację pomiaru A z INNYMI parametrami niż moje w D-060: skala
+Weibulla λ=3 (u mnie: λ skalibrowane ≈10), zaokrąglenie "do pełnych lat z podłogą jeden"
+(`floor(T)`, minimum 1 — u mnie: mechanizm fazowy `discretize_gap`/D-058), 295 obserwacji,
+200 replik, 3 starty optymalizatora. Wynik autora: b̂ średnie **+0,035** (SD=0,026, 89,5%
+dodatnich) — znak PRZECIWNY do mojego (−0,1252). Autor: dwa podejrzenia (metoda
+zaokrąglenia; skala), z wyraźnym poleceniem „Zgłoś różnicę, nie dopasowuj".
+
+**Diagnoza — eksperyment 2×2 (metoda dyskretyzacji × skala), skrypt
+`test13_diag_zaokraglanie.py`, TE SAME 294 realne `admin_max`, k_true=0,7096, 200 replik,
+seed=42, 3 starty (−0,3;0;2), (−0,3;0,3;2), (−0,3;−0,3;2) — dokładnie jak podał autor:**
+
+| metoda | λ | b̂ średnie | SD | odsetek dodatnich | frakcja pełnych |
+|---|---|---|---|---|---|
+| phi (discretize_gap) | 3,0 | −0,0445 | 0,0163 | 0,000 | 0,908 |
+| phi (discretize_gap) | 10,0 | −0,1248 | 0,0575 | 0,005 | 0,742 |
+| floor_min1 (autor) | 3,0 | **+0,0306** | 0,0300 | 0,845 | 0,873 |
+| floor_min1 (autor) | 10,0 | **+0,0284** | 0,0255 | 0,890 | 0,717 |
+
+**Wniosek 1: rozbieżność znaku pochodzi z METODY ZAOKRĄGLENIA, nie ze skali.** Przy obu
+skalach metoda `phi` daje ujemne b̂, metoda `floor_min1` daje dodatnie b̂ — skala zmienia
+tylko wielkość efektu (i frakcję pełnych obserwacji), nigdy znak, w żadnej z dwóch metod.
+Podejrzenie autora nr 2 (skala) — ODRZUCONE jako przyczyna. Podejrzenie nr 1 (metoda
+zaokrąglenia) — POTWIERDZONE jako przyczyna.
+
+**Kontrola krzyżowa — która metoda jest zgodna z realnymi danymi UCDP.** Podstawiono
+`floor_min1` w miejsce `discretize_gap` w JUŻ USTALONYM pomiarze odchylenia zaokrąglenia
+D-056 (`test12_power.measure_rounding_bias`, struktura realnych okien median-2 z Testu
+12/S7, k_true=1,0, λ skalibrowane z realnych danych, 300 replik, seed=42) — jedyna zmiana
+to funkcja dyskretyzująca:
+
+| | phi (D-056, już ustalone) | floor_min1 (ten pomiar) |
+|---|---|---|
+| k̂ zaokrąglone, średnie | 0,9672 | 1,0595 |
+| k̂ ciągłe, średnie | 1,0025 | 1,0020 |
+| obciążenie | **−0,0353** | **+0,0575** |
+
+D-056 zostało wcześniej zweryfikowane jako zgodne z rzeczywistym, zmierzonym obciążeniem na
+prawdziwych danych UCDP (struktura median-2). `floor_min1` daje obciążenie PRZECIWNEGO
+znaku na tej samej realnej strukturze.
+
+**Interpretacja (zgłaszana jako zdiagnozowana różnica do oceny przez autora, nie jako
+jednostronne rozstrzygnięcie — zgodnie z „zgłoś różnicę, nie dopasowuj"):** mechanizm
+`discretize_gap` modeluje fazę wewnątrz roku (`phi~Uniform(0,1)`) i wymaga odrzucenia
+próbek, gdzie `phi+T<1` (bo to nie stanowiłoby zaobserwowanego odstępu ≥1 rok) — to
+odwzorowuje fakt, że rzeczywisty czas trwania jest ciągły, a obserwujemy tylko rok
+kalendarzowy zdarzenia. `floor_min1` odrzuca informację o fazie i po prostu ucina każdy
+ciągły czas w dół, co strukturalnie zawyża prawdopodobieństwo zaobserwowania krótkich
+odstępów w inny sposób niż to się dzieje w realnym mechanizmie kodowania UCDP (rok, nie
+data dzienna). Zgodność `discretize_gap` z niezależnie zmierzonym obciążeniem na
+prawdziwych danych (D-056) jest argumentem za tym, że to ten mechanizm, a nie `floor_min1`,
+jest źródłem rozbieżności znaku w pomiarze A — ale to ustalenie pozostaje do potwierdzenia
+przez autora, nie jest tu deklarowane jako zamknięte.
+
+**Status: NIE zmieniam wyniku D-060 (b̂=−0,1252 z pomiaru A pozostaje moim zmierzonym
+wynikiem, metodą `discretize_gap`). Nie przechodzę do Etapu 2 — zgodnie z poleceniem autora
+("Nie wolno przechodzić do Etapu 2, dopóki to się nie wyjaśni"), czekam na potwierdzenie.**
+
+---
+
+## D-062 — Test 13 §5, errata projektu protokołu (na wyraźne żądanie autora)
+
+Autor, niezależnie od rozstrzygnięcia znaku w D-061, wskazał strukturalny problem
+protokołu §5 (model zerowy N3 oparty na permutacji lat początkowych odstępów): permutacja
+NISZCZY dokładnie tę zależność rok↔cenzurowanie (rok startu determinuje `admin_max`, a
+przez to i kierunek/wielkość obciążenia zaokrąglenia), która — jak pokazuje pomiar A w
+D-060/D-061 — sama w sobie generuje niezerowe b̂ pod prawdziwie stałym k. Permutacyjny N3
+centruje się błędnie na zerze; właściwym punktem odniesienia dla `b` nie jest zero, tylko
+to, co daje symulacja "stałe k + prawdziwe lata + prawdziwe cenzurowanie (+ zaokrąglenie)"
+— czyli dokładnie mechanizm już zbudowany jako pomiar A.
+
+Autor poleca: zmienić §5 z modelu permutacyjnego na model **parametryczny** (stałe k,
+prawdziwe lata, prawdziwe cenzurowanie administracyjne, z zaokrągleniem) — i zapisać to
+jako erratę projektu protokołu autora, nie jako moją decyzję.
+
+**ERRATA (zapisana na żądanie autora, nie moja decyzja metodologiczna):** Protokół Testu
+13 §5 (model zerowy N3) jest niniejszym oznaczony jako wymagający poprawki: permutacyjny
+N3 zastąpić modelem parametrycznym — symulacja pod k_true=k̂ (lub k_true=1, do ustalenia
+przez autora), z REALNYMI latami startu (`ep_end`, jak w pomiarze A) i REALNĄ granicą
+administracyjną (2023−rok_startu), przepuszczona przez tę samą dyskretyzację co dane
+rzeczywiste — mechanicznie to, co już implementuje `test13_etap1.simulate_one_rep_A` /
+`test13_diag_zaokraglanie.run_2x2`. Uwaga: nie ma jeszcze zamrożonego pliku
+`TEST13_PROTOCOL_*.md` na dysku (protokół istniał dotąd wyłącznie jako SZKIC v0.1 w
+rozmowie) — errata dotyczy więc treści protokołu, do wpisania w momencie jego zamrożenia,
+nie edycji istniejącego pliku.
+
+**Który k_true ma zasilać ten null (obserwowane k̂ czy k_true=1) oraz czy zaokrąglenie ma
+być metodą `discretize_gap` czy inną — pozostaje decyzją autora**, nie rozstrzygam
+samodzielnie zgodnie z dyscypliną projektu (rozstrzygnięcia metodologiczne warstwy danych
+należą do autora).
