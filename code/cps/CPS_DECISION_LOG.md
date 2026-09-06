@@ -3336,3 +3336,66 @@ rzeczywistych danych** (dopasowanie decydujące), dopóki nie potwierdzisz, że 
 właściwy zakres "Etapu 2 po tych zmianach", albo nie podasz/nie przypomnisz dosłownej
 treści §8 — zgodnie z precedensem tego samego testu (odmowa działania na parafrazie przy
 zagubionym załączniku).
+
+---
+
+## D-064 — Test 13, treść §8 wpisana, pomiary 2 i 3 wykonane
+
+Autor potwierdził: zatrzymanie przed `b_obs` było prawidłowe (Etap 4, osobna autoryzacja).
+Podał dosłowną treść §8 (do wpisania do protokołu przy zamrożeniu):
+
+> §8. Symulacja mocy i kalibracji — przed zamrożeniem. Na realnej strukturze, mechanizmem
+> min(T,C), z discretize_gap. Trzy pomiary. Pierwszy: odchylenie oszacowania b przy
+> prawdziwym braku trendu. Drugi: udział fałszywych odrzuceń — jak często wartość p
+> (liczona dwustronnie względem środka rozkładu surogatów) wychodzi poniżej 0,05, gdy
+> trendu naprawdę nie ma; ma wyjść w okolicach 5%. Trzeci: moc przy trzech wielkościach
+> trendu, w tym przy ok. 0,2 na cztery dekady (tyle, ile sugeruje S3 Testu 12). Niska moc
+> NIE jest powodem nieuruchamiania (wynik pierwszorzędny to wielkość efektu z
+> przedziałem, nie moc/orzeczenie) — zgłoś liczbę, nie rekomenduj wstrzymania wyłącznie
+> na tej podstawie.
+
+**Pomiar 1 — już wykonany w D-063:** środek −0,1030, SD 0,0425.
+
+**Pomiar 2 — udział fałszywych odrzuceń, WYKONANY.** Konstrukcja (`test13_etap2.py`,
+`pomiar2_falszywe_odrzucenia`): N=2000 niezależnych ciągnień pod stałym parametrem
+(k̂=0,709628, λ̂=6,803500 z dopasowania bez trendu, `discretize_gap`, realne lata/admin_max).
+Każde z kolei potraktowane jako "obserwacja", porównywane z rozkładem zerowym zbudowanym z
+POZOSTAŁYCH N−1 ciągnień (środek liczony też z pozostałych N−1, nie włączając "obserwacji"
+— zachowuje wymienność, unika obciążenia własnym punktem). To jest matematycznie
+równoważne (do poprawki O(1/N)) pełnej zagnieżdżonej symulacji B_outer×B_inner, znacznie
+tańsze obliczeniowo (253 s zamiast wielogodzinnego biegu).
+
+**Wynik: frac_falszywych_odrzuceń = 0,0495**, nominalne 0,05. **Zgodność niemal dokładna.**
+Porównanie dwustronne względem środka rozkładu surogatów jest poprawnie skalibrowane mimo
+asymetrii rozkładu zerowego — to potwierdza teoretyczną własność testów Monte Carlo
+(wymienność b_obs i surogatów gwarantuje właściwy rozmiar testu niezależnie od kształtu
+rozkładu, o ile środek odniesienia nie zależy od samej obserwacji) empirycznie, nie tylko
+przez założenie.
+
+**Pomiar 3 — moc przy trzech wielkościach trendu, WYKONANY.** Trzy wartości b_true
+zaproponowane przeze mnie (środkowa = 0,05/dekadę, tj. 0,2 na cztery dekady, wskazana
+przez autora; skrajne — połowa i podwojenie tej wartości — **flagowane jako mój wybór do
+oceny, nie decyzja autora**): 0,025 / 0,05 / 0,10. M=500 replik na wielkość, seed
+20260824+, ta sama STAŁA pula zerowa z pomiaru 2 (N_ref=2000) jako punkt odniesienia
+(analogicznie do konwencji power-simulation z Testów 10/11 — zerowy nie jest generowany
+od nowa per replika mocy):
+
+| b_true | b̂ średnie (surowe) | moc (p<0,05) |
+|---|---|---|
+| 0,025 | −0,0874 | 9,4% |
+| 0,05 (cel autora) | −0,0614 | 19,6% |
+| 0,10 | −0,0120 | 59,8% |
+
+**Obserwacja spójności:** surowe b̂ pozostaje ujemne nawet pod prawdziwym dodatnim trendem
+— w każdym przypadku surowe b̂ ≈ b_true + (−0,103) [artefakt z pomiaru 1], np. przy
+b_true=0,10: 0,10−0,103=−0,003, zmierzone −0,012; przy b_true=0,05: 0,05−0,103=−0,053,
+zmierzone −0,0614 — zgodność w granicach szumu Monte Carlo, potwierdza addytywność
+artefaktu i spójność całej konstrukcji.
+
+**Zgodnie z poleceniem autora — moc nie jest tu podstawą rekomendacji wstrzymania.**
+Przy trendzie wielkości sugerowanej przez S3 Testu 12 (b≈0,05/dekadę) moc wynosi ok. 20% —
+niska, ale to tylko liczba do zgłoszenia, nie powód nieuruchamiania; wynikiem
+pierwszorzędnym pozostaje wielkość efektu z przedziałem.
+
+**STOP zgodnie z poleceniem autora — po pomiarach 2 i 3. Etap 3 (zamrożenie protokołu i
+kodu) dopiero po potwierdzeniu przez autora.**
