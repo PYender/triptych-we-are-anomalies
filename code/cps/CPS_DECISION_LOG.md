@@ -3444,3 +3444,13 @@ UCDP. Żadna liczba dotycząca `b_obs` nie została policzona ani ujawniona.
 **STOP zgodnie z §10 protokołu i wyraźnym poleceniem autora: „Po zamrożeniu i przeglądzie
 kodu STOP. Bieg, czyli obliczenie b_obs, wymaga osobnej autoryzacji autora."** Etap 4 nie
 następuje automatycznie.
+
+---
+
+## D-066 — Test 13, autoryzacja Etapu 4 (bieg decydujący)
+
+**2026-09-06, 06:58 UTC — autor autoryzuje Etap 4 Testu 13. Blokada zdjęta.** Adnotacja:
+zapis niniejszy sporządzony PRZED obliczeniem `b_obs` — treść tego wpisu (poza samą datą i
+faktem autoryzacji) nie zawiera żadnej liczby z biegu, który nastąpi po nim. Bieg zgodnie
+z zamrożonym protokołem `TEST13_PROTOCOL_trend_ksztaltu.md` (numer 13, ziarno 20260823),
+funkcja `test13_run.run_decisive()`. Wynik — wpis następny.
