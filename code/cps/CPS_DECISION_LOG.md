@@ -3454,3 +3454,36 @@ zapis niniejszy sporządzony PRZED obliczeniem `b_obs` — treść tego wpisu (p
 faktem autoryzacji) nie zawiera żadnej liczby z biegu, który nastąpi po nim. Bieg zgodnie
 z zamrożonym protokołem `TEST13_PROTOCOL_trend_ksztaltu.md` (numer 13, ziarno 20260823),
 funkcja `test13_run.run_decisive()`. Wynik — wpis następny.
+
+---
+
+## D-067 — Test 13, Etap 4: wynik biegu decydującego (surowe liczby, bez interpretacji)
+
+`test13_run.run_decisive()`, dane: n=294 (220 pełnych, 74 cenzurowanych), B=2000,
+ziarno=20260823.
+
+| wielkość | wartość |
+|---|---|
+| b_obs (surowe) | 0,0922518 |
+| a_obs | −0,4240811 |
+| λ_obs | 6,1248356 |
+| center_null | −0,1030285 |
+| SD_null | 0,0424634 |
+| efekt (b_obs − center_null) | **0,1952803** |
+| przedział efektu (≈95%, ±1,96·SD_null) | [0,1120521; 0,2785085] |
+| p (dwustronna, względem środka rozkładu surogatów) | 0,0009995 |
+| frac_tie | 0,0 |
+| klasyfikacja mechaniczna wg §6 (zapis faktu, nie interpretacja) | wsparty |
+
+**Implikowane wartości parametru kształtu k(rok), z przedziałem bootstrap 95%
+(klastrowanie po parze, B=2000, ziarno=20260823, 1 start optymalizatora na replikę):**
+
+| rok | k(rok) | 95% CI |
+|---|---|---|
+| 1950 | 0,4738 | [0,3803; 0,6071] |
+| 1985 | 0,6544 | [0,6021; 0,7210] |
+| 2020 | 0,9038 | [0,8006; 1,0134] |
+
+Zapis wyłącznie faktograficzny, zgodnie z wyraźnym poleceniem autora („surowe liczby bez
+narracji... nie klasyfikuj wyniku i nie pisz, czy hipoteza jest wsparta — to ustalimy po
+zobaczeniu liczb"). Interpretacja — do ustalenia wspólnie w kolejnym kroku.
