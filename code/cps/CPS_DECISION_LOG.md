@@ -3487,3 +3487,50 @@ ziarno=20260823.
 Zapis wyłącznie faktograficzny, zgodnie z wyraźnym poleceniem autora („surowe liczby bez
 narracji... nie klasyfikuj wyniku i nie pisz, czy hipoteza jest wsparta — to ustalimy po
 zobaczeniu liczb"). Interpretacja — do ustalenia wspólnie w kolejnym kroku.
+
+---
+
+## D-068 — Test 13, dodatkowy pomiar wyjaśnienia B z §7 (skala zależna od roku)
+
+Autor przyjął wynik D-067 (efekt 0,195/dekadę, przedział [0,112; 0,279], p=0,001, reguła
+jednoczłonowa spełniona z zapasem) i zamówił jeden dodatkowy pomiar PRZED jakąkolwiek
+narracją/klasyfikacją: wyjaśnienie B z §7 (gęstość kodowania) zmierzone w D-060 jako
+realne, ale NIE jako niewystarczające — jedyne z trzech konkurencyjnych wyjaśnień
+niewykluczone pomiarem. Mechanizm: obciążenie zaokrąglenia zależy od mediany odstępu, a
+mediana spada z ok. 15 lat (l. 50.) do ok. 1 roku (dziś); model zerowy §5 używa JEDNEJ
+wspólnej skali dopasowanej do całości i nie odtwarza tej zmiany w czasie.
+
+**Odczyt zadeklarowany przez autora PRZED pomiarem:** nowy środek blisko −0,10 → wyjaśnienie
+B odpada, wynik D-067 stoi bez zmian; nowy środek blisko +0,09 (surowe b_obs) → wynik w
+całości wyjaśniony zmianą mediany w czasie; wartości pośrednie → częściowe wyjaśnienie,
+obie liczby podane obok siebie. **To NIE jest zmiana §5 zamrożonego protokołu ani reguły
+decyzyjnej** — reguła z D-067 pozostaje w mocy; to dodatkowy pomiar diagnostyczny
+domykający §7.
+
+**Konstrukcja (`test13_b_check.py`):** model zerowy ze skalą zależną od roku, kształt
+stały. `log λ(rok) = c + d·(rok−1985)/10`, `k` stałe = k̂ z dopasowania bez trendu
+(0,709628, ten sam co w §5). `(c,d)` dopasowane MLE (cenzurowana wiarygodność Weibulla) do
+tych samych 294 rzeczywistych obserwacji. Surogaty: realne lata/admin_max, `T~Weibull(k̂,
+λ(rok))`, `discretize_gap` (bez zmian względem §5), dopasowanie modelu TRENDU (§3, k
+zmienne/λ stałe) do każdego surogatu — B=2000, to samo ziarno 20260823.
+
+**Dopasowanie skali do danych:** ĉ=2,0818, d̂=−0,1554 → λ̂(1950)=13,81, λ̂(1985)=8,02,
+λ̂(2020)=4,65 — potwierdza opisany spadek mediany odstępu w czasie (D-060, wyjaśnienie B).
+
+**Wynik — nowy rozkład zerowy pod tym alternatywnym mechanizmem:**
+
+| | wartość |
+|---|---|
+| nowy środek (b_sur średnie) | **−0,1354** |
+| mediana | −0,1300 |
+| SD | 0,0494 |
+| 95% CI | [−0,2506; −0,0518] |
+
+**Zastosowanie zadeklarowanego przed pomiarem kryterium autora (zapis mechaniczny, nie
+nowa interpretacja):** nowy środek (−0,1354) leży PO TEJ SAMEJ STRONIE i DALEJ od zera niż
+poprzedni (−0,1030) — nie przesunął się w stronę +0,09 (surowego b_obs), przesunął się w
+przeciwnym kierunku. Wedle kryterium autora: **wyjaśnienie B odpada, wynik D-067 stoi bez
+zmian** (efekt liczony względem tego alternatywnego środka byłby nawet nieco WIĘKSZY:
+0,0923−(−0,1354)=0,2277, wobec 0,1953 z D-067 — nie mniejszy).
+
+**STOP zgodnie z poleceniem autora — po tym pomiarze.**
