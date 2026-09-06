@@ -3251,3 +3251,88 @@ nie edycji istniejącego pliku.
 być metodą `discretize_gap` czy inną — pozostaje decyzją autora**, nie rozstrzygam
 samodzielnie zgodnie z dyscypliną projektu (rozstrzygnięcia metodologiczne warstwy danych
 należą do autora).
+
+---
+
+## D-063 — Test 13, przyjęcie diagnozy D-061 + rozstrzygnięcie obu decyzji z D-062 +
+przepisane §5 + charakterystyka poprawionego modelu zerowego
+
+Autor przyjął diagnozę D-061 w całości i uzasadnił merytorycznie, dlaczego `floor_min1`
+było błędem: UCDP notuje odstęp jako liczbę pełnych PUSTYCH lat kalendarzowych, a ten sam
+czas pokoju (2,7 roku) daje inną liczbę pustych lat zależnie od momentu w roku, w którym
+skończyła się wojna (koniec w marcu → 1 pusty rok; koniec w grudniu → 2 puste lata,
+Do tego samego 2,7-letniego pokoju). `discretize_gap` tę zależność modeluje (losuje fazę w
+roku), `floor_min1` ją ignoruje. Kontrola krzyżowa na D-056 to potwierdza. **Rozstrzygnięcie:
+obowiązuje `discretize_gap`, znak obciążenia jest ujemny.**
+
+**Decyzja 1 (rozstrzygnięta przez autora): model zerowy zasilają k̂ i λ̂ z dopasowania BEZ
+trendu na tych samych danych, NIE k=1.** Uzasadnienie autora: hipoteza zerowa Testu 13 brzmi
+„parametr kształtu jest stały w czasie", nie „proces jest bez pamięci (k=1)" — to drugie
+pytanie już rozstrzygnął Test 12 (P1: obie krawędzie przedziału < 1). Użycie k=1 mieszałoby
+dwa różne pytania w jednym teście. Zwykły bootstrap parametryczny: symulacja pod k̂, λ̂
+oszacowanymi z rzeczywistych danych.
+
+**Decyzja 2 (rozstrzygnięta): dyskretyzacja przez `discretize_gap` wszędzie w tej rodzinie
+testów** — retroaktywnie potwierdzone dla wszystkich dotychczasowych symulacji Testu 13
+(pomiar A w D-060 już jej używał; jedynie diagnostyczny wariant `floor_min1` w D-061 był
+świadomie odstępstwem do celów porównawczych, nigdy częścią właściwego pipeline'u).
+
+**Dopisek do §5: skala rozkładu w modelu zerowym musi pochodzić z dopasowania do
+rzeczywistych danych, nie być przyjęta z góry** — bo obciążenie zależy silnie od skali
+(D-061: −0,045 przy λ=3 wobec −0,125 przy λ=10 na kalibrowanej skali), więc zła skala
+przesuwa punkt odniesienia całego testu. Dopasowanie do realnych danych (poniżej) daje
+λ̂=6,8035 — wartość leżącą MIĘDZY tymi dwiema wcześniej testowanymi skalami, a więc różnica
+nie jest formalnością.
+
+**§5 protokołu — treść przepisana (do wpisania w pliku protokołu przy jego zamrożeniu; plik
+`TEST13_PROTOCOL_*.md` wciąż nie istnieje na dysku, protokół pozostaje SZKICEM v0.1 w
+rozmowie):**
+
+> Model zerowy N3: parametryczny (NIE permutacyjny). k̂ i λ̂ pochodzą z dopasowania modelu
+> Weibulla BEZ trendu (`test6_weibull.fit_pooled`) do tych samych rzeczywistych danych,
+> które zasilają dopasowanie decydujące. Surogaty: dla każdej z rzeczywistych obserwacji
+> użyty jej REALNY rok startu i REALNA granica administracyjna (2023−rok_startu, fakt
+> egzogeniczny); T~Weibull(k̂,λ̂) ciągłe, dyskretyzacja przez `discretize_gap`
+> (D-058/D-061), zdarzenie pełne jeśli zdyskretyzowane T ≤ admin_max, inaczej cenzura na
+> admin_max. Dopasuj model trendu do każdego surogatu, zbierz rozkład b_sur. B=2000, ziarno
+> do potwierdzenia przy zamrożeniu protokołu. Jeśli frac_tie (|b_sur−b_obs|<1e-6) > 0,01 —
+> STOP (analogicznie do D-026 SS7). **Wartość p liczona względem rozkładu b_sur, nie
+> względem zera:** p = (1+#{|b_sur−center|≥|b_obs−center|})/(B+1), gdzie
+> center=średnia(b_sur) — nie literalne zero. To jest sedno erraty: punktem odniesienia
+> jest to, co sama procedura wytwarza pod stałym parametrem, nie zero.
+
+**Implementacja: `test13_n3.py`** (`fit_no_trend`, `simulate_n3_once`, `run_n3`). Uruchomiona
+w zakresie BEZPIECZNYM dla dyscypliny STOP (charakterystyka modelu zerowego, BEZ dopasowania
+decydującego do realnego, obserwowanego trendu — `b_obs` NIE zostało jeszcze policzone,
+`run_n3` wywołane z `b_obs=None`):
+
+k̂ (bez trendu, dane realne) = **0,709628**, λ̂ (bez trendu, dane realne) = **6,803500**
+(dopasowanie `fit_pooled` na 294 obserwacjach, próg≥3, t0 wykluczone — te same dane P1
+Testu 12). B=2000, seed=20260823 (prowizoryczne):
+
+| | wartość |
+|---|---|
+| b_sur średnie | **−0,1030** |
+| b_sur mediana | −0,0995 |
+| SD | 0,0425 |
+| 95% CI | [−0,1960; −0,0290] |
+
+To **zastępuje** prowizoryczny numer z D-060 (−0,1252, liczony na skali λ=10 dobranej
+metodą kalibracji do frakcji zdarzeń pełnych, nie z dopasowania) jako finalny punkt
+odniesienia dla `b` pod poprawionym §5 — kierunek (ujemny) ten sam, wielkość nieco mniejsza
+co do modułu po użyciu właściwej, dopasowanej skali.
+
+**Do raportu, niezależnie od dalszego wyniku (zgodnie z żądaniem autora): obciążenie jest
+ujemne — sama procedura pod stałym parametrem produkuje pozorny SPADEK k z rokiem.
+Obserwowany trend (S3 Testu 12: k̂ 0,625→0,793) jest ROSNĄCY. Artefakt działa więc przeciw
+obserwacji, nie na jej korzyść — po korekcie prawdziwy trend może być SILNIEJSZY niż
+surowa obserwacja, nie słabszy.**
+
+**Zastrzeżenie przejrzystości: nie mam zapisanej dosłownej treści §8 protokołu (specyfikacja
+Etapu 2 poza samym §5)** — protokół istniał wyłącznie jako SZKIC v0.1 w rozmowie, a ten
+konkretny fragment nie został zapisany do pliku na dysku. Zatrzymuję się świadomie na
+charakterystyce poprawionego modelu zerowego (powyżej) i **nie liczę `b_obs` na
+rzeczywistych danych** (dopasowanie decydujące), dopóki nie potwierdzisz, że to jest
+właściwy zakres "Etapu 2 po tych zmianach", albo nie podasz/nie przypomnisz dosłownej
+treści §8 — zgodnie z precedensem tego samego testu (odmowa działania na parafrazie przy
+zagubionym załączniku).
