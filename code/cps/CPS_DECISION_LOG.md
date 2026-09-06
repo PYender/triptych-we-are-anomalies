@@ -3399,3 +3399,48 @@ pierwszorzędnym pozostaje wielkość efektu z przedziałem.
 
 **STOP zgodnie z poleceniem autora — po pomiarach 2 i 3. Etap 3 (zamrożenie protokołu i
 kodu) dopiero po potwierdzeniu przez autora.**
+
+---
+
+## D-065 — Test 13, Etap 3: zamrożenie protokołu i kodu
+
+Autor przyjął oba pomiary (2: kalibracja 0,0495 rozstrzyga wątpliwość, dla której był
+zamawiany; 3: konstrukcja addytywności artefaktu ważniejsza od samych liczb mocy) i
+autoryzował Etap 3: „zamrożenie protokołu, numer i ziarno, kod plus bliźniaczy .md".
+
+**Numer: 13** (bez kolizji — sprawdzone, brak innego użycia „TEST13"/„Test 13" poza tą
+rodziną w plikach projektu). **Ziarno: 20260823** (już operacyjnie w użyciu od D-060 przez
+`test13_trend.RNG_SEED`, potwierdzone teraz formalnie przy zamrożeniu — pula zerowa
+wygenerowana tym ziarnem w D-063 [`test13_n3.py`] i D-064 [`test13_etap2.py`, pomiar 2]
+dała IDENTYCZNE wyniki: center=−0,10302854…, SD=0,04246336…, zweryfikowane cyfra po
+cyfrze — reprodukowalność potwierdzona).
+
+**Plik protokołu: `TEST13_PROTOCOL_trend_ksztaltu.md`** — zamrożony, wersja 1.0, zastępuje
+SZKIC v0.1. Zawiera: §1 cel/filozofia raportowania (efekt pierwszorzędny), §2 dane/model,
+§3 estymator, **§4 — NOWA sekcja, definicja wielkości raportowanej jako
+`b_obs − center_null` z przedziałem ±1,96·SD_null (na żądanie autora, formalizacja
+obserwacji o addytywności artefaktu z D-064)**, §5 model zerowy N3 poprawiony (errata
+D-062/D-063), §6 reguła decyzyjna (jednowarunkowa, p względem rozkładu surogatów, etykiety
+wsparty/graniczny/niewsparty), §7 trzy wyjaśnienia konkurencyjne (Etap 1, D-060, wykonane),
+§8 symulacja mocy/kalibracji (Etap 2, D-063/D-064, wykonane), **§9 — trzy zdania o
+ograniczeniach z mocy ~20%, w brzmieniu podanym przez autora** (wynik nieistotny nic nie
+powie; wynik istotny wskazuje na trend >0,05/dekadę; przedział szeroki jest wynikiem, nie
+porażką), §10 kolejność/autoryzacje, §11 historia zmian względem szkicu.
+
+**Kod bliźniaczy: `test13_run.py`** — zbudowany, PRZEJRZANY, **NIE URUCHOMIONY**.
+Implementuje bieg decydujący (Etap 4): wczytuje te same 294 obserwacje realne, dopasowuje
+model trendu (da `b_obs`), porównuje z tą samą, już zweryfikowaną pulą zerową (B=2000,
+ziarno 20260823) metodą z §6, zwraca efekt/przedział/p/klasyfikację. `__main__` celowo
+rzuca STOP zamiast liczyć cokolwiek — wymaga jawnego wywołania `run_decisive()` po
+autoryzacji.
+
+**Sprawdzenie bez przekraczania granicy:** uruchomiono WYŁĄCZNIE `load_real_decisive_data`
+(hydraulika danych — wczytanie realnych 294 wierszy z rokiem startu), BEZ wywołania
+`fit_trend` na realnych danych (co byłoby już `b_obs`, decydującym krokiem). Wynik:
+n=294 (220 pełnych, 74 cenzurowanych), zgodne z D-055. Rok_c (rok−1985) w zakresie
+[−37, 38], tj. lata startu 1948–2023 — zgodne z oczekiwanym zakresem czasowym danych
+UCDP. Żadna liczba dotycząca `b_obs` nie została policzona ani ujawniona.
+
+**STOP zgodnie z §10 protokołu i wyraźnym poleceniem autora: „Po zamrożeniu i przeglądzie
+kodu STOP. Bieg, czyli obliczenie b_obs, wymaga osobnej autoryzacji autora."** Etap 4 nie
+następuje automatycznie.
